@@ -1,0 +1,26 @@
+name: CI SAE-BUT3
+
+# Le pipeline se déclenche à chaque PR vers main ou develop
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  verification-qualite:
+    name: Vérification du code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      - name: Test de l'infrastructure (Hello World CI)
+        run: |
+          echo "Le pipeline CI fonctionne !"
+          echo "La structure du monorepo est :"
+          ls -la
+
+      # Plus tard ici l'installation de Node/Python
+      # et les commandes comme 'npm run lint' ou 'pytest'
