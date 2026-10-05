@@ -12,7 +12,7 @@
   "dependencies": {
     "framer-motion": "^14.0.0",
     "howler": "^2.2.4",
-    "kaboom": "^3000.1.17",
+    "kaplay": "^3001.0.19",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "socket.io-client": "^4.8.4",
