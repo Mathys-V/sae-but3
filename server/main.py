@@ -1,6 +1,6 @@
+import socketio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import socketio
 
 # 1. Initialisation de l'application FastAPI
 app = FastAPI(
