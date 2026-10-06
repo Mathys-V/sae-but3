@@ -120,6 +120,12 @@ const institutions = [
   "Autre utilisateur",
 ];
 
+function secureRandom() {
+  const value = new Uint32Array(1);
+  crypto.getRandomValues(value);
+  return value[0] / 0x100000000;
+}
+
 function ConnexionMCJV() {
   const [activeTab, setActiveTab] = useState("enseignants");
   const [selectedInstitution, setSelectedInstitution] = useState(
@@ -146,8 +152,8 @@ function ConnexionMCJV() {
     let destination = { x: margin, y: margin, width, height };
     let bestScore = -Infinity;
     for (let attempt = 0; attempt < 18; attempt += 1) {
-      const angle = Math.random() * Math.PI * 2;
-      const distanceFromCurrent = 340 + Math.random() * 220;
+      const angle = secureRandom() * Math.PI * 2;
+      const distanceFromCurrent = 340 + secureRandom() * 220;
       const candidate = {
         x: Math.min(
           maxX,
@@ -200,15 +206,16 @@ function ConnexionMCJV() {
       setPopUpButtons((buttons) => [
         ...buttons,
         {
-          id: `${Date.now()}-${Math.random()}`,
+          id: crypto.randomUUID(),
           x:
             margin +
-            Math.random() * Math.max(0, window.innerWidth - width - margin * 2),
+            secureRandom() *
+              Math.max(0, window.innerWidth - width - margin * 2),
           y:
             margin +
-            Math.random() *
+            secureRandom() *
               Math.max(0, window.innerHeight - height - margin * 2),
-          hue: Math.floor(Math.random() * 360),
+          hue: Math.floor(secureRandom() * 360),
         },
       ]);
     }, 5000);
