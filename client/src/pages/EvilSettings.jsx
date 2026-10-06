@@ -20,23 +20,28 @@ function EvilSettings() {
   // Nouvel état pour gérer l'affichage du pop-up de confirmation
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleKeyDown = (e) => {
-    if (isListening) {
-      e.preventDefault();
-      setKeys({
-        ...keys,
-        [isListening]: e.code === "Space" ? "Space" : e.key.toUpperCase(),
-      });
-      setIsListening(null);
-    }
-  };
-
   useEffect(() => {
-    if (isListening) {
-      window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [isListening, keys]);
+    // Si on n'écoute aucune touche, on ne lance pas l'événement
+    if (!isListening) return;
+
+    // La fonction est maintenant proprement encapsulée dans le useEffect
+    const handleKeyDown = (e) => {
+      e.preventDefault();
+      // L'utilisation de prevKeys évite d'avoir à mettre "keys" dans le tableau de dépendances
+      setKeys((prevKeys) => ({
+        ...prevKeys,
+        [isListening]: e.code === "Space" ? "Space" : e.key.toUpperCase(),
+      }));
+      setIsListening(null);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Nettoyage de l'événement
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isListening]); // Le linter sera content : isListening est la seule dépendance légitime
 
   // Fonction déclenchée lors de la confirmation finale
   const handleSave = () => {
