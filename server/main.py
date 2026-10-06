@@ -2,6 +2,9 @@ import socketio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+# NOUVEAU : Import de nos fichiers de routes
+from routers import auth, leaderboard
+
 # 1. Initialisation de l'application FastAPI
 app = FastAPI(
     title="Evil MesCoursJV API", 
@@ -22,6 +25,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# NOUVEAU : Inclusion de nos routes API dans l'application FastAPI
+app.include_router(auth.router)
+app.include_router(leaderboard.router)
+
 # 3. Initialisation du serveur Socket.IO (Mode Asynchrone)
 # On autorise également le port 5173 pour les WebSockets
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins="http://localhost:5173")
@@ -30,7 +37,7 @@ sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins="http://local
 # C'est cette variable 'socket_app' que le serveur Uvicorn va lancer
 socket_app = socketio.ASGIApp(sio, other_asgi_app=app)
 
-# --- ÉvénEMENTS SOCKET.IO ---
+# --- ÉVÉNEMENTS SOCKET.IO ---
 
 @sio.event
 async def connect(sid, environ):
