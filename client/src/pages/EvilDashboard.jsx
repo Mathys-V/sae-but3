@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
 import { ressourcesBUT } from "../data/ressources.js";
 import { useAuthStore } from "../store/authStore.js";
 import LoginForm from "../components/LoginForm.jsx";
@@ -28,9 +27,6 @@ function EvilDashboard() {
   // On récupère exactement les mêmes ressources débloquées que sur la page EvilGames
   const jeuxActifs = ressourcesBUT.BUT1.slice(0, 2);
 
-  useEffect(() => {
-    document.title = "EvilJV | Tableau de bord";
-  }, []);
 
   return (
     <main className="space-y-8 animate-fade-in">
