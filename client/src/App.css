@@ -216,7 +216,9 @@ summary:focus-visible {
   position: fixed;
   left: 16px;
   top: 16px;
-  transition: left 320ms cubic-bezier(0.2, 0.75, 0.25, 1), top 320ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  transition:
+    left 320ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    top 320ms cubic-bezier(0.2, 0.75, 0.25, 1);
   will-change: left, top;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -232,8 +234,45 @@ summary:focus-visible {
   background: #f4f7f9;
   color: #284a5a;
 }
-.guest-button:hover {
-  background: #e9f0f4;
+.pop-up-button {
+  position: fixed;
+  z-index: 1100;
+  width: 190px;
+  background: linear-gradient(
+    90deg,
+    #ff007f,
+    #ff7f00,
+    #fffe00,
+    #00ff00,
+    #00fefe,
+    #0000ff,
+    #7f00ff,
+    #ff007f,
+    #ff7f00,
+    #fffe00,
+    #00ff00,
+    #00fefe,
+    #0000ff,
+    #7f00ff,
+    #ff007f
+  );
+  background-size: 200% 100%;
+  color: #17102b;
+  box-shadow: none;
+  animation: pop-up-color 5s linear infinite;
+}
+@keyframes pop-up-color {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pop-up-button {
+    animation: none;
+  }
 }
 .signup-copy {
   margin: 20px 0 0;

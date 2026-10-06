@@ -128,6 +128,7 @@ function ConnexionMCJV() {
   );
   const [loginMessage, setLoginMessage] = useState("");
   const [loginButtonPosition, setLoginButtonPosition] = useState(null);
+  const [popUpButtons, setPopUpButtons] = useState([]);
   const loginButtonRef = useRef(null);
   const lastButtonFleeAt = useRef(0);
 
@@ -190,6 +191,29 @@ function ConnexionMCJV() {
     }
     window.addEventListener("pointermove", dodge);
     return () => window.removeEventListener("pointermove", dodge);
+  }, []);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      const width = Math.min(190, window.innerWidth - 24);
+      const height = 48;
+      const margin = 12;
+      setPopUpButtons((buttons) => [
+        ...buttons,
+        {
+          id: `${Date.now()}-${Math.random()}`,
+          x:
+            margin +
+            Math.random() * Math.max(0, window.innerWidth - width - margin * 2),
+          y:
+            margin +
+            Math.random() *
+              Math.max(0, window.innerHeight - height - margin * 2),
+          hue: Math.floor(Math.random() * 360),
+        },
+      ]);
+    }, 5000);
+    return () => window.clearInterval(interval);
   }, []);
   const questions = activeTab === "enseignants" ? staffFaq : studentFaq;
 
@@ -273,9 +297,16 @@ function ConnexionMCJV() {
                 Connexion
               </button>
             </div>
-            <button className="guest-button" type="button">
-              NE CLIQUE PAS
-            </button>
+            {popUpButtons.map(({ id, x, y, hue }) => (
+              <button
+                className="guest-button pop-up-button"
+                type="button"
+                key={id}
+                style={{ left: `${x}px`, top: `${y}px`, "--button-hue": hue }}
+              >
+                CLIQUE MOI
+              </button>
+            ))}
             {loginMessage && (
               <p className="login-message" role="status">
                 {loginMessage}
