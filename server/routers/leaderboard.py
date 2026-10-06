@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from schemas.score import LeaderboardResponse, ScoreEntry
 
 router = APIRouter(prefix="/api/leaderboard", tags=["Scores"])
