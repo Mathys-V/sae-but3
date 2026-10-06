@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ressourcesBUT } from "../data/ressources.js";
 import { useAuthStore } from "../store/authStore.js";
 import LoginForm from "../components/LoginForm.jsx";
+import Leaderboard from "../components/Leaderboard.jsx";
 
 function EvilDashboard() {
   // On récupère l'utilisateur depuis Zustand
@@ -86,6 +87,10 @@ function EvilDashboard() {
             </Link>
           ))}
         </div>
+      </div>
+      <div className="bg-gray-800 p-6 rounded border border-gray-700 mt-8">
+        <h2 className="text-2xl font-bold text-center mb-6">🏆 MEILLEURS JOUEURS</h2>
+        <Leaderboard gameId="sae-mission-2" />
       </div>
     </main>
   );
