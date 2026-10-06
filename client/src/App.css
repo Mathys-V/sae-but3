@@ -84,6 +84,17 @@ summary:focus-visible {
   font-size: 18px;
   text-decoration: none;
 }
+
+.header-warn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 26px;
+  color: #07233d78;
+  font-size: 18px;
+  text-decoration: none;
+}
+
 .header-login span {
   font-size: 25px;
   line-height: 1;

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logo from "../assets/logos.svg";
 
 function SiteHeader() {
   return (
@@ -8,11 +9,11 @@ function SiteHeader() {
         to="/connexionMCJV"
         aria-label="MesCoursJV, accueil"
       >
-        <img
-          src="https://mescoursjv.u-picardie.fr/moodle/alternate/assets/logos.svg"
-          alt="Mes CoursJV"
-        />
+        <img src={logo} alt="Mes CoursJV" />
       </Link>
+      <p className="header-warn">
+        Projet étudiant - Ceci n'est pas la plateforme officielle
+      </p>
       <Link className="header-login" to="/connexionMCJV#connexion">
         <span aria-hidden="true">⇥</span> Connexion
       </Link>

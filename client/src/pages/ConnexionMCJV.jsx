@@ -2,87 +2,50 @@ import { useEffect, useState } from "react";
 
 const staffFaq = [
   {
-    question: "Comment accéder à la plateforme MesCoursJV ?",
-    answer: (
-      <>
-        <p>
-          Si vous possédez un compte institutionnel, choisissez l’établissement
-          correspondant à votre adresse e-mail dans « Compte de connexion » :
-        </p>
-        <ul>
-          <li>@u-picardie.fr : Université de Picardie Jules Verne</li>
-          <li>@chu-amiens.fr : CHU Amiens Picardie</li>
-          <li>@univ-artois.fr : Université d’Artois</li>
-          <li>@univ-littoral.fr : Université du Littoral Côte d’Opale</li>
-        </ul>
-        <p>Pour toute autre adresse, choisissez « Autre utilisateur ».</p>
-      </>
-    ),
-  },
-  {
     question:
-      "Je n’ai pas d’identifiant, mais je souhaite accéder à MesCoursJV afin de mettre des cours à disposition des étudiants. Que dois-je faire ?",
+      "Rupture totale de café à la machine du hall, que dois-je faire ?",
     answer: (
       <p>
-        Si vos identifiants institutionnels ne vous ont pas encore été
-        attribués, veuillez patienter ou contacter le service des ressources
-        humaines de votre établissement. Si vous n’êtes pas concerné par leur
-        attribution, créez un compte avec le lien « En créer un ici ».
+        {" "}
+        Oh non, la machine est ENCORE HS ????? Pas de souci, vous pouvez
+        toujours vous rendre{" "}
+        <a href="https://extra.u-picardie.fr/LUp/staffs/">ici</a> pour une pause
+        gourmande.
       </p>
     ),
   },
   {
     question:
-      "Je me connecte, mais je ne retrouve pas mes cours. Que dois-je faire ?",
+      "Comment faire si un étudiant est sur son smartphone en amphithéatre ?",
+    answer: <p>Laissez le donc, il est sûrement sur EvilJV.</p>,
+  },
+  {
+    question: "Que faire si un étudiant envoie un e-mail à 2 heures du matin ?",
     answer: (
       <p>
-        Vérifiez que vous utilisez vos identifiants habituels. Vous pouvez
-        disposer de deux adresses institutionnelles distinctes, par exemple une
-        adresse UPJV et une adresse CHU, associées à des accès différents.
+        Ce genre de situation peut s'avérer agaçante. Gardez votre calme, faites
+        comme si vous n'avez rien vu et{" "}
+        <a href="https://extra.u-picardie.fr/LUp/staffs/">cliquez ici</a> pour
+        vous détendre.
       </p>
     ),
   },
   {
-    question:
-      "Je ne me souviens plus de mon identifiant ou de mon mot de passe. Que faire ?",
+    question: "Ne me clique pas",
     answer: (
-      <>
-        <p>
-          Pour réinitialiser vos identifiants, utilisez le service de votre
-          établissement :
-        </p>
-        <ul>
-          <li>
-            UPJV :{" "}
-            <a href="https://extra.u-picardie.fr/LUp/staffs/">
-              réinitialiser mon mot de passe
-            </a>
-          </li>
-          <li>CHU : contactez la hotline au 14000</li>
-          <li>
-            Université d’Artois :{" "}
-            <a href="https://monmotdepasse.univ-artois.fr/">
-              monmotdepasse.univ-artois.fr
-            </a>
-          </li>
-          <li>ULCO : contactez assistance-compte-numerique@univ-littoral.fr</li>
-        </ul>
-        <p>
-          Vous pouvez aussi sélectionner votre établissement puis cliquer sur «
-          Connexion » pour afficher l’aide de connexion.
-        </p>
-      </>
+      <a href="https://extra.u-picardie.fr/LUp/staffs/">
+        Ne clique pas sur moi, suuuurtout pas.
+      </a>
     ),
   },
   {
     question: "Je ne trouve pas la réponse à mon problème.",
     answer: (
       <p>
-        Posez votre question sur le{" "}
-        <a href="https://extra.u-picardie.fr/glpi/marketplace/formcreator/front/wizard.php">
-          centre d’assistance
-        </a>
-        .
+        {" "}
+        Ca tombe bien,{" "}
+        <a href="https://extra.u-picardie.fr/LUp/staffs/">cliquez ici</a> et
+        vous aurez toutes les réponses à vos questions.
       </p>
     ),
   },
@@ -90,46 +53,24 @@ const staffFaq = [
 
 const studentFaq = [
   {
-    question: "Comment accéder à la plateforme MesCoursJV ?",
+    question: "Comment accéder à la plateforme PasMesCoursJV ?",
     answer: (
       <>
         <p>
-          Vérifiez que votre inscription à l’université est validée. Après
-          validation, la synchronisation peut prendre jusqu’à 24 heures. Activez
-          ensuite votre compte pour accéder à MesCoursJV, à votre ENT et à votre
-          boîte mail :
+          Pourquoi vouloir accéder à la plateforme PasMesCoursJV alors qu'il
+          existe un site bien meilleur ? Clique{" "}
+          <a href="https://PasMesCoursJV.u-picardie.fr/moodle/">ici</a>.
         </p>
-        <ul>
-          <li>
-            UPJV :{" "}
-            <a href="https://webmail.etud.u-picardie.fr/validation/">
-              activer mon compte
-            </a>
-          </li>
-          <li>
-            ULCO :{" "}
-            <a href="https://formulaire.extranet.univ-littoral.fr/validate.php">
-              valider mon compte
-            </a>
-          </li>
-          <li>
-            Université d’Artois :{" "}
-            <a href="https://monmotdepasse.univ-artois.fr/">
-              gérer mon mot de passe
-            </a>
-          </li>
-        </ul>
       </>
     ),
   },
   {
-    question:
-      "Je n’arrive pas à me connecter et un message « Identifiants erronés » s’affiche.",
+    question: "Le pare-feu de mon établissement bloque Roblox, que faire ?",
     answer: (
       <p>
-        Vérifiez que vous sélectionnez le bon établissement dans « Compte de
-        connexion » et que vous utilisez les identifiants fournis par celui-ci.
-        L’adresse étudiante UPJV doit être activée avant la première connexion.
+        Laissez tomber Roblox, c'est un jeu pour les enfants. Vous pouvez
+        toujours rejoindre la cour des grands{" "}
+        <a href="https://extra.u-picardie.fr/LUp/staffs/">ici</a>.
       </p>
     ),
   },
@@ -148,13 +89,12 @@ const studentFaq = [
   },
   {
     question:
-      "Je ne me souviens plus de mon identifiant ou de mon mot de passe. Que faire ?",
+      "J'ai un travail de groupe et je ne connais personne, comment m'intégrer ?",
     answer: (
       <p>
-        Sélectionnez votre établissement, puis cliquez sur « Connexion » pour
-        accéder aux instructions de récupération. Les utilisateurs du CHU
-        peuvent modifier leur mot de passe avec les outils internes ou contacter
-        la hotline au 14000.
+        {" "}
+        Clique <a href="https://extra.u-picardie.fr/LUp/staffs/">ici</a> pour te
+        faire de nouveaux amis et t'intégrer dans ton groupe de travail.
       </p>
     ),
   },
@@ -162,11 +102,10 @@ const studentFaq = [
     question: "Je ne trouve pas la réponse à mon problème.",
     answer: (
       <p>
-        Posez votre question via le{" "}
-        <a href="https://extra.u-picardie.fr/glpi/marketplace/formcreator/front/formdisplay.php?id=54">
-          formulaire de contact
-        </a>
-        .
+        {" "}
+        Ca tombe bien,{" "}
+        <a href="https://extra.u-picardie.fr/LUp/staffs/">cliquez ici</a> et
+        vous aurez toutes les réponses à vos questions.
       </p>
     ),
   },
@@ -185,7 +124,7 @@ function ConnexionMCJV() {
   const [activeTab, setActiveTab] = useState("enseignants");
   const [showNotice, setShowNotice] = useState(true);
   const [selectedInstitution, setSelectedInstitution] = useState(
-    () => localStorage.getItem("mescoursjv-institution") || institutions[0],
+    () => localStorage.getItem("PasMesCoursJV-institution") || institutions[0],
   );
   const [loginMessage, setLoginMessage] = useState("");
   const questions = activeTab === "enseignants" ? staffFaq : studentFaq;
@@ -195,10 +134,13 @@ function ConnexionMCJV() {
       setSelectedInstitution(institutions[0]);
       setLoginMessage("");
     }
-    window.addEventListener("mescoursjv-preferences-reset", resetInstitution);
+    window.addEventListener(
+      "PasMesCoursJV-preferences-reset",
+      resetInstitution,
+    );
     return () =>
       window.removeEventListener(
-        "mescoursjv-preferences-reset",
+        "PasMesCoursJV-preferences-reset",
         resetInstitution,
       );
   }, []);
@@ -206,53 +148,22 @@ function ConnexionMCJV() {
   return (
     <main id="accueil">
       <section className="page-banner" aria-labelledby="page-title">
-        <h1 id="page-title">MesCoursJV / Connexion</h1>
+        <h1 id="page-title">PasMesCoursJV / Connexion</h1>
       </section>
       <div className="page-content">
-        {showNotice && (
-          <aside className="notice" role="status">
-            <div>
-              <h2>Amélioration de l’interface de connexion</h2>
-              <p>
-                Votre choix de connexion est désormais mémorisé pour votre
-                prochaine visite, vous permettant ainsi d’accéder plus
-                rapidement à la plateforme.
-              </p>
-              <p>
-                <strong>⚠ Mise à jour importante :</strong> En cas de
-                dysfonctionnement ou d’affichage incorrect, actualisez la page
-                avec <strong>Ctrl+F5</strong> (PC) ou{" "}
-                <strong>Cmd+Shift+R</strong> (Mac) pour vider le cache de votre
-                navigateur.
-              </p>
-              <p>
-                La section « Autre utilisateur » a été intégrée directement dans
-                le sélecteur principal.
-              </p>
-            </div>
-            <button
-              className="close-notice"
-              type="button"
-              aria-label="Fermer l’alerte"
-              onClick={() => setShowNotice(false)}
-            >
-              ×
-            </button>
-          </aside>
-        )}
         <section
           className="login-panel"
           id="connexion"
           aria-labelledby="login-title"
         >
-          <h2 id="login-title">MesCoursJV</h2>
+          <h2 id="login-title">PasMesCoursJV</h2>
           <form
             onSubmit={(event) => {
               event.preventDefault();
               setLoginMessage(
                 selectedInstitution === institutions[0]
                   ? "Veuillez sélectionner votre compte de connexion."
-                  : "La connexion est disponible depuis la plateforme MesCoursJV.",
+                  : null,
               );
             }}
           >
@@ -265,7 +176,7 @@ function ConnexionMCJV() {
               onChange={(event) => {
                 setSelectedInstitution(event.target.value);
                 localStorage.setItem(
-                  "mescoursjv-institution",
+                  "PasMesCoursJV-institution",
                   event.target.value,
                 );
               }}
@@ -284,11 +195,11 @@ function ConnexionMCJV() {
               type="button"
               onClick={() =>
                 setLoginMessage(
-                  "L’accès sans compte est proposé directement sur la plateforme MesCoursJV.",
+                  "L’accès sans compte est proposé directement sur la plateforme PasMesCoursJV.",
                 )
               }
             >
-              Accès sans compte
+              NE CLIQUE PAS
             </button>
             {loginMessage && (
               <p className="login-message" role="status">
@@ -297,8 +208,8 @@ function ConnexionMCJV() {
             )}
           </form>
           <p className="signup-copy">
-            Vous n’avez pas de compte ? En créer un{" "}
-            <a href="https://mescoursjv.u-picardie.fr/moodle/login/signup.php">
+            Tu souhaites travailler avec sérieux ? Ne clique pas{" "}
+            <a href="https://PasMesCoursJV.u-picardie.fr/moodle/login/signup.php">
               ici
             </a>
           </p>
@@ -306,9 +217,7 @@ function ConnexionMCJV() {
         <section className="faq-section" aria-labelledby="faq-title">
           <div className="faq-heading">
             <span className="faq-kicker">Aide et assistance</span>
-            <h2 id="faq-title">
-              Un problème de connexion ? Consultez la FAQ ci-dessous.
-            </h2>
+            <h2 id="faq-title">Un problème ? Consultez la FAQ ci-dessous.</h2>
           </div>
           <div
             className="faq-tabs"
