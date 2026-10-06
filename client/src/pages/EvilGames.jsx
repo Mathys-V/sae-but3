@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ressourcesBUT } from "../data/ressources.js";
 
 function EvilGames() {
@@ -5,6 +6,10 @@ function EvilGames() {
   const jeuxBUT1 = ressourcesBUT.BUT1.slice(0, 2);
   const jeuxBUT2 = ressourcesBUT.BUT2.slice(0, 2);
   const jeuxBUT3 = ressourcesBUT.BUT3.slice(0, 2);
+
+  useEffect(() => {
+    document.title = "EvilJV | Mes Jeux";
+  }, []);
 
   return (
     <main className="space-y-8">
