@@ -16,3 +16,25 @@ export const fetchLeaderboard = async (gameId) => {
     return null;
   }
 };
+
+// Fonction pour envoyer les identifiants au serveur
+export const loginUser = async (pseudo, password) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ pseudo, password }),
+    });
+    
+    if (!response.ok) {
+      throw new Error("Identifiants incorrects");
+    }
+    
+    return await response.json(); // Renvoie { access_token, token_type, pseudo }
+  } catch (error) {
+    console.error("Erreur de connexion :", error);
+    return null; // Retourne null si la connexion échoue
+  }
+};
