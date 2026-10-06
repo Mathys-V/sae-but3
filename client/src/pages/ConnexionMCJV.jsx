@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const staffFaq = [
   {
@@ -127,6 +127,70 @@ function ConnexionMCJV() {
     () => localStorage.getItem("PasMesCoursJV-institution") || institutions[0],
   );
   const [loginMessage, setLoginMessage] = useState("");
+  const [loginButtonPosition, setLoginButtonPosition] = useState(null);
+  const loginButtonRef = useRef(null);
+  const lastButtonFleeAt = useRef(0);
+
+  function fleeFromPointer(pointerX, pointerY) {
+    const button = loginButtonRef.current;
+    if (!button) return;
+    const rect = button.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const now = performance.now();
+    if (now - lastButtonFleeAt.current < 80) return;
+    lastButtonFleeAt.current = now;
+    const margin = 16;
+    const maxX = Math.max(margin, window.innerWidth - width - margin);
+    const maxY = Math.max(margin, window.innerHeight - height - margin);
+    let destination = { x: margin, y: margin, width, height };
+    let bestScore = -Infinity;
+    for (let attempt = 0; attempt < 18; attempt += 1) {
+      const angle = Math.random() * Math.PI * 2;
+      const distanceFromCurrent = 340 + Math.random() * 220;
+      const candidate = {
+        x: Math.min(
+          maxX,
+          Math.max(margin, rect.left + Math.cos(angle) * distanceFromCurrent),
+        ),
+        y: Math.min(
+          maxY,
+          Math.max(margin, rect.top + Math.sin(angle) * distanceFromCurrent),
+        ),
+        width,
+        height,
+      };
+      const distanceFromPointer = Math.hypot(
+        candidate.x + width / 2 - pointerX,
+        candidate.y + height / 2 - pointerY,
+      );
+      const distanceMoved = Math.hypot(
+        candidate.x - rect.left,
+        candidate.y - rect.top,
+      );
+      const score = distanceFromPointer - distanceMoved * 0.12;
+      if (score > bestScore) {
+        destination = candidate;
+        bestScore = score;
+      }
+    }
+    setLoginButtonPosition(destination);
+  }
+
+  useEffect(() => {
+    function dodge(event) {
+      const button = loginButtonRef.current;
+      if (!button) return;
+      const rect = button.getBoundingClientRect();
+      const distance = Math.hypot(
+        event.clientX - (rect.left + rect.width / 2),
+        event.clientY - (rect.top + rect.height / 2),
+      );
+      if (distance < 270) fleeFromPointer(event.clientX, event.clientY);
+    }
+    window.addEventListener("pointermove", dodge);
+    return () => window.removeEventListener("pointermove", dodge);
+  }, []);
   const questions = activeTab === "enseignants" ? staffFaq : studentFaq;
 
   useEffect(() => {
@@ -187,18 +251,29 @@ function ConnexionMCJV() {
                 </option>
               ))}
             </select>
-            <button className="primary-button" type="submit">
-              Connexion <span aria-hidden="true">→</span>
-            </button>
-            <button
-              className="guest-button"
-              type="button"
-              onClick={() =>
-                setLoginMessage(
-                  "L’accès sans compte est proposé directement sur la plateforme PasMesCoursJV.",
-                )
-              }
-            >
+            <div className="login-button-zone">
+              <button
+                ref={loginButtonRef}
+                className={`primary-button${loginButtonPosition ? " is-fleeing" : ""}`}
+                type="submit"
+                style={
+                  loginButtonPosition
+                    ? {
+                        left: `${loginButtonPosition.x}px`,
+                        top: `${loginButtonPosition.y}px`,
+                        width: `${loginButtonPosition.width}px`,
+                        height: `${loginButtonPosition.height}px`,
+                      }
+                    : undefined
+                }
+                onPointerEnter={(event) =>
+                  fleeFromPointer(event.clientX, event.clientY)
+                }
+              >
+                Connexion
+              </button>
+            </div>
+            <button className="guest-button" type="button">
               NE CLIQUE PAS
             </button>
             {loginMessage && (
