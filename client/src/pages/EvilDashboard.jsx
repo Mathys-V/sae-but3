@@ -1,15 +1,29 @@
 import { Link } from "react-router-dom";
 import { ressourcesBUT } from "../data/ressources.js";
+import { useAuthStore } from "../store/authStore.js";
+import LoginForm from "../components/LoginForm.jsx";
 
 function EvilDashboard() {
+  // On récupère l'utilisateur depuis Zustand
+  const { user } = useAuthStore();
+
+  // Si le joueur n'est PAS connecté, on bloque l'accès et on affiche le formulaire
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center min-h-[80vh]">
+        <LoginForm />
+      </div>
+    );
+  }
+
   // On récupère exactement les mêmes ressources débloquées que sur la page EvilGames
   const jeuxActifs = ressourcesBUT.BUT1.slice(0, 2);
 
   return (
     <main className="space-y-8 animate-fade-in">
-      {/* Bandeau de bienvenue */}
+      {/* Bandeau de bienvenue (Modifié pour afficher le pseudo) */}
       <div className="bg-red-900 text-white p-8 text-center rounded shadow-lg border border-red-700">
-        <h1 className="text-5xl font-bold">Bienvenue sur evilJV</h1>
+        <h1 className="text-5xl font-bold">Bienvenue sur evilJV, {user} !</h1>
       </div>
 
       {/* Les 3 cartes principales */}
