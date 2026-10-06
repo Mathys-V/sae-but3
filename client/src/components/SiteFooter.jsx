@@ -1,9 +1,4 @@
 function SiteFooter() {
-  function resetPreferences() {
-    localStorage.removeItem("mescoursjv-institution");
-    window.dispatchEvent(new Event("mescoursjv-preferences-reset"));
-  }
-
   return (
     <footer className="site-footer">
       <a href="https://www.u-picardie.fr/">

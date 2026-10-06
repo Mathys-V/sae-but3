@@ -122,7 +122,6 @@ const institutions = [
 
 function ConnexionMCJV() {
   const [activeTab, setActiveTab] = useState("enseignants");
-  const [showNotice, setShowNotice] = useState(true);
   const [selectedInstitution, setSelectedInstitution] = useState(
     () => localStorage.getItem("PasMesCoursJV-institution") || institutions[0],
   );
