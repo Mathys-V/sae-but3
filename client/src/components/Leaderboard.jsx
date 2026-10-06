@@ -8,12 +8,14 @@ export default function Leaderboard({ gameId }) {
   useEffect(() => {
     async function loadScores() {
       const data = await fetchLeaderboard(gameId);
-      if (data && data.scores) {
+      // Correction 1 : Optional chaining (?.)
+      if (data?.scores) {
         setScores(data.scores);
       }
       setLoading(false);
     }
-    loadScores();
+    // Correction 2 : Gestion de l'erreur avec .catch()
+    loadScores().catch(console.error);
   }, [gameId]);
 
   if (loading) return <p className="text-gray-400">Chargement des scores...</p>;
