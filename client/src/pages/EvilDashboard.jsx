@@ -1,9 +1,14 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 import { ressourcesBUT } from "../data/ressources.js";
 
 function EvilDashboard() {
   // On récupère exactement les mêmes ressources débloquées que sur la page EvilGames
   const jeuxActifs = ressourcesBUT.BUT1.slice(0, 2);
+
+  useEffect(() => {
+    document.title = "EvilJV | Tableau de bord";
+  }, []);
 
   return (
     <main className="space-y-8 animate-fade-in">
@@ -19,9 +24,12 @@ function EvilDashboard() {
           <h2 className="text-xl font-bold mb-4 w-full border-b border-gray-700 pb-2 text-center">
             Tutoriel
           </h2>
-          <button className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded">
+          <Link
+            to="/evil/jeux/tutoriel"
+            className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-center block"
+          >
             Accéder
-          </button>
+          </Link>
         </div>
         <div className="bg-gray-800 p-4 rounded border border-gray-700 flex flex-col items-center">
           <div className="text-6xl mb-4">🌍</div>
