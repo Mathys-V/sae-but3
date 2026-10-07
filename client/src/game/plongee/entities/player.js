@@ -37,21 +37,14 @@ export function setupPlayer(k, startX, startY) {
     // Si on est dans l'eau, on peut aller dans toutes les directions
     if (player.pos.y > WATER_LEVEL) {
       player.move(x, y);
-    } else {
+    } else if (x !== 0) {
       // Si on est en l'air (ou sur le radeau), on ne peut bouger que de gauche à droite
-      if (x !== 0) player.move(x, 0);
+      player.move(x, 0);
     }
 
     // Gestion du retournement visuel
     if (x < 0) player.flipX = true;
     if (x > 0) player.flipX = false;
-
-    if (!isSwimming) {
-      player.use(k.sprite("diver-swim"));
-      player.play("swim");
-      isSwimming = true;
-    }
-  };
 
   // Mouvements ZQSD / Flèches
   k.onKeyDown(["left", "q", "a"], () => handleMovement(-speed, 0));

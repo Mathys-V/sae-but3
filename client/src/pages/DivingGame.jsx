@@ -17,7 +17,7 @@ function DivingGame() {
         console.error(`Erreur plein écran : ${err.message}`);
       });
     } else {
-      document.exitFullscreen();
+      document.exitFullscreen().catch((err) => console.error(err));
     }
   };
 

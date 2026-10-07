@@ -59,27 +59,25 @@ export function setupOceanBoundaries(k) {
 
   // --- 4. PHYSIQUE ET COLLISIONS ---
 
-  // 4.1 Le Bateau de départ (remplace l'ancien radeau rectangulaire)
-  const boat = k.add([
+  // 4.1 Le Bateau de départ
+  k.add([
     k.sprite("boat"),
     k.scale(3),
-    // On ajoute +12 pour "enfoncer" légèrement la coque dans l'eau
     k.pos(0, WATER_LEVEL + 12),
     k.anchor("bot"),
     k.area(),
     k.body({ isStatic: true }),
-    k.z(10), // 👈 NOUVEAU : On donne un Z-index élevé au bateau pour qu'il soit au premier plan
+    k.z(10),
     "boat",
   ]);
 
-  // 4.2 Le Tonneau / Inventaire commun posé sur le bateau
-  const sharedBarrel = k.add([
+  // 4.2 Le Tonneau / Inventaire commun
+  k.add([
     k.sprite("barrel-empty"),
-    // On descend aussi le tonneau de quelques pixels pour qu'il suive le bateau
     k.pos(-40, WATER_LEVEL - 5),
     k.anchor("bot"),
     k.area(),
-    k.z(5), // 👈 NOUVEAU : Z-index inférieur à celui du bateau (10). Il s'affichera donc "derrière" la coque !
+    k.z(5),
     "inventory-barrel",
     k.scale(2),
   ]);
