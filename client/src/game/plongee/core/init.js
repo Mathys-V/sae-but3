@@ -54,6 +54,11 @@ export function initDivingGame(canvasElement) {
   // Sons
   k.loadSound("bgm-dive", "/assets/plongee/sounds/watery_cave_loop.ogg");
 
+  // Items & Objets interactifs
+  k.loadSprite("boat", "/assets/plongee/items/Boat.png");
+  k.loadSprite("barrel-empty", "/assets/plongee/items/Fishbarrel3.png");
+  k.loadSprite("barrel-full", "/assets/plongee/items/Fishbarrel4.png");
+
   k.scene("dive", () => {
     k.play("bgm-dive", { loop: true, volume: 0.5 });
     setupOceanBoundaries(k);
