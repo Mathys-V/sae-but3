@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import kaplay from "kaplay";
 import { useEconomyStore } from "../store/economyStore";
+import Leaderboard from "./Leaderboard.jsx";
 
 // --- LOGIQUE MÉTIER ---
 const SYMBOLS = ["7️⃣", "🔔", "🍉", "🍒", "☕"];
@@ -38,7 +39,6 @@ function calculerGains(resultat) {
 // --- COMPOSANT REACT & KAPLAY ---
 export default function MiniGameSlot() {
   const canvasRef = useRef(null);
-  // On récupère aussi paidSpins pour l'affichage React
   const { coins, paidSpins } = useEconomyStore();
 
   useEffect(() => {
@@ -66,7 +66,6 @@ export default function MiniGameSlot() {
         k.color(150, 200, 255),
       ]);
 
-      // Affichage du score (lancers payants) en haut à droite
       const uiScore = k.add([
         k.text(`Score: ${useEconomyStore.getState().paidSpins}`, { size: 36 }),
         k.pos(k.width() - 30, 30),
@@ -98,7 +97,6 @@ export default function MiniGameSlot() {
           k.anchor("center"),
         ]);
         
-        // On crée une propriété personnalisée pour savoir si ce rouleau a fini de tourner
         symbolText.isStopped = true;
         reels.push(symbolText);
       }
@@ -151,7 +149,6 @@ export default function MiniGameSlot() {
         const resultat = tirerRouleaux();
         const gains = calculerGains(resultat);
 
-        // 1. On lance l'animation infinie (défilement très rapide)
         reels.forEach(r => r.isStopped = false);
         const spinAnim = k.loop(0.05, () => {
           if (!reels[0].isStopped) reels[0].text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
@@ -159,23 +156,20 @@ export default function MiniGameSlot() {
           if (!reels[2].isStopped) reels[2].text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
         });
 
-        // 2. On arrête le premier rouleau après 0.5s
         k.wait(0.5, () => {
           reels[0].isStopped = true;
           reels[0].text = resultat[0];
         });
 
-        // 3. On arrête le deuxième après 1s
         k.wait(1.0, () => {
           reels[1].isStopped = true;
           reels[1].text = resultat[1];
         });
 
-        // 4. On arrête le dernier après 1.5s et on donne les résultats
         k.wait(1.5, () => {
           reels[2].isStopped = true;
           reels[2].text = resultat[2];
-          spinAnim.cancel(); // On coupe la boucle d'animation
+          spinAnim.cancel();
 
           if (gains > 0) {
             useEconomyStore.getState().addWinnings(gains);
@@ -186,7 +180,6 @@ export default function MiniGameSlot() {
             uiResult.color = k.rgb(200, 200, 200);
           }
 
-          // Mise à jour de l'interface Kaplay
           uiCoins.text = `Coins: ${useEconomyStore.getState().coins}`;
           uiSpins.text = `Lancers gratuits: ${useEconomyStore.getState().freeSpins}`;
           uiScore.text = `Score: ${useEconomyStore.getState().paidSpins}`;
@@ -203,73 +196,85 @@ export default function MiniGameSlot() {
   }, []);
 
   return (
-    <div className="flex flex-col md:flex-row gap-8 items-start justify-center p-4 max-w-7xl mx-auto">
+    <div className="flex flex-col items-center justify-center p-4 max-w-7xl mx-auto">
       
-      {/* COLONNE GAUCHE : TABLEAU DES GAINS (inchangé) */}
-      <div className="w-full md:w-1/3 bg-gray-900 border-2 border-gray-700 rounded-xl p-6 shadow-lg">
-        <h2 className="text-2xl font-bold text-white mb-6 text-center border-b border-gray-700 pb-4">
-          🏆 Tableau des gains
-        </h2>
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-gray-400 font-bold mb-3 uppercase text-sm">Aligner 3 symboles</h3>
-            <ul className="space-y-2 text-lg font-medium">
-              <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
-                <span className="tracking-[0.5em]">7️⃣7️⃣7️⃣</span> <span className="text-yellow-400 font-bold">100 🪙</span>
-              </li>
-              <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
-                <span className="tracking-[0.5em]">🔔🔔🔔</span> <span className="text-yellow-400 font-bold">50 🪙</span>
-              </li>
-              <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
-                <span className="tracking-[0.5em]">🍉🍉🍉</span> <span className="text-yellow-400 font-bold">25 🪙</span>
-              </li>
-              <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
-                <span className="tracking-[0.5em]">🍒🍒🍒</span> <span className="text-yellow-400 font-bold">15 🪙</span>
-              </li>
-              <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
-                <span className="tracking-[0.5em]">☕☕☕</span> <span className="text-yellow-400 font-bold">10 🪙</span>
-              </li>
-            </ul>
+      {/* --- GRILLE PRINCIPALE (Tableau + Jeu) --- */}
+      <div className="flex flex-col md:flex-row gap-8 w-full">
+        
+        {/* COLONNE GAUCHE : TABLEAU DES GAINS */}
+        <div className="w-full md:w-1/3 bg-gray-900 border-2 border-gray-700 rounded-xl p-6 shadow-lg">
+          <h2 className="text-2xl font-bold text-white mb-6 text-center border-b border-gray-700 pb-4">
+            🏆 Tableau des gains
+          </h2>
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-gray-400 font-bold mb-3 uppercase text-sm">Aligner 3 symboles</h3>
+              <ul className="space-y-2 text-lg font-medium">
+                <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
+                  <span className="tracking-[0.5em]">7️⃣7️⃣7️⃣</span> <span className="text-yellow-400 font-bold">100 🪙</span>
+                </li>
+                <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
+                  <span className="tracking-[0.5em]">🔔🔔🔔</span> <span className="text-yellow-400 font-bold">50 🪙</span>
+                </li>
+                <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
+                  <span className="tracking-[0.5em]">🍉🍉🍉</span> <span className="text-yellow-400 font-bold">25 🪙</span>
+                </li>
+                <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
+                  <span className="tracking-[0.5em]">🍒🍒🍒</span> <span className="text-yellow-400 font-bold">15 🪙</span>
+                </li>
+                <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
+                  <span className="tracking-[0.5em]">☕☕☕</span> <span className="text-yellow-400 font-bold">10 🪙</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-gray-400 font-bold mb-3 uppercase text-sm">Obtenir 2 symboles</h3>
+              <ul className="space-y-2 text-md font-medium text-gray-300">
+                <li className="flex justify-between items-center border-b border-gray-800 pb-1">
+                  <span>Deux 7️⃣</span> <span className="text-yellow-500">20 🪙</span>
+                </li>
+                <li className="flex justify-between items-center border-b border-gray-800 pb-1">
+                  <span>Deux 🔔</span> <span className="text-yellow-500">10 🪙</span>
+                </li>
+                <li className="flex justify-between items-center border-b border-gray-800 pb-1">
+                  <span>Deux 🍉</span> <span className="text-yellow-500">5 🪙</span>
+                </li>
+                <li className="flex justify-between items-center border-b border-gray-800 pb-1">
+                  <span>Deux 🍒 ou ☕</span> <span className="text-yellow-500">4 🪙</span>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div>
-            <h3 className="text-gray-400 font-bold mb-3 uppercase text-sm">Obtenir 2 symboles</h3>
-            <ul className="space-y-2 text-md font-medium text-gray-300">
-              <li className="flex justify-between items-center border-b border-gray-800 pb-1">
-                <span>Deux 7️⃣</span> <span className="text-yellow-500">20 🪙</span>
-              </li>
-              <li className="flex justify-between items-center border-b border-gray-800 pb-1">
-                <span>Deux 🔔</span> <span className="text-yellow-500">10 🪙</span>
-              </li>
-              <li className="flex justify-between items-center border-b border-gray-800 pb-1">
-                <span>Deux 🍉</span> <span className="text-yellow-500">5 🪙</span>
-              </li>
-              <li className="flex justify-between items-center border-b border-gray-800 pb-1">
-                <span>Deux 🍒 ou ☕</span> <span className="text-yellow-500">4 🪙</span>
-              </li>
-            </ul>
+        </div>
+
+        {/* COLONNE DROITE : LE JEU */}
+        <div className="w-full md:w-2/3 flex flex-col">
+          <div className="w-full flex justify-between items-center mb-6">
+            <div className="text-2xl text-white font-bold bg-gray-800 px-6 py-2 rounded-lg border border-gray-700">
+              Banque: {coins} 🪙
+            </div>
+            <button 
+              onClick={() => alert(`Partie terminée ! Score au Leaderboard : ${paidSpins} lancers.`)}
+              className="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-lg font-bold transition-colors shadow-lg"
+            >
+              Encaisser & Quitter
+            </button>
+          </div>
+          
+          <div className="w-full aspect-[4/3] rounded-xl shadow-2xl border-4 border-gray-700 overflow-hidden bg-[#191923]">
+            <canvas ref={canvasRef} className="w-full h-full block"></canvas>
           </div>
         </div>
       </div>
 
-      {/* COLONNE DROITE : LE JEU */}
-      <div className="w-full md:w-2/3 flex flex-col">
-        <div className="w-full flex justify-between items-center mb-6">
-          <div className="text-2xl text-white font-bold bg-gray-800 px-6 py-2 rounded-lg border border-gray-700">
-            Banque: {coins} 🪙
-          </div>
-          <button 
-            // Mise à jour de l'alerte pour afficher le vrai score au leaderboard
-            onClick={() => alert(`Partie terminée ! Score au Leaderboard : ${paidSpins} lancers.`)}
-            className="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-lg font-bold transition-colors shadow-lg"
-          >
-            Encaisser & Quitter
-          </button>
-        </div>
-        
-        <div className="w-full aspect-[4/3] rounded-xl shadow-2xl border-4 border-gray-700 overflow-hidden bg-[#191923]">
-          <canvas ref={canvasRef} className="w-full h-full block"></canvas>
+      {/* --- NOUVELLE SECTION : LEADERBOARD --- */}
+      <div className="w-full mt-12">
+        <h2 className="text-3xl font-bold text-center text-white mb-6">🔥 TOP 5 DES MEILLEURS JOUEURS 🔥</h2>
+        <div className="max-w-3xl mx-auto">
+          <Leaderboard gameId="casino" />
         </div>
       </div>
+
     </div>
   );
 }
