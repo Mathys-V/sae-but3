@@ -1,9 +1,10 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { ressourcesBUT } from "../data/ressources.js";
 
 function EvilGames() {
-  // On récupère 2 ressources par année pour la maquette
-  const jeuxBUT1 = ressourcesBUT.BUT1.slice(0, 2);
+  // On récupère 3 ressources pour afficher le Casino + 2 cours
+  const jeuxBUT1 = ressourcesBUT.BUT1.slice(0, 6);
   const jeuxBUT2 = ressourcesBUT.BUT2.slice(0, 2);
   const jeuxBUT3 = ressourcesBUT.BUT3.slice(0, 2);
 
@@ -33,9 +34,13 @@ function EvilGames() {
               </div>
               <div className="flex justify-between items-center mt-2">
                 <span className="text-sm text-gray-400">0 % terminé</span>
-                <button className="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1">
+                {/* On utilise un Link au lieu d'un simple button */}
+                <Link 
+                  to={cours.path ? cours.path : `/evil/jeux/${cours.id}`}
+                  className="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1"
+                >
                   ▶ Lancer
-                </button>
+                </Link>
               </div>
             </div>
           ))}
