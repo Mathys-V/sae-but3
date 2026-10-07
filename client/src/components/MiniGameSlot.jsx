@@ -5,13 +5,26 @@ import Leaderboard from "./Leaderboard.jsx";
 
 // --- LOGIQUE MÉTIER ---
 const SYMBOLS = ["7️⃣", "🔔", "🍉", "🍒", "☕"];
+
+// NOUVEAU : Probabilités biaisées du casino !
+// Total de 15 "billets" dans l'urne. 
+// Le 7️⃣ a 1 chance sur 15 de tomber. Le ☕ a 5 chances sur 15.
+const WEIGHTED_SYMBOLS = [
+  "7️⃣", 
+  "🔔", "🔔", 
+  "🍉", "🍉", "🍉", 
+  "🍒", "🍒", "🍒", "🍒", 
+  "☕", "☕", "☕", "☕", "☕"
+];
+
 const BET_AMOUNT = 5;
 
 function tirerRouleaux() {
+  // On pioche maintenant dans l'urne truquée
   return [
-    SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
-    SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
-    SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+    WEIGHTED_SYMBOLS[Math.floor(Math.random() * WEIGHTED_SYMBOLS.length)],
+    WEIGHTED_SYMBOLS[Math.floor(Math.random() * WEIGHTED_SYMBOLS.length)],
+    WEIGHTED_SYMBOLS[Math.floor(Math.random() * WEIGHTED_SYMBOLS.length)],
   ];
 }
 
@@ -39,7 +52,9 @@ function calculerGains(resultat) {
 // --- COMPOSANT REACT & KAPLAY ---
 export default function MiniGameSlot() {
   const canvasRef = useRef(null);
-  const { coins, paidSpins } = useEconomyStore();
+  
+  // On importe resetEconomy depuis notre store
+  const { coins, paidSpins, freeSpins, resetEconomy } = useEconomyStore();
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -53,29 +68,9 @@ export default function MiniGameSlot() {
     });
 
     k.scene("main", () => {
-      // --- UI Kaplay ---
-      const uiCoins = k.add([
-        k.text(`Coins: ${useEconomyStore.getState().coins}`, { size: 36 }),
-        k.pos(30, 30),
-        k.color(255, 215, 0),
-      ]);
-
-      const uiSpins = k.add([
-        k.text(`Lancers gratuits: ${useEconomyStore.getState().freeSpins}`, { size: 28 }),
-        k.pos(30, 80),
-        k.color(150, 200, 255),
-      ]);
-
-      const uiScore = k.add([
-        k.text(`Score: ${useEconomyStore.getState().paidSpins}`, { size: 36 }),
-        k.pos(k.width() - 30, 30),
-        k.anchor("topright"),
-        k.color(255, 100, 100),
-      ]);
-
       const uiResult = k.add([
         k.text("TENTE TA CHANCE !", { size: 54 }),
-        k.pos(k.width() / 2, 140),
+        k.pos(k.width() / 2, 120),
         k.anchor("center"),
       ]);
 
@@ -125,7 +120,6 @@ export default function MiniGameSlot() {
         k.setCursor("default");
       });
 
-      // --- LOGIQUE D'ANIMATION ---
       spinBtn.onClick(() => {
         const store = useEconomyStore.getState();
         
@@ -151,6 +145,7 @@ export default function MiniGameSlot() {
 
         reels.forEach(r => r.isStopped = false);
         const spinAnim = k.loop(0.05, () => {
+          // Pour l'animation purement visuelle, on garde les symboles classiques
           if (!reels[0].isStopped) reels[0].text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
           if (!reels[1].isStopped) reels[1].text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
           if (!reels[2].isStopped) reels[2].text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
@@ -179,10 +174,6 @@ export default function MiniGameSlot() {
             uiResult.text = "PERDU...";
             uiResult.color = k.rgb(200, 200, 200);
           }
-
-          uiCoins.text = `Coins: ${useEconomyStore.getState().coins}`;
-          uiSpins.text = `Lancers gratuits: ${useEconomyStore.getState().freeSpins}`;
-          uiScore.text = `Score: ${useEconomyStore.getState().paidSpins}`;
           
           spinBtn.hidden = false;
           spinText.hidden = false;
@@ -197,12 +188,10 @@ export default function MiniGameSlot() {
 
   return (
     <div className="flex flex-col items-center justify-center p-4 max-w-7xl mx-auto">
-      
-      {/* --- GRILLE PRINCIPALE (Tableau + Jeu) --- */}
       <div className="flex flex-col md:flex-row gap-8 w-full">
         
         {/* COLONNE GAUCHE : TABLEAU DES GAINS */}
-        <div className="w-full md:w-1/3 bg-gray-900 border-2 border-gray-700 rounded-xl p-6 shadow-lg">
+        <div className="w-full md:w-1/3 bg-gray-900 border-2 border-gray-700 rounded-xl p-6 shadow-lg h-fit">
           <h2 className="text-2xl font-bold text-white mb-6 text-center border-b border-gray-700 pb-4">
             🏆 Tableau des gains
           </h2>
@@ -249,12 +238,27 @@ export default function MiniGameSlot() {
 
         {/* COLONNE DROITE : LE JEU */}
         <div className="w-full md:w-2/3 flex flex-col">
-          <div className="w-full flex justify-between items-center mb-6">
-            <div className="text-2xl text-white font-bold bg-gray-800 px-6 py-2 rounded-lg border border-gray-700">
-              Banque: {coins} 🪙
+          
+          <div className="w-full flex flex-wrap justify-between items-center gap-4 mb-6">
+            <div className="flex gap-4 flex-wrap">
+              <div className="text-lg text-white font-bold bg-gray-800 px-4 py-2 rounded-lg border border-gray-700">
+                Banque: {coins} 🪙
+              </div>
+              <div className="text-lg text-white font-bold bg-gray-800 px-4 py-2 rounded-lg border border-gray-700">
+                Lancers gratuits: {freeSpins} 🎁
+              </div>
+              <div className="text-lg text-white font-bold bg-gray-800 px-4 py-2 rounded-lg border border-gray-700 text-red-400">
+                Score: {paidSpins} 🔥
+              </div>
             </div>
+            
             <button 
-              onClick={() => alert(`Partie terminée ! Score au Leaderboard : ${paidSpins} lancers.`)}
+              onClick={() => {
+                // On affiche le score final
+                alert(`Partie terminée ! Ton score de ${paidSpins} sera envoyé au Leaderboard.`);
+                // On remet la "base de données locale" à 0 !
+                resetEconomy();
+              }}
               className="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-lg font-bold transition-colors shadow-lg"
             >
               Encaisser & Quitter
@@ -267,14 +271,13 @@ export default function MiniGameSlot() {
         </div>
       </div>
 
-      {/* --- NOUVELLE SECTION : LEADERBOARD --- */}
+      {/* --- LEADERBOARD --- */}
       <div className="w-full mt-12">
         <h2 className="text-3xl font-bold text-center text-white mb-6">🔥 TOP 5 DES MEILLEURS JOUEURS 🔥</h2>
         <div className="max-w-3xl mx-auto">
           <Leaderboard gameId="casino" />
         </div>
       </div>
-
     </div>
   );
 }
