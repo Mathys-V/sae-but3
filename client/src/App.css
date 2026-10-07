@@ -413,6 +413,268 @@ summary:focus-visible {
   display: flex;
   gap: 24px;
 }
+.evil-transformation body {
+  background:
+    linear-gradient(#09080c99, #09080c99),
+    url("./assets/fire.gif") center / cover fixed;
+  color: #eee8ee;
+  transition: background-color 700ms ease, color 700ms ease;
+}
+.evil-transformation .site-shell {
+  background: transparent;
+  color: #eee8ee;
+  transition: background-color 700ms ease, color 700ms ease;
+}
+.evil-transformation .site-header {
+  background: #100d12;
+  box-shadow: 0 2px 18px #d521302b;
+  transition: background-color 700ms ease, box-shadow 700ms ease;
+}
+.evil-transformation .brand {
+  position: relative;
+}
+.evil-transformation .brand img {
+  visibility: hidden;
+}
+.evil-transformation .brand::after {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ff3648;
+  content: "EVILJV";
+  font-size: 27px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-shadow: 0 0 16px #ff173d91;
+}
+.evil-transformation .header-warn {
+  visibility: hidden;
+}
+.evil-transformation .header-login {
+  background: #751a27;
+  transition: background-color 700ms ease;
+}
+.evil-transformation .page-banner {
+  background:
+    radial-gradient(ellipse at 50% 110%, #a31e2d9c, transparent 58%),
+    linear-gradient(100deg, #180d15, #39131d 55%, #160e16);
+  transition: background 700ms ease;
+}
+.evil-transformation .page-content {
+  color: #eee8ee;
+}
+.evil-transformation .login-panel,
+.evil-transformation .faq-item {
+  border-color: #54202a;
+  background: #151116;
+  color: #eee8ee;
+  box-shadow: 0 8px 26px #e3223214;
+  transition: background-color 700ms ease, border-color 700ms ease,
+    box-shadow 700ms ease;
+}
+.evil-transformation .login-panel {
+  border-top-color: #ef3947;
+}
+.evil-transformation .evil-auth-panel {
+  width: min(100%, 460px);
+  padding: 28px 30px 30px;
+}
+.evil-auth-panel > h2,
+.evil-auth-panel > .pmcjv-login-form,
+.evil-auth-panel > .signup-copy {
+  display: none;
+}
+.evil-login-screen {
+  display: grid;
+  gap: 22px;
+}
+.evil-login-emblem {
+  display: grid;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 14px;
+  place-items: center;
+  border: 1px solid #d33d4c;
+  background: #153e5b;
+  color: #f2eaf0;
+  font-size: 30px;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px #c4293d36;
+}
+.evil-login-form {
+  display: grid;
+  gap: 8px;
+}
+.evil-login-form label {
+  margin-top: 3px;
+  color: #c8bac4;
+  font-size: 12px;
+}
+.evil-login-form input {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #75404a;
+  border-radius: 3px;
+  background: #29232c;
+  color: #f7edf3;
+  font: inherit;
+}
+.evil-login-form input:focus {
+  border-color: #e34b59;
+  outline: 2px solid #e34b594d;
+}
+.evil-password-field {
+  display: flex;
+  min-width: 0;
+}
+.evil-password-field input {
+  border-radius: 3px 0 0 3px;
+}
+.evil-password-toggle {
+  flex: 0 0 52px;
+  border: 1px solid #8a2635;
+  border-radius: 0 3px 3px 0;
+  background: #741e2b;
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+}
+.evil-submit-button {
+  min-height: 46px;
+  margin-top: 8px;
+  border: 1px solid #e04450;
+  border-radius: 6px;
+  background: #751a27;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  box-shadow: 0 0 13px #dc303b52;
+  transition: background-color 180ms ease, box-shadow 180ms ease;
+}
+.evil-submit-button:hover {
+  background: #982533;
+  box-shadow: 0 0 18px #dc303b80;
+}
+.evil-profile-links {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 5px;
+  padding-top: 16px;
+  border-top: 1px solid #54202a;
+}
+.evil-profile-links button,
+.evil-disconnect-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #e4cbd4;
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.evil-profile-links button.is-selected {
+  color: #ff7580;
+}
+.evil-disconnect-link {
+  justify-self: end;
+  margin: 0 0 4px;
+  color: #cdbcc6;
+  font-size: 14px;
+}
+.evil-transformation .login-panel h2,
+.evil-transformation .faq-heading h2,
+.evil-transformation .faq-item summary,
+.evil-transformation .signup-copy {
+  color: #f0e5eb;
+  transition: color 700ms ease;
+}
+.evil-transformation .faq-kicker {
+  color: #ff5864;
+}
+.evil-transformation a {
+  color: #ff818a;
+}
+.evil-transformation .login-panel select {
+  border-color: #62303a;
+  background: #211820;
+  color: #f0e5eb;
+  transition: background-color 700ms ease, color 700ms ease,
+    border-color 700ms ease;
+}
+.evil-transformation .login-panel label,
+.evil-transformation .faq-answer {
+  color: #c6b6c1;
+}
+.evil-transformation .faq-tabs {
+  border-bottom-color: #54202a;
+}
+.evil-transformation .faq-tabs button {
+  color: #b99eaa;
+}
+.evil-transformation .faq-tabs button[aria-selected="true"] {
+  color: #ff5864;
+}
+.evil-transformation .faq-tabs button[aria-selected="true"]::after {
+  background: #ef3947;
+}
+.evil-transformation .faq-list,
+.evil-transformation .faq-item {
+  border-color: #54202a;
+}
+.evil-transformation .faq-plus::before,
+.evil-transformation .faq-plus::after {
+  background: #ff5864;
+}
+.evil-transformation .site-footer {
+  background: #100d12;
+  color: #cdbcc6;
+  transition: background-color 700ms ease, color 700ms ease;
+}
+.evil-transformation #accueil.is-evil .primary-button {
+  visibility: hidden;
+  pointer-events: none;
+}
+.evil-transformation #accueil::before {
+  position: fixed;
+  z-index: 1500;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 100%, #ffad324a, transparent 45%),
+    radial-gradient(ellipse at 0% 100%, #ff351f54, transparent 40%),
+    radial-gradient(ellipse at 100% 100%, #ff351f54, transparent 40%);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  animation: evil-ignition 1400ms ease-out both;
+}
+@keyframes evil-ignition {
+  0% { opacity: 0; }
+  18% { opacity: 1; }
+  38% { opacity: 0.55; }
+  58% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .evil-transformation body,
+  .evil-transformation .site-shell,
+  .evil-transformation .site-header,
+  .evil-transformation .page-banner,
+  .evil-transformation .login-panel,
+  .evil-transformation .faq-item,
+  .evil-transformation .site-footer {
+    transition-duration: 0.01ms;
+  }
+  .evil-transformation #accueil::before {
+    animation-duration: 500ms;
+  }
+}
 .site-footer button {
   padding: 7px 0;
   border: 0;

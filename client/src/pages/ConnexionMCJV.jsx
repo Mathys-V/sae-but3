@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const staffFaq = [
   {
@@ -8,9 +9,7 @@ const staffFaq = [
       <p>
         {" "}
         Oh non, la machine est ENCORE HS ????? Pas de souci, vous pouvez
-        toujours vous rendre{" "}
-        <a href="https://extra.u-picardie.fr/LUp/staffs/">ici</a> pour une pause
-        gourmande.
+        toujours vous rendre <a>ici</a> pour une pause gourmande.
       </p>
     ),
   },
@@ -24,28 +23,21 @@ const staffFaq = [
     answer: (
       <p>
         Ce genre de situation peut s'avérer agaçante. Gardez votre calme, faites
-        comme si vous n'avez rien vu et{" "}
-        <a href="https://extra.u-picardie.fr/LUp/staffs/">cliquez ici</a> pour
-        vous détendre.
+        comme si vous n'avez rien vu et <a>cliquez ici</a> pour vous détendre.
       </p>
     ),
   },
   {
     question: "Ne me clique pas",
-    answer: (
-      <a href="https://extra.u-picardie.fr/LUp/staffs/">
-        Ne clique pas sur moi, suuuurtout pas.
-      </a>
-    ),
+    answer: <a>Ne clique pas sur moi, suuuurtout pas.</a>,
   },
   {
     question: "Je ne trouve pas la réponse à mon problème.",
     answer: (
       <p>
         {" "}
-        Ca tombe bien,{" "}
-        <a href="https://extra.u-picardie.fr/LUp/staffs/">cliquez ici</a> et
-        vous aurez toutes les réponses à vos questions.
+        Ca tombe bien, <a>cliquez ici</a> et vous aurez toutes les réponses à
+        vos questions.
       </p>
     ),
   },
@@ -58,8 +50,7 @@ const studentFaq = [
       <>
         <p>
           Pourquoi vouloir accéder à la plateforme PasMesCoursJV alors qu'il
-          existe un site bien meilleur ? Clique{" "}
-          <a href="https://PasMesCoursJV.u-picardie.fr/moodle/">ici</a>.
+          existe un site bien meilleur ? Clique <a>ici</a>.
         </p>
       </>
     ),
@@ -69,8 +60,7 @@ const studentFaq = [
     answer: (
       <p>
         Laissez tomber Roblox, c'est un jeu pour les enfants. Vous pouvez
-        toujours rejoindre la cour des grands{" "}
-        <a href="https://extra.u-picardie.fr/LUp/staffs/">ici</a>.
+        toujours rejoindre la cour des grands <a>ici</a>.
       </p>
     ),
   },
@@ -93,8 +83,8 @@ const studentFaq = [
     answer: (
       <p>
         {" "}
-        Clique <a href="https://extra.u-picardie.fr/LUp/staffs/">ici</a> pour te
-        faire de nouveaux amis et t'intégrer dans ton groupe de travail.
+        Clique <a>ici</a> pour te faire de nouveaux amis et t'intégrer dans ton
+        groupe de travail.
       </p>
     ),
   },
@@ -103,9 +93,8 @@ const studentFaq = [
     answer: (
       <p>
         {" "}
-        Ca tombe bien,{" "}
-        <a href="https://extra.u-picardie.fr/LUp/staffs/">cliquez ici</a> et
-        vous aurez toutes les réponses à vos questions.
+        Ca tombe bien, <a>cliquez ici</a> et vous aurez toutes les réponses à
+        vos questions.
       </p>
     ),
   },
@@ -127,15 +116,27 @@ function secureRandom() {
 }
 
 function ConnexionMCJV() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("enseignants");
   const [selectedInstitution, setSelectedInstitution] = useState(
     () => localStorage.getItem("PasMesCoursJV-institution") || institutions[0],
   );
   const [loginMessage, setLoginMessage] = useState("");
+  const [isEvil, setIsEvil] = useState(false);
+  const [evilIdentifier, setEvilIdentifier] = useState("");
+  const [evilPassword, setEvilPassword] = useState("");
+  const [showEvilPassword, setShowEvilPassword] = useState(false);
+  const [evilProfile, setEvilProfile] = useState("Étudiant");
   const [loginButtonPosition, setLoginButtonPosition] = useState(null);
   const [popUpButtons, setPopUpButtons] = useState([]);
   const loginButtonRef = useRef(null);
   const lastButtonFleeAt = useRef(0);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("evil-transformation", isEvil);
+    return () =>
+      document.documentElement.classList.remove("evil-transformation");
+  }, [isEvil]);
 
   function fleeFromPointer(pointerX, pointerY) {
     const button = loginButtonRef.current;
@@ -184,6 +185,7 @@ function ConnexionMCJV() {
   }
 
   useEffect(() => {
+    if (isEvil) return undefined;
     function dodge(event) {
       const button = loginButtonRef.current;
       if (!button) return;
@@ -196,9 +198,10 @@ function ConnexionMCJV() {
     }
     window.addEventListener("pointermove", dodge);
     return () => window.removeEventListener("pointermove", dodge);
-  }, []);
+  }, [isEvil]);
 
   useEffect(() => {
+    if (isEvil) return undefined;
     const interval = window.setInterval(() => {
       const width = Math.min(190, window.innerWidth - 24);
       const height = 48;
@@ -220,8 +223,20 @@ function ConnexionMCJV() {
       ]);
     }, 5000);
     return () => window.clearInterval(interval);
-  }, []);
+  }, [isEvil]);
   const questions = activeTab === "enseignants" ? staffFaq : studentFaq;
+
+  function activateEvil(event) {
+    event.preventDefault();
+    setPopUpButtons([]);
+    setLoginButtonPosition(null);
+    setIsEvil(true);
+  }
+
+  function activateEvilFromFaq(event) {
+    if (!event.target.closest("a")) return;
+    activateEvil(event);
+  }
 
   useEffect(() => {
     function resetInstitution() {
@@ -240,18 +255,74 @@ function ConnexionMCJV() {
   }, []);
 
   return (
-    <main id="accueil">
-      <section className="page-banner" aria-labelledby="page-title">
-        <h1 id="page-title">PasMesCoursJV / Connexion</h1>
-      </section>
+    <main id="accueil" className={isEvil ? "is-evil" : ""}>
+      {!isEvil && (
+        <section className="page-banner" aria-labelledby="page-title">
+          <h1 id="page-title">PasMesCoursJV / Connexion</h1>
+        </section>
+      )}
       <div className="page-content">
         <section
-          className="login-panel"
+          className={`login-panel${isEvil ? " evil-auth-panel" : ""}`}
           id="connexion"
-          aria-labelledby="login-title"
+          aria-labelledby={isEvil ? "login-title" : "pmcjv-login-title"}
         >
-          <h2 id="login-title">PasMesCoursJV</h2>
+          {isEvil && (
+            <div className="evil-login-screen">
+              <div
+                className="evil-login-emblem"
+                id="login-title"
+                aria-label="EvilJV"
+              >
+                ?????
+              </div>
+              <form
+                className="evil-login-form"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  navigate("/evil");
+                }}
+              >
+                <label htmlFor="evil-identifier">Identifiant *</label>
+                <input
+                  id="evil-identifier"
+                  type="text"
+                  autoComplete="username"
+                  value={evilIdentifier}
+                  onChange={(event) => setEvilIdentifier(event.target.value)}
+                />
+                <label htmlFor="evil-password">Mot de passe *</label>
+                <div className="evil-password-field">
+                  <input
+                    id="evil-password"
+                    type={showEvilPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    value={evilPassword}
+                    onChange={(event) => setEvilPassword(event.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="evil-password-toggle"
+                    aria-label={
+                      showEvilPassword
+                        ? "Masquer le mot de passe"
+                        : "Afficher le mot de passe"
+                    }
+                    aria-pressed={showEvilPassword}
+                    onClick={() => setShowEvilPassword((visible) => !visible)}
+                  >
+                    {showEvilPassword ? "🙈" : "👁"}
+                  </button>
+                </div>
+                <button className="evil-submit-button" type="submit">
+                  SE CONNECTER
+                </button>
+              </form>
+            </div>
+          )}
+          <h2 id="pmcjv-login-title">PasMesCoursJV</h2>
           <form
+            className="pmcjv-login-form"
             onSubmit={(event) => {
               event.preventDefault();
               setLoginMessage(
@@ -309,6 +380,11 @@ function ConnexionMCJV() {
                 type="button"
                 key={id}
                 style={{ left: `${x}px`, top: `${y}px`, "--button-hue": hue }}
+                onClick={() => {
+                  setPopUpButtons([]);
+                  setLoginButtonPosition(null);
+                  setIsEvil(true);
+                }}
               >
                 CLIQUE MOI
               </button>
@@ -321,59 +397,63 @@ function ConnexionMCJV() {
           </form>
           <p className="signup-copy">
             Tu souhaites travailler avec sérieux ? Ne clique pas{" "}
-            <a href="https://PasMesCoursJV.u-picardie.fr/moodle/login/signup.php">
-              ici
-            </a>
+            <a onClick={activateEvil}>ici</a>
           </p>
         </section>
-        <section className="faq-section" aria-labelledby="faq-title">
-          <div className="faq-heading">
-            <span className="faq-kicker">Aide et assistance</span>
-            <h2 id="faq-title">Un problème ? Consultez la FAQ ci-dessous.</h2>
-          </div>
-          <div
-            className="faq-tabs"
-            role="tablist"
-            aria-label="Choisir un profil"
+        {!isEvil && (
+          <section
+            className="faq-section"
+            aria-labelledby="faq-title"
+            onClick={activateEvilFromFaq}
           >
-            <button
-              id="tab-enseignants"
-              type="button"
-              role="tab"
-              aria-selected={activeTab === "enseignants"}
-              aria-controls="faq-panel"
-              onClick={() => setActiveTab("enseignants")}
+            <div className="faq-heading">
+              <span className="faq-kicker">Aide et assistance</span>
+              <h2 id="faq-title">Un problème ? Consultez la FAQ ci-dessous.</h2>
+            </div>
+            <div
+              className="faq-tabs"
+              role="tablist"
+              aria-label="Choisir un profil"
             >
-              Enseignants
-            </button>
-            <button
-              id="tab-etudiants"
-              type="button"
-              role="tab"
-              aria-selected={activeTab === "etudiants"}
-              aria-controls="faq-panel"
-              onClick={() => setActiveTab("etudiants")}
+              <button
+                id="tab-enseignants"
+                type="button"
+                role="tab"
+                aria-selected={activeTab === "enseignants"}
+                aria-controls="faq-panel"
+                onClick={() => setActiveTab("enseignants")}
+              >
+                Enseignants
+              </button>
+              <button
+                id="tab-etudiants"
+                type="button"
+                role="tab"
+                aria-selected={activeTab === "etudiants"}
+                aria-controls="faq-panel"
+                onClick={() => setActiveTab("etudiants")}
+              >
+                Étudiants
+              </button>
+            </div>
+            <div
+              className="faq-list"
+              id="faq-panel"
+              role="tabpanel"
+              aria-labelledby={`tab-${activeTab}`}
             >
-              Étudiants
-            </button>
-          </div>
-          <div
-            className="faq-list"
-            id="faq-panel"
-            role="tabpanel"
-            aria-labelledby={`tab-${activeTab}`}
-          >
-            {questions.map(({ question, answer }) => (
-              <details className="faq-item" key={question}>
-                <summary>
-                  {question}
-                  <span className="faq-plus" aria-hidden="true"></span>
-                </summary>
-                <div className="faq-answer">{answer}</div>
-              </details>
-            ))}
-          </div>
-        </section>
+              {questions.map(({ question, answer }) => (
+                <details className="faq-item" key={question}>
+                  <summary>
+                    {question}
+                    <span className="faq-plus" aria-hidden="true"></span>
+                  </summary>
+                  <div className="faq-answer">{answer}</div>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </main>
   );
