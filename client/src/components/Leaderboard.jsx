@@ -7,15 +7,20 @@ export default function Leaderboard({ gameId }) {
 
   useEffect(() => {
     async function loadScores() {
-      const data = await fetchLeaderboard(gameId);
-      // Correction 1 : Optional chaining (?.)
-      if (data?.scores) {
-        setScores(data.scores);
+      try {
+        const data = await fetchLeaderboard(gameId);
+        if (data?.scores) {
+          setScores(data.scores);
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des scores :", error);
+      } finally {
+        // S'exécutera toujours, même s'il y a une erreur dans le try !
+        setLoading(false);
       }
-      setLoading(false);
     }
-    // Correction 2 : Gestion de l'erreur avec .catch()
-    loadScores().catch(console.error);
+    
+    loadScores();
   }, [gameId]);
 
   if (loading) return <p className="text-gray-400">Chargement des scores...</p>;
