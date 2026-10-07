@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { initDivingGame } from "../game/plongee/init.js";
+import { initDivingGame } from "../game/plongee/core/init.js";
 
 function DivingGame() {
   const canvasRef = useRef(null);
