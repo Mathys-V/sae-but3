@@ -1,20 +1,38 @@
-import { Link } from "react-router-dom";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { ressourcesBUT } from "../data/ressources.js";
+import { useAuthStore } from "../store/authStore.js";
+import LoginForm from "../components/LoginForm.jsx";
+import Leaderboard from "../components/Leaderboard.jsx";
 
 function EvilDashboard() {
+  // 1. TOUS LES HOOKS EN PREMIER (Règle d'or de React)
+  const { user } = useAuthStore();
+
+  useEffect(() => {
+    document.title = "EvilJV - Dashboard";
+  }, []);
+
+  // 2. LES CONDITIONS (return anticipés) ENSUITE
+  // Si le joueur n'est PAS connecté, on bloque l'accès et on affiche le formulaire
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center min-h-[80vh]">
+        <LoginForm />
+      </div>
+    );
+  }
+
+  // 3. LE RESTE DU COMPOSANT
   // On récupère exactement les mêmes ressources débloquées que sur la page EvilGames
   const jeuxActifs = ressourcesBUT.BUT1.slice(0, 2);
 
-  useEffect(() => {
-    document.title = "EvilJV | Tableau de bord";
-  }, []);
 
   return (
     <main className="space-y-8 animate-fade-in">
-      {/* Bandeau de bienvenue */}
+      {/* Bandeau de bienvenue (Modifié pour afficher le pseudo) */}
       <div className="bg-red-900 text-white p-8 text-center rounded shadow-lg border border-red-700">
-        <h1 className="text-5xl font-bold">Bienvenue sur evilJV</h1>
+        <h1 className="text-5xl font-bold">Bienvenue sur evilJV, {user} !</h1>
       </div>
 
       {/* Les 3 cartes principales */}
@@ -80,6 +98,12 @@ function EvilDashboard() {
             </Link>
           ))}
         </div>
+      </div>
+      
+      {/* Section Leaderboard */}
+      <div className="bg-gray-800 p-6 rounded border border-gray-700 mt-8">
+        <h2 className="text-2xl font-bold text-center mb-6">🏆 MEILLEURS JOUEURS</h2>
+        <Leaderboard gameId="sae-mission-2" />
       </div>
     </main>
   );
