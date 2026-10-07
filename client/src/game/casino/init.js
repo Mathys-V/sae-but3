@@ -106,11 +106,11 @@ export function initCasinoGame(canvasElement) {
 
       reels.forEach(r => r.isStopped = false);
       const spinAnim = k.loop(0.05, () => {
-        if (!reels[0].isStopped) reels[0].text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-        if (!reels[1].isStopped) reels[1].text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-        if (!reels[2].isStopped) reels[2].text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        if (!reels[0].isStopped) reels[0].text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]; // NOSONAR
+        if (!reels[1].isStopped) reels[1].text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]; // NOSONAR
+        if (!reels[2].isStopped) reels[2].text = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]; // NOSONAR
       });
-
+      
       k.wait(0.5, () => { reels[0].isStopped = true; reels[0].text = resultat[0]; });
       k.wait(1.0, () => { reels[1].isStopped = true; reels[1].text = resultat[1]; });
       k.wait(1.5, () => {
