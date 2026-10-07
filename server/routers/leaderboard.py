@@ -1,0 +1,14 @@
+from fastapi import APIRouter
+
+from schemas.score import LeaderboardResponse, ScoreEntry
+
+router = APIRouter(prefix="/api/leaderboard", tags=["Scores"])
+
+@router.get("/{game_id}", response_model=LeaderboardResponse)
+async def get_leaderboard(game_id: str):
+    fake_scores = [
+        ScoreEntry(rank=1, pseudo="xXDarkKiffeurXx", score=9500),
+        ScoreEntry(rank=2, pseudo="MaitreDesPieds", score=8200),
+        ScoreEntry(rank=2, pseudo="ALaFrench", score=200),
+    ]
+    return LeaderboardResponse(game_id=game_id, scores=fake_scores)
