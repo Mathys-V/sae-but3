@@ -418,17 +418,23 @@ summary:focus-visible {
     linear-gradient(#09080c99, #09080c99),
     url("./assets/fire.gif") center / cover fixed;
   color: #eee8ee;
-  transition: background-color 700ms ease, color 700ms ease;
+  transition:
+    background-color 700ms ease,
+    color 700ms ease;
 }
 .evil-transformation .site-shell {
   background: transparent;
   color: #eee8ee;
-  transition: background-color 700ms ease, color 700ms ease;
+  transition:
+    background-color 700ms ease,
+    color 700ms ease;
 }
 .evil-transformation .site-header {
   background: #100d12;
   box-shadow: 0 2px 18px #d521302b;
-  transition: background-color 700ms ease, box-shadow 700ms ease;
+  transition:
+    background-color 700ms ease,
+    box-shadow 700ms ease;
 }
 .evil-transformation .brand {
   position: relative;
@@ -443,10 +449,12 @@ summary:focus-visible {
   transform: translateY(-50%);
   color: #ff3648;
   content: "EVILJV";
-  font-size: 27px;
+  font-family: "EvilJV", sans-serif;
+  font-size: 55px;
   font-weight: 900;
-  letter-spacing: 4px;
-  text-shadow: 0 0 16px #ff173d91;
+  letter-spacing: 5px;
+  line-height: 1;
+  text-shadow: 0 0 20px #ff173d;
 }
 .evil-transformation .header-warn {
   visibility: hidden;
@@ -465,20 +473,12 @@ summary:focus-visible {
   color: #eee8ee;
 }
 .evil-transformation .login-panel,
-.evil-transformation .faq-item {
-  border-color: #54202a;
-  background: #151116;
-  color: #eee8ee;
-  box-shadow: 0 8px 26px #e3223214;
-  transition: background-color 700ms ease, border-color 700ms ease,
-    box-shadow 700ms ease;
-}
-.evil-transformation .login-panel {
-  border-top-color: #ef3947;
-}
 .evil-transformation .evil-auth-panel {
   width: min(100%, 460px);
   padding: 28px 30px 30px;
+}
+.evil-transformation .evil-auth-panel {
+  border-top: 0;
 }
 .evil-auth-panel > h2,
 .evil-auth-panel > .pmcjv-login-form,
@@ -495,7 +495,6 @@ summary:focus-visible {
   height: 100px;
   margin: 0 auto 14px;
   place-items: center;
-  border: 1px solid #d33d4c;
   background: #153e5b;
   color: #f2eaf0;
   font-size: 30px;
@@ -516,16 +515,11 @@ summary:focus-visible {
   min-width: 0;
   height: 44px;
   padding: 0 12px;
-  border: 1px solid #75404a;
-  border-radius: 3px;
   background: #29232c;
   color: #f7edf3;
   font: inherit;
 }
-.evil-login-form input:focus {
-  border-color: #e34b59;
-  outline: 2px solid #e34b594d;
-}
+
 .evil-password-field {
   display: flex;
   min-width: 0;
@@ -542,6 +536,23 @@ summary:focus-visible {
   cursor: pointer;
   font-size: 18px;
 }
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 .evil-submit-button {
   min-height: 46px;
   margin-top: 8px;
@@ -554,7 +565,9 @@ summary:focus-visible {
   font-weight: 700;
   letter-spacing: 0.7px;
   box-shadow: 0 0 13px #dc303b52;
-  transition: background-color 180ms ease, box-shadow 180ms ease;
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease;
 }
 .evil-submit-button:hover {
   background: #982533;
@@ -605,7 +618,9 @@ summary:focus-visible {
   border-color: #62303a;
   background: #211820;
   color: #f0e5eb;
-  transition: background-color 700ms ease, color 700ms ease,
+  transition:
+    background-color 700ms ease,
+    color 700ms ease,
     border-color 700ms ease;
 }
 .evil-transformation .login-panel label,
@@ -635,7 +650,9 @@ summary:focus-visible {
 .evil-transformation .site-footer {
   background: #100d12;
   color: #cdbcc6;
-  transition: background-color 700ms ease, color 700ms ease;
+  transition:
+    background-color 700ms ease,
+    color 700ms ease;
 }
 .evil-transformation #accueil.is-evil .primary-button {
   visibility: hidden;
@@ -655,11 +672,21 @@ summary:focus-visible {
   animation: evil-ignition 1400ms ease-out both;
 }
 @keyframes evil-ignition {
-  0% { opacity: 0; }
-  18% { opacity: 1; }
-  38% { opacity: 0.55; }
-  58% { opacity: 0.85; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  38% {
+    opacity: 0.55;
+  }
+  58% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .evil-transformation body,
@@ -686,6 +713,11 @@ summary:focus-visible {
 }
 
 @media (max-width: 700px) {
+  .evil-transformation .brand::after {
+    font-size: 30px;
+    letter-spacing: 3px;
+  }
+
   .site-header {
     height: 64px;
     padding-left: 16px;
@@ -761,4 +793,13 @@ summary:focus-visible {
   .site-footer nav {
     gap: 20px;
   }
+}
+
+@font-face {
+  font-family: "EvilJV";
+  src:
+    url("assets/fonts/pixelzone-e4mv4-webfont.woff2") format("woff2"),
+    url("assets/fonts/pixelzone-e4mv4-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
 }

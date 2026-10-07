@@ -311,7 +311,9 @@ function ConnexionMCJV() {
                     aria-pressed={showEvilPassword}
                     onClick={() => setShowEvilPassword((visible) => !visible)}
                   >
-                    {showEvilPassword ? "🙈" : "👁"}
+                    <span className="material-symbols-outlined" aria-hidden="true">
+                      {showEvilPassword ? "visibility_off" : "visibility"}
+                    </span>
                   </button>
                 </div>
                 <button className="evil-submit-button" type="submit">
