@@ -8,6 +8,7 @@ import NotFoundPage from "./pages/NotFoundPage.jsx";
 import MiniGameTuto from "./pages/MiniGameTuto.jsx";
 import EvilSettings from "./pages/EvilSettings.jsx";
 import DivingGame from "./pages/DivingGame.jsx";
+import CasinoGame from "./pages/CasinoGame.jsx";
 import "./App.css";
 
 function AppRoutes() {
@@ -23,6 +24,7 @@ function AppRoutes() {
         <Route path="evil/jeux" element={<EvilGames />} />
         <Route path="evil/jeux/tutoriel" element={<MiniGameTuto />} />
         <Route path="evil/jeux/plongee" element={<DivingGame />} />
+        <Route path="evil/jeux/casino" element={<CasinoGame />} />
         <Route path="evil/parametres" element={<EvilSettings />} />
       </Route>
 

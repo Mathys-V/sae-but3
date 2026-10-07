@@ -12,7 +12,7 @@ export const ressourcesBUT = {
     },
     { id: "R1.04", nom: "Introduction aux systèmes d'exploitation", sem: 1 },
     { id: "R1.05", nom: "Introduction aux bases de données et SQL", sem: 1 },
-    { id: "R1.06", nom: "Mathématiques discrètes", sem: 1 },
+    { id: "R1.06", nom: "Mathématiques discrètes", sem: 1 , path: "/evil/jeux/casino"},
     { id: "R1.07", nom: "Outils mathématiques fondamentaux", sem: 1 },
     { id: "R1.08", nom: "Introduction à la gestion des organisations", sem: 1 },
     {
