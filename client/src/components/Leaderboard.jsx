@@ -20,7 +20,7 @@ export default function Leaderboard({ gameId }) {
       }
     }
     
-    loadScores();
+    void loadScores();
   }, [gameId]);
 
   if (loading) return <p className="text-gray-400">Chargement des scores...</p>;
