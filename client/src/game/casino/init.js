@@ -13,6 +13,9 @@ export function initCasinoGame(canvasElement) {
   });
 
   k.scene("main", () => {
+    // NOTRE VERROU ANTI-SPAM :
+    let isSpinning = false; 
+
     const uiResult = k.add([
       k.text("TENTE TA CHANCE !", { size: 54 }),
       k.pos(k.width() / 2, 120),
@@ -57,15 +60,22 @@ export function initCasinoGame(canvasElement) {
     ]);
 
     spinBtn.onHoverUpdate(() => {
-      spinBtn.color = k.rgb(50, 200, 70);
-      k.setCursor("pointer");
+      // On ne change la couleur au survol que si on ne tourne pas
+      if (!isSpinning) {
+        spinBtn.color = k.rgb(50, 200, 70);
+        k.setCursor("pointer");
+      }
     });
+    
     spinBtn.onHoverEnd(() => {
       spinBtn.color = k.rgb(40, 160, 60);
       k.setCursor("default");
     });
 
     spinBtn.onClick(() => {
+      // SI LA MACHINE TOURNE DÉJÀ, ON NE FAIT RIEN ! (Bloque le spam)
+      if (isSpinning) return;
+
       const store = useEconomyStore.getState();
       
       if (store.freeSpins === 0 && store.coins < BET_AMOUNT) {
@@ -73,6 +83,10 @@ export function initCasinoGame(canvasElement) {
         uiResult.color = k.rgb(255, 50, 50);
         return;
       }
+
+      // On verrouille le bouton
+      isSpinning = true;
+      k.setCursor("default");
 
       if (store.freeSpins > 0) {
         store.useFreeSpin();
@@ -82,6 +96,8 @@ export function initCasinoGame(canvasElement) {
 
       uiResult.text = "🎰 Bonne chance... 🎰";
       uiResult.color = k.rgb(255, 255, 255);
+      
+      // On cache le bouton
       spinBtn.hidden = true;
       spinText.hidden = true;
 
@@ -111,14 +127,15 @@ export function initCasinoGame(canvasElement) {
           uiResult.color = k.rgb(200, 200, 200);
         }
         
+        // On réaffiche le bouton et on déverrouille !
         spinBtn.hidden = false;
         spinText.hidden = false;
+        isSpinning = false; 
       });
     });
   });
 
   k.go("main");
   
-  // On retourne l'instance pour pouvoir faire k.quit() dans React
   return k; 
 }
