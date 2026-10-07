@@ -1,5 +1,5 @@
 export function setupUI(k, player) {
-  const MAX_DEPTH = 5000; // Doit correspondre à la profondeur de ta map
+  const MAX_DEPTH = 6000; // Doit correspondre à la profondeur de ta map
 
   // 1. Fond noir semi-transparent de la jauge (Fixe à gauche)
   k.add([

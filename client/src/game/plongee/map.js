@@ -1,40 +1,89 @@
 export function setupOceanBoundaries(k) {
-  const OCEAN_WIDTH = 4000;
-  const OCEAN_DEPTH = 5000;
+  const OCEAN_WIDTH = 12000;
 
-  // Surface de l'eau (Plafond bloquant)
+  const WATER_LEVEL = 0;
+  const ZONE1_END = 1500;
+  const ZONE2_END = 3500;
+  const OCEAN_DEPTH = 6000;
+
+  // --- 1. LE CIEL ET LA SURFACE (Méthode de base initiale) ---
   k.add([
-    k.rect(OCEAN_WIDTH, 50),
-    k.pos(-OCEAN_WIDTH / 2, 0),
-    k.color(0, 150, 255),
-    k.area(),
-    k.body({ isStatic: true }), // Le joueur ne peut pas passer au-dessus
+    k.sprite("bg-surface", { width: OCEAN_WIDTH, height: 1296, tiled: true }),
+    k.pos(-OCEAN_WIDTH / 2, -1296),
+    k.z(-100),
   ]);
 
-  // Mur Gauche
+  // --- 2. LES CORAUX (De la surface à la Zone 3) ---
   k.add([
-    k.rect(50, OCEAN_DEPTH),
-    k.pos(-OCEAN_WIDTH / 2, 0),
+    k.sprite("bg-zone2", {
+      width: OCEAN_WIDTH,
+      height: ZONE2_END,
+      tiled: true,
+    }),
+    k.pos(-OCEAN_WIDTH / 2, WATER_LEVEL),
+    k.z(-99),
+  ]);
+  k.add([
+    k.sprite("midground-zone2", {
+      width: OCEAN_WIDTH,
+      height: ZONE2_END,
+      tiled: true,
+    }),
+    k.pos(-OCEAN_WIDTH / 2, WATER_LEVEL),
+    k.z(-95),
+  ]);
+
+  // --- 3. FILTRES DE PROFONDEUR ET ABYSSES ---
+  // Zone 1 (0 à 150m) : Eau claire
+  k.add([
+    k.rect(OCEAN_WIDTH, ZONE1_END),
+    k.pos(-OCEAN_WIDTH / 2, WATER_LEVEL),
+    k.color(0, 180, 255),
+    k.opacity(0.15),
+    k.z(-94),
+  ]);
+
+  // Zone 3 Abyssale (350m à 600m) : Le sable + Filtre noir
+  k.add([
+    k.sprite("bg-zone3", { width: OCEAN_WIDTH, height: 324, tiled: true }),
+    k.pos(-OCEAN_WIDTH / 2, OCEAN_DEPTH - 324),
+    k.z(-96),
+  ]);
+  k.add([
+    k.rect(OCEAN_WIDTH, OCEAN_DEPTH - ZONE2_END),
+    k.pos(-OCEAN_WIDTH / 2, ZONE2_END),
+    k.color(5, 5, 20),
+    k.opacity(0.85),
+    k.z(-94),
+  ]);
+
+  // --- 4. PHYSIQUE ET COLLISIONS ---
+  k.add([
+    k.rect(250, 20),
+    k.pos(-125, WATER_LEVEL - 10), // Le radeau
+    k.color(139, 69, 19),
+    k.area(),
+    k.body({ isStatic: true }),
+    "raft",
+  ]);
+
+  k.add([
+    k.rect(50, OCEAN_DEPTH + 1000),
+    k.pos(-OCEAN_WIDTH / 2, -1000),
     k.area(),
     k.body({ isStatic: true }),
   ]);
-
-  // Mur Droit
   k.add([
-    k.rect(50, OCEAN_DEPTH),
-    k.pos(OCEAN_WIDTH / 2, 0),
+    k.rect(50, OCEAN_DEPTH + 1000),
+    k.pos(OCEAN_WIDTH / 2, -1000),
     k.area(),
     k.body({ isStatic: true }),
   ]);
-
-  // Le fond marin (Plancher)
   k.add([
     k.rect(OCEAN_WIDTH, 50),
     k.pos(-OCEAN_WIDTH / 2, OCEAN_DEPTH),
-    k.color(139, 69, 19), // Marron (Terre/Sable)
+    k.color(10, 10, 15),
     k.area(),
     k.body({ isStatic: true }),
   ]);
-
-  // Ici, tu pourras ajouter la plateforme du bateau à la surface (Y: 50)
 }
