@@ -46,6 +46,13 @@ export function setupPlayer(k, startX, startY) {
     if (x < 0) player.flipX = true;
     if (x > 0) player.flipX = false;
 
+    if (!isSwimming) {
+      player.use(k.sprite("diver-swim"));
+      player.play("swim");
+      isSwimming = true;
+    }
+  };
+
   // Mouvements ZQSD / Flèches
   k.onKeyDown(["left", "q", "a"], () => handleMovement(-speed, 0));
   k.onKeyDown(["right", "d"], () => handleMovement(speed, 0));
