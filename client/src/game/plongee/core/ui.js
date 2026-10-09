@@ -1,7 +1,7 @@
 import { stats } from "../entities/stats.js";
 
 export function setupUI(k, player) {
-  const MAX_DEPTH = 6000;
+  const MAX_DEPTH = 12000;
 
   // --- 1. JAUGE DE PROFONDEUR ---
   k.add([
@@ -56,8 +56,8 @@ export function setupUI(k, player) {
     cursor.pos.y = currentY;
     depthText.pos.y = currentY - 4;
 
-    // 👈 Divisé par 20 ! 6000 pixels = 300 mètres de profondeur max.
-    depthText.text = `${Math.floor(player.pos.y / 20)}m`;
+    const DIVISEUR_PROFONDEUR = 35; // Ajuste cette valeur pour changer l'échelle de profondeur affichée
+    depthText.text = `${Math.floor(player.pos.y / DIVISEUR_PROFONDEUR)}m`;
 
     const o2Frame = Math.round((stats.o2 / stats.maxO2) * 16);
     const hpFrame = Math.round((stats.hp / stats.maxHp) * 16);

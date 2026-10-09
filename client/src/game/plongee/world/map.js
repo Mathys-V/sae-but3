@@ -4,9 +4,9 @@ export function setupOceanBoundaries(k) {
   const OCEAN_WIDTH = 20000; // doit être > PLAYABLE_WIDTH (16000)
 
   const WATER_LEVEL = 0;
-  const ZONE1_END = 1500;
-  const ZONE2_END = 3500;
-  const OCEAN_DEPTH = 6000;
+  const ZONE1_END = 3000;
+  const ZONE2_END = 7000;
+  const OCEAN_DEPTH = 12000;
 
   // --- 1. LE CIEL ET LA SURFACE ---
   k.add([

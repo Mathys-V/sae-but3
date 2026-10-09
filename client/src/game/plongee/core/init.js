@@ -3,6 +3,7 @@ import { setupPlayer } from "../entities/player.js";
 import { setupOceanBoundaries } from "../world/map.js";
 import { setupUI } from "./ui.js";
 import { setupSolids } from "../obstacles/solids.js";
+import { populateOcean } from "../world/levelManager.js";
 
 export function initDivingGame(canvasElement) {
   const k = kaplay({
@@ -14,7 +15,7 @@ export function initDivingGame(canvasElement) {
   });
 
   k.setGravity(1400);
-  //k.debug.inspect = true; // pour le debug : montre les hitboxes et les points d'ancrage
+  k.debug.inspect = true; // pour le debug : montre les hitboxes et les points d'ancrage
 
   // --- 1. CHARGEMENT DES ASSETS (Chemins mis à jour selon la nouvelle structure) ---
 
@@ -88,16 +89,167 @@ export function initDivingGame(canvasElement) {
   });
   k.loadSprite("depth-cursor", "/assets/plongee/ui/UI_Flat_IconArrow01a.png");
 
+  // ==========================================
+  // CHARGEMENT DES ENNEMIS (ZONE 1)
+  // ⚠️ À MODIFIER : Ajuste le 'sliceX' et le 'to' selon le vrai nombre d'images de chaque fichier !
+  // Exemple: si Attack.png a 6 images, met sliceX: 6 et to: 5.
+  // ==========================================
+
+  // --- ANGUILLE ---
+  k.loadSprite(
+    "anguille-idle",
+    "/assets/plongee/enemies/fishes/anguille/Idle.png",
+    {
+      sliceX: 4,
+      sliceY: 1,
+      anims: { idle: { from: 0, to: 3, loop: true, speed: 6 } },
+    },
+  );
+  k.loadSprite(
+    "anguille-walk",
+    "/assets/plongee/enemies/fishes/anguille/Walk.png",
+    {
+      sliceX: 6,
+      sliceY: 1,
+      anims: { walk: { from: 0, to: 5, loop: true, speed: 8 } },
+    },
+  );
+  k.loadSprite(
+    "anguille-attack",
+    "/assets/plongee/enemies/fishes/anguille/Attack.png",
+    {
+      sliceX: 6,
+      sliceY: 1,
+      anims: { attack: { from: 0, to: 5, loop: false, speed: 12 } },
+    },
+  );
+  k.loadSprite(
+    "anguille-hurt",
+    "/assets/plongee/enemies/fishes/anguille/Hurt.png",
+    {
+      sliceX: 2,
+      sliceY: 1,
+      anims: { hurt: { from: 0, to: 1, loop: false, speed: 10 } },
+    },
+  );
+  k.loadSprite(
+    "anguille-death",
+    "/assets/plongee/enemies/fishes/anguille/Death.png",
+    {
+      sliceX: 6,
+      sliceY: 1,
+      anims: { death: { from: 0, to: 5, loop: false, speed: 8 } },
+    },
+  );
+
+  // --- MEDUSE ---
+  k.loadSprite(
+    "meduse-idle",
+    "/assets/plongee/enemies/fishes/meduse/Idle.png",
+    {
+      sliceX: 4,
+      sliceY: 1,
+      anims: { idle: { from: 0, to: 3, loop: true, speed: 5 } },
+    },
+  );
+  k.loadSprite(
+    "meduse-walk",
+    "/assets/plongee/enemies/fishes/meduse/Walk.png",
+    {
+      sliceX: 4,
+      sliceY: 1,
+      anims: { walk: { from: 0, to: 3, loop: true, speed: 6 } },
+    },
+  );
+  k.loadSprite(
+    "meduse-attack",
+    "/assets/plongee/enemies/fishes/meduse/Attack.png",
+    {
+      sliceX: 4,
+      sliceY: 1,
+      anims: { attack: { from: 0, to: 3, loop: false, speed: 8 } },
+    },
+  );
+  k.loadSprite(
+    "meduse-hurt",
+    "/assets/plongee/enemies/fishes/meduse/Hurt.png",
+    {
+      sliceX: 2,
+      sliceY: 1,
+      anims: { hurt: { from: 0, to: 1, loop: false, speed: 10 } },
+    },
+  );
+  k.loadSprite(
+    "meduse-death",
+    "/assets/plongee/enemies/fishes/meduse/Death.png",
+    {
+      sliceX: 6,
+      sliceY: 1,
+      anims: { death: { from: 0, to: 5, loop: false, speed: 6 } },
+    },
+  );
+
+  // --- TORTUE ---
+  k.loadSprite(
+    "tortue-idle",
+    "/assets/plongee/enemies/fishes/tortue/Idle.png",
+    {
+      sliceX: 4,
+      sliceY: 1,
+      anims: { idle: { from: 0, to: 3, loop: true, speed: 3 } },
+    },
+  );
+  k.loadSprite(
+    "tortue-walk",
+    "/assets/plongee/enemies/fishes/tortue/Walk.png",
+    {
+      sliceX: 6,
+      sliceY: 1,
+      anims: { walk: { from: 0, to: 5, loop: true, speed: 4 } },
+    },
+  );
+  k.loadSprite(
+    "tortue-attack",
+    "/assets/plongee/enemies/fishes/tortue/Attack.png",
+    {
+      sliceX: 6,
+      sliceY: 1,
+      anims: { attack: { from: 0, to: 5, loop: false, speed: 6 } },
+    },
+  );
+  k.loadSprite(
+    "tortue-hurt",
+    "/assets/plongee/enemies/fishes/tortue/Hurt.png",
+    {
+      sliceX: 2,
+      sliceY: 1,
+      anims: { hurt: { from: 0, to: 1, loop: false, speed: 10 } },
+    },
+  );
+  k.loadSprite(
+    "tortue-death",
+    "/assets/plongee/enemies/fishes/tortue/Death.png",
+    {
+      sliceX: 6,
+      sliceY: 1,
+      anims: { death: { from: 0, to: 5, loop: false, speed: 5 } },
+    },
+  );
+
   k.scene("dive", () => {
     k.play("bgm-dive", { loop: true, volume: 0.5 });
     setupOceanBoundaries(k);
+
+    // Fait apparaître toute la faune de l'océan
+    populateOcean(k);
+
     const localPlayer = setupPlayer(k, 0, 150);
     setupUI(k, localPlayer);
     setupSolids(k, localPlayer); // doit être appelé AVANT la caméra et le filet
 
     // Filet de sécurité : le joueur ne peut jamais sortir de la zone
     const PLAYABLE_WIDTH = 16000; // même valeur que terrain.js
-    const OCEAN_DEPTH = 6000;
+    const OCEAN_DEPTH = 12000;
     const FLOOR_RAISE = 90; // même valeur que terrain.js
     const MARGIN = 20;
 
