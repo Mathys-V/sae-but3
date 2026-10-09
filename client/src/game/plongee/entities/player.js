@@ -13,7 +13,7 @@ export function setupPlayer(k, startX, startY) {
 
   player.play("idle");
 
-  const speed = 250;
+  const speed = 1000; // Vitesse de déplacement du joueur (px/s) de base 250
   let isSwimming = false;
 
   // GESTION DE LA PHYSIQUE EAU vs AIR

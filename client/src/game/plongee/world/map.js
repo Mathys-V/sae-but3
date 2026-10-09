@@ -1,12 +1,14 @@
+import { setupTerrain } from "../obstacles/terrain.js";
+
 export function setupOceanBoundaries(k) {
-  const OCEAN_WIDTH = 12000;
+  const OCEAN_WIDTH = 20000; // doit être > PLAYABLE_WIDTH (16000)
 
   const WATER_LEVEL = 0;
   const ZONE1_END = 1500;
   const ZONE2_END = 3500;
   const OCEAN_DEPTH = 6000;
 
-  // --- 1. LE CIEL ET LA SURFACE (Méthode de base initiale) ---
+  // --- 1. LE CIEL ET LA SURFACE ---
   k.add([
     k.sprite("bg-surface", { width: OCEAN_WIDTH, height: 1296, tiled: true }),
     k.pos(-OCEAN_WIDTH / 2, -1296),
@@ -34,7 +36,6 @@ export function setupOceanBoundaries(k) {
   ]);
 
   // --- 3. FILTRES DE PROFONDEUR ET ABYSSES ---
-  // Zone 1 (0 à 150m) : Eau claire
   k.add([
     k.rect(OCEAN_WIDTH, ZONE1_END),
     k.pos(-OCEAN_WIDTH / 2, WATER_LEVEL),
@@ -43,7 +44,6 @@ export function setupOceanBoundaries(k) {
     k.z(-94),
   ]);
 
-  // Zone 3 Abyssale (350m à 600m) : Le sable + Filtre noir
   k.add([
     k.sprite("bg-zone3", { width: OCEAN_WIDTH, height: 324, tiled: true }),
     k.pos(-OCEAN_WIDTH / 2, OCEAN_DEPTH - 324),
@@ -58,20 +58,17 @@ export function setupOceanBoundaries(k) {
   ]);
 
   // --- 4. PHYSIQUE ET COLLISIONS ---
-
-  // 4.1 Le Bateau de départ
   k.add([
     k.sprite("boat"),
     k.scale(3),
     k.pos(0, WATER_LEVEL + 12),
     k.anchor("bot"),
     k.area(),
-    k.body({ isStatic: true }),
     k.z(10),
+    "solid", // à la place de k.body({ isStatic: true })
     "boat",
   ]);
 
-  // 4.2 Le Tonneau / Inventaire commun
   k.add([
     k.sprite("barrel-empty"),
     k.pos(-40, WATER_LEVEL - 5),
@@ -82,23 +79,7 @@ export function setupOceanBoundaries(k) {
     k.scale(2),
   ]);
 
-  k.add([
-    k.rect(50, OCEAN_DEPTH + 1000),
-    k.pos(-OCEAN_WIDTH / 2, -1000),
-    k.area(),
-    k.body({ isStatic: true }),
-  ]);
-  k.add([
-    k.rect(50, OCEAN_DEPTH + 1000),
-    k.pos(OCEAN_WIDTH / 2, -1000),
-    k.area(),
-    k.body({ isStatic: true }),
-  ]);
-  k.add([
-    k.rect(OCEAN_WIDTH, 50),
-    k.pos(-OCEAN_WIDTH / 2, OCEAN_DEPTH),
-    k.color(10, 10, 15),
-    k.area(),
-    k.body({ isStatic: true }),
-  ]);
+  // --- 5. LIMITES DU TERRAIN (Bouées, chaînes et murs invisibles) ---
+
+  setupTerrain(k, WATER_LEVEL, OCEAN_DEPTH);
 }
