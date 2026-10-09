@@ -1,11 +1,13 @@
+import { stats } from "./stats.js";
+
 export function setupPlayer(k, startX, startY) {
   const WATER_LEVEL = 0;
 
   const player = k.add([
     k.sprite("diver-idle"),
     k.pos(startX, startY),
-    k.scale(2), // NOUVEAU : On double la taille du joueur pour mieux le voir
-    k.area({ shape: new k.Rect(k.vec2(0, 0), 12, 12) }), // Hitbox carrée propre et réduite
+    k.scale(2),
+    k.area({ shape: new k.Rect(k.vec2(0, 0), 12, 12) }),
     k.body(),
     k.anchor("center"),
     "player",
@@ -13,36 +15,57 @@ export function setupPlayer(k, startX, startY) {
 
   player.play("idle");
 
-  const speed = 1000; // Vitesse de déplacement du joueur (px/s) de base 250
   let isSwimming = false;
 
-  // GESTION DE LA PHYSIQUE EAU vs AIR
+  // GESTION DE LA PHYSIQUE ET DE LA SURVIE
   k.onUpdate(() => {
-    if (player.pos.y > WATER_LEVEL) {
-      // 1. SOUS L'EAU : On désactive la gravité
-      player.gravityScale = 0;
+    const dt = k.dt();
 
-      // On applique une friction naturelle pour qu'il "glisse" un peu dans l'eau quand on lâche les touches
+    if (player.pos.y > WATER_LEVEL) {
+      // 1. SOUS L'EAU
+      player.gravityScale = 0;
       if (player.vel) {
         player.vel.x *= 0.9;
         player.vel.y *= 0.9;
       }
+
+      // Consommation d'O2 (1 point par seconde)
+      stats.o2 = Math.max(0, stats.o2 - dt);
+
+      // Si on a encore de l'air, la vie remonte TRES lentement (+0.5 HP/sec)
+      if (stats.o2 > 0) {
+        stats.hp = Math.min(stats.maxHp, stats.hp + dt * 0.5);
+      } else {
+        // Noyade : perd 10 HP/sec
+        stats.hp -= 10 * dt;
+      }
     } else {
-      // 2. DANS LES AIRS : La gravité reprend le dessus (il retombe ou se pose sur le radeau)
+      // 2. SUR LA BARQUE / SURFACE
       player.gravityScale = 1;
+
+      // Recharge très rapide de l'oxygène (+20/sec)
+      stats.o2 = Math.min(stats.maxO2, stats.o2 + dt * 20);
+
+      // Recharge rapide de la vie (+5 HP/sec)
+      stats.hp = Math.min(stats.maxHp, stats.hp + dt * 5);
+    }
+
+    // 3. GESTION DE LA MORT
+    if (stats.hp <= 0) {
+      stats.inventory = [];
+      stats.hp = stats.maxHp;
+      stats.o2 = stats.maxO2;
+      k.go("dive");
     }
   });
 
   const handleMovement = (x, y) => {
-    // Si on est dans l'eau, on peut aller dans toutes les directions
     if (player.pos.y > WATER_LEVEL) {
       player.move(x, y);
     } else if (x !== 0) {
-      // Si on est en l'air (ou sur le radeau), on ne peut bouger que de gauche à droite
       player.move(x, 0);
     }
 
-    // Gestion du retournement visuel
     if (x < 0) player.flipX = true;
     if (x > 0) player.flipX = false;
 
@@ -53,20 +76,17 @@ export function setupPlayer(k, startX, startY) {
     }
   };
 
-  // Mouvements ZQSD / Flèches
-  k.onKeyDown(["left", "q", "a"], () => handleMovement(-speed, 0));
-  k.onKeyDown(["right", "d"], () => handleMovement(speed, 0));
-  k.onKeyDown(["down", "s"], () => handleMovement(0, speed));
+  // On utilise stats.speed pour que la boutique puisse l'améliorer plus tard
+  k.onKeyDown(["left", "q", "a"], () => handleMovement(-stats.speed, 0));
+  k.onKeyDown(["right", "d"], () => handleMovement(stats.speed, 0));
+  k.onKeyDown(["down", "s"], () => handleMovement(0, stats.speed));
 
-  // LE SAUT DE DAUPHIN (Touche Haut)
   k.onKeyDown(["up", "z", "w"], () => {
-    handleMovement(0, -speed);
+    handleMovement(0, -stats.speed);
 
-    // Si on nage très vite vers le haut et qu'on touche presque la surface... on SAUTE !
     if (player.pos.y > WATER_LEVEL && player.pos.y < WATER_LEVEL + 40) {
-      player.jump(650); // Pousse le joueur hors de l'eau
+      player.jump(650);
     }
-    // Permet aussi de sauter si on est debout sur le radeau
     if (player.isGrounded()) {
       player.jump(500);
     }

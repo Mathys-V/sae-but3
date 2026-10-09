@@ -76,6 +76,18 @@ export function initDivingGame(canvasElement) {
     "/assets/plongee/items/rocher-fond-sous-map2.png",
   );
 
+  // --- UI ---
+  k.loadSprite("hp-bar", "/assets/plongee/ui/bar_fill_health.png", {
+    sliceX: 17, // L'image contient 17 états (de vide à plein)
+    sliceY: 1,
+  });
+
+  k.loadSprite("o2-bar", "/assets/plongee/ui/bar_fill_mana.png", {
+    sliceX: 17, // L'image contient 17 états (de vide à plein)
+    sliceY: 1,
+  });
+  k.loadSprite("depth-cursor", "/assets/plongee/ui/UI_Flat_IconArrow01a.png");
+
   k.scene("dive", () => {
     k.play("bgm-dive", { loop: true, volume: 0.5 });
     setupOceanBoundaries(k);
