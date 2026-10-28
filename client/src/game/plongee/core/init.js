@@ -26,630 +26,142 @@ export function initDivingGame(canvasElement) {
   k.setGravity(1400);
   k.debug.inspect = false; // pour le debug : montre les hitboxes et les points d'ancrage
 
-  // --- 1. CHARGEMENT DES ASSETS (Chemins mis à jour selon la nouvelle structure) ---
+  // ==========================================
+  // 1. CHARGEMENT CONFIGURÉ DES ASSETS (Anti-Duplication SonarQube)
+  // ==========================================
 
   // Environnements
-  k.loadSprite(
-    "bg-surface",
-    "/assets/plongee/env/backgrounds/surface_ocean_jour.png",
-  );
-  k.loadSprite(
-    "bg-zone2",
-    "/assets/plongee/env/backgrounds/background_profondeur2.png",
-  );
-  k.loadSprite(
-    "midground-zone2",
-    "/assets/plongee/env/backgrounds/midground_profondeur2.png",
-  );
-  k.loadSprite(
-    "bg-zone3",
-    "/assets/plongee/env/backgrounds/orig_profondeur3.png",
-  );
-
-  // Joueur
-  k.loadSprite("diver-swim", "/assets/plongee/player/player-swiming.png", {
-    sliceX: 7,
-    sliceY: 1,
-    anims: { swim: { from: 0, to: 6, loop: true, speed: 8 } },
-  });
-
-  k.loadSprite("diver-idle", "/assets/plongee/player/player-idle.png", {
-    sliceX: 6,
-    sliceY: 1,
-    anims: { idle: { from: 0, to: 5, loop: true, speed: 4 } },
-  });
-
-  k.loadSprite(
-    "diver-idle-boat",
-    "/assets/plongee/player/player-idle-boat.png",
-  );
-
-  k.loadSprite("diver-walk", "/assets/plongee/player/player-walk.png", {
-    sliceX: 8,
-    sliceY: 1,
-    anims: { walk: { from: 0, to: 7, loop: true, speed: 10 } },
-  });
-
-  k.loadSprite("diver-attack", "/assets/plongee/player/player-attack.png", {
-    sliceX: 8,
-    sliceY: 1,
-    anims: { attack: { from: 0, to: 7, loop: false, speed: 12 } },
-  });
-
-  k.loadSprite(
-    "diver-attack-underwater",
-    "/assets/plongee/player/player-attack-underwater.png",
-    {
-      sliceX: 8,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 7, loop: false, speed: 12 } },
-    },
-  );
-
-  // Ennemis (fishes & monsters)
-  k.loadSprite("fish-small", "/assets/plongee/enemies/fishes/fish.png");
-  k.loadSprite("mine", "/assets/plongee/enemies/monsters/mine.png");
+  k.loadSprite("bg-surface", "/assets/plongee/env/backgrounds/surface_ocean_jour.png");
+  k.loadSprite("bg-zone2", "/assets/plongee/env/backgrounds/background_profondeur2.png");
+  k.loadSprite("midground-zone2", "/assets/plongee/env/backgrounds/midground_profondeur2.png");
+  k.loadSprite("bg-zone3", "/assets/plongee/env/backgrounds/orig_profondeur3.png");
 
   // Sons
-  k.loadSound("bgm-dive", "/assets/plongee/sounds/watery_cave_loop.ogg");
-  k.loadSound("sfx-attack", "/assets/plongee/sounds/sfx_attack.wav");
-  k.loadSound("sfx-hit", "/assets/plongee/sounds/sfx_hit.wav");
-  k.loadSound("sfx-hurt", "/assets/plongee/sounds/sfx_hurt.wav");
-  k.loadSound("sfx-death", "/assets/plongee/sounds/sfx_death.wav");
-  k.loadSound("sfx-loot", "/assets/plongee/sounds/sfx_loot.wav");
-  k.loadSound("sfx-deposit", "/assets/plongee/sounds/sfx_deposit.wav");
-  k.loadSound("sfx-gold", "/assets/plongee/sounds/sfx_gold.wav");
+  const SOUND_EFFECTS = [
+    ["bgm-dive", "/assets/plongee/sounds/watery_cave_loop.ogg"],
+    ["sfx-attack", "/assets/plongee/sounds/sfx_attack.wav"],
+    ["sfx-hit", "/assets/plongee/sounds/sfx_hit.wav"],
+    ["sfx-hurt", "/assets/plongee/sounds/sfx_hurt.wav"],
+    ["sfx-death", "/assets/plongee/sounds/sfx_death.wav"],
+    ["sfx-loot", "/assets/plongee/sounds/sfx_loot.wav"],
+    ["sfx-deposit", "/assets/plongee/sounds/sfx_deposit.wav"],
+    ["sfx-gold", "/assets/plongee/sounds/sfx_gold.wav"],
+  ];
+  for (const [name, path] of SOUND_EFFECTS) {
+    k.loadSound(name, path);
+  }
 
-  // Items & Objets interactifs
-  k.loadSprite("boat", "/assets/plongee/items/Boat.png");
-  k.loadSprite("barrel-empty", "/assets/plongee/items/Fishbarrel3.png");
-  k.loadSprite("barrel-full", "/assets/plongee/items/Fishbarrel4.png");
+  // Items & Décors statiques
+  const STATIC_SPRITES = [
+    ["boat", "/assets/plongee/items/Boat.png"],
+    ["barrel-empty", "/assets/plongee/items/Fishbarrel3.png"],
+    ["barrel-full", "/assets/plongee/items/Fishbarrel4.png"],
+    ["diver-idle-boat", "/assets/plongee/player/player-idle-boat.png"],
+    ["fish-small", "/assets/plongee/enemies/fishes/fish.png"],
+    ["mine", "/assets/plongee/enemies/monsters/mine.png"],
+    ["mine-big", "/assets/plongee/enemies/monsters/mine-big.png"],
+    ["bouee", "/assets/plongee/items/bouee_de_mer.png"],
+    ["chain", "/assets/plongee/items/chain.png"],
+    ["rock-fond1", "/assets/plongee/items/rocher-fond1.png"],
+    ["rock-fond2", "/assets/plongee/items/rocher-fond2.png"],
+    ["rock-fond3", "/assets/plongee/items/rocher-fond3.png"],
+    ["rock-under1", "/assets/plongee/items/rocher-fond-sous-map1.png"],
+    ["rock-under2", "/assets/plongee/items/rocher-fond-sous-map2.png"],
+    ["depth-cursor", "/assets/plongee/ui/UI_Flat_IconArrow01a.png"],
+    ["sirene-mage-projectile", "/assets/plongee/enemies/monsters/sirene-baton-magique/Projectile.png"],
+  ];
+  for (const [name, path] of STATIC_SPRITES) {
+    k.loadSprite(name, path);
+  }
 
   // Sprites des butins pixel art 16x16
-  k.loadSprite("loot-anguille-meat", "/assets/plongee/items/loots/loot_anguille_meat.png");
-  k.loadSprite("loot-jelly-filament", "/assets/plongee/items/loots/loot_jelly_filament.png");
-  k.loadSprite("loot-turtle-shell", "/assets/plongee/items/loots/loot_turtle_shell.png");
-  k.loadSprite("loot-pieuvre-tentacle", "/assets/plongee/items/loots/loot_pieuvre_tentacle.png");
-  k.loadSprite("loot-lantern", "/assets/plongee/items/loots/loot_lantern.png");
-  k.loadSprite("loot-siren-scale", "/assets/plongee/items/loots/loot_siren_scale.png");
-  k.loadSprite("loot-magic-pearl", "/assets/plongee/items/loots/loot_magic_pearl.png");
-  k.loadSprite("loot-explosive-dust", "/assets/plongee/items/loots/loot_explosive_dust.png");
-  k.loadSprite("loot-trident-tip", "/assets/plongee/items/loots/loot_trident_tip.png");
-  k.loadSprite("loot-shark-tooth", "/assets/plongee/items/loots/loot_shark_tooth.png");
-  k.loadSprite("loot-shark-king-tooth", "/assets/plongee/items/loots/loot_shark_king_tooth.png");
+  const LOOT_ITEMS = [
+    "anguille-meat", "jelly-filament", "turtle-shell", "pieuvre-tentacle",
+    "lantern", "siren-scale", "magic-pearl", "explosive-dust",
+    "trident-tip", "shark-tooth", "shark-king-tooth",
+  ];
+  for (const itemKey of LOOT_ITEMS) {
+    k.loadSprite(`loot-${itemKey}`, `/assets/plongee/items/loots/loot_${itemKey.replace(/-/g, "_")}.png`);
+  }
 
-  // PNJ Pecheur Marchand
-  k.loadSprite("fisherman-idle", "/assets/plongee/npc/Fisherman_idle.png", {
-    sliceX: 4,
-    sliceY: 1,
-    anims: { idle: { from: 0, to: 3, loop: true, speed: 4 } },
-  });
-  k.loadSprite("fisherman-hurt", "/assets/plongee/npc/Fisherman_hurt.png", {
-    sliceX: 2,
-    sliceY: 1,
-    anims: { hurt: { from: 0, to: 1, loop: false, speed: 6 } },
-  });
+  // Barres d'interface multi-états
+  k.loadSprite("hp-bar", "/assets/plongee/ui/bar_fill_health.png", { sliceX: 17, sliceY: 1 });
+  k.loadSprite("o2-bar", "/assets/plongee/ui/bar_fill_mana.png", { sliceX: 17, sliceY: 1 });
 
-  k.loadSprite("bouee", "/assets/plongee/items/bouee_de_mer.png");
-  k.loadSprite("chain", "/assets/plongee/items/chain.png");
+  // Table déclarative des spritesheets animées pour éviter la duplication de code
+  const ANIMATED_SPRITES = [
+    // Joueur
+    ["diver-swim", "/assets/plongee/player/player-swiming.png", 7, "swim", 6, 8, true],
+    ["diver-idle", "/assets/plongee/player/player-idle.png", 6, "idle", 5, 4, true],
+    ["diver-walk", "/assets/plongee/player/player-walk.png", 8, "walk", 7, 10, true],
+    ["diver-attack", "/assets/plongee/player/player-attack.png", 8, "attack", 7, 12, false],
+    ["diver-attack-underwater", "/assets/plongee/player/player-attack-underwater.png", 8, "attack", 7, 12, false],
+    // PNJ Marchand
+    ["fisherman-idle", "/assets/plongee/npc/Fisherman_idle.png", 4, "idle", 3, 4, true],
+    ["fisherman-hurt", "/assets/plongee/npc/Fisherman_hurt.png", 2, "hurt", 1, 6, false],
+    // Faune Zone 1
+    ["anguille-idle", "/assets/plongee/enemies/fishes/anguille/Idle.png", 4, "idle", 3, 6, true],
+    ["anguille-walk", "/assets/plongee/enemies/fishes/anguille/Walk.png", 6, "walk", 5, 8, true],
+    ["anguille-attack", "/assets/plongee/enemies/fishes/anguille/Attack.png", 6, "attack", 5, 12, false],
+    ["anguille-hurt", "/assets/plongee/enemies/fishes/anguille/Hurt.png", 2, "hurt", 1, 10, false],
+    ["anguille-death", "/assets/plongee/enemies/fishes/anguille/Death.png", 6, "death", 5, 8, false],
+    ["meduse-idle", "/assets/plongee/enemies/fishes/meduse/Idle.png", 4, "idle", 3, 5, true],
+    ["meduse-walk", "/assets/plongee/enemies/fishes/meduse/Walk.png", 4, "walk", 3, 6, true],
+    ["meduse-attack", "/assets/plongee/enemies/fishes/meduse/Attack.png", 4, "attack", 3, 8, false],
+    ["meduse-hurt", "/assets/plongee/enemies/fishes/meduse/Hurt.png", 2, "hurt", 1, 10, false],
+    ["meduse-death", "/assets/plongee/enemies/fishes/meduse/Death.png", 6, "death", 5, 6, false],
+    ["tortue-idle", "/assets/plongee/enemies/fishes/tortue/Idle.png", 4, "idle", 3, 3, true],
+    ["tortue-walk", "/assets/plongee/enemies/fishes/tortue/Walk.png", 6, "walk", 5, 4, true],
+    ["tortue-attack", "/assets/plongee/enemies/fishes/tortue/Attack.png", 6, "attack", 5, 6, false],
+    ["tortue-hurt", "/assets/plongee/enemies/fishes/tortue/Hurt.png", 2, "hurt", 1, 10, false],
+    ["tortue-death", "/assets/plongee/enemies/fishes/tortue/Death.png", 6, "death", 5, 5, false],
+    // Requins Zone 3
+    ["requin-boss-move", "/assets/plongee/enemies/monsters/requin-boss/spr_shark_move_strip9.png", 9, "move", 8, 8, true],
+    ["requin-boss-attack", "/assets/plongee/enemies/monsters/requin-boss/spr_shark_attack_strip9.png", 9, "attack", 8, 10, false],
+    ["requin-marteau-move", "/assets/plongee/enemies/monsters/requin-marteau/spr_hammerhead_shark_move_strip9.png", 9, "move", 8, 8, true],
+    ["requin-marteau-attack", "/assets/plongee/enemies/monsters/requin-marteau/spr_hammerhead_shark_attack_strip9.png", 9, "attack", 8, 10, false],
+    ["requin-tigre-move", "/assets/plongee/enemies/monsters/requin-tigre/spr_tiger_shark_move_strip9.png", 9, "move", 8, 8, true],
+    ["requin-tigre-attack", "/assets/plongee/enemies/monsters/requin-tigre/spr_tiger_shark_attack_strip9.png", 9, "attack", 8, 10, false],
+    // Monstres Zone 2
+    ["pieuvre-idle", "/assets/plongee/enemies/fishes/pieuvre/Idle.png", 6, "idle", 5, 5, true],
+    ["pieuvre-walk", "/assets/plongee/enemies/fishes/pieuvre/Walk.png", 6, "walk", 5, 6, true],
+    ["pieuvre-attack", "/assets/plongee/enemies/fishes/pieuvre/Attack.png", 6, "attack", 5, 8, false],
+    ["pieuvre-hurt", "/assets/plongee/enemies/fishes/pieuvre/Hurt.png", 2, "hurt", 1, 8, false],
+    ["pieuvre-death", "/assets/plongee/enemies/fishes/pieuvre/Death.png", 6, "death", 5, 6, false],
+    ["lanterne-idle", "/assets/plongee/enemies/fishes/poisson-lanterne/Idle.png", 4, "idle", 3, 4, true],
+    ["lanterne-walk", "/assets/plongee/enemies/fishes/poisson-lanterne/Walk.png", 4, "walk", 3, 5, true],
+    ["lanterne-attack", "/assets/plongee/enemies/fishes/poisson-lanterne/Attack.png", 6, "attack", 5, 8, false],
+    ["lanterne-hurt", "/assets/plongee/enemies/fishes/poisson-lanterne/Hurt.png", 2, "hurt", 1, 8, false],
+    ["lanterne-death", "/assets/plongee/enemies/fishes/poisson-lanterne/Death.png", 6, "death", 5, 6, false],
+    ["sirene-epee-idle", "/assets/plongee/enemies/monsters/sirene-epee-bouclier/Idle.png", 4, "idle", 3, 4, true],
+    ["sirene-epee-walk", "/assets/plongee/enemies/monsters/sirene-epee-bouclier/Walk.png", 6, "walk", 5, 6, true],
+    ["sirene-epee-attack", "/assets/plongee/enemies/monsters/sirene-epee-bouclier/Attack.png", 6, "attack", 5, 8, false],
+    ["sirene-epee-hurt", "/assets/plongee/enemies/monsters/sirene-epee-bouclier/Hurt.png", 2, "hurt", 1, 8, false],
+    ["sirene-epee-death", "/assets/plongee/enemies/monsters/sirene-epee-bouclier/Death.png", 6, "death", 5, 6, false],
+    ["sirene-mage-idle", "/assets/plongee/enemies/monsters/sirene-baton-magique/Idle.png", 4, "idle", 3, 4, true],
+    ["sirene-mage-walk", "/assets/plongee/enemies/monsters/sirene-baton-magique/Walk.png", 6, "walk", 5, 5, true],
+    ["sirene-mage-attack", "/assets/plongee/enemies/monsters/sirene-baton-magique/Attack.png", 6, "attack", 5, 8, false],
+    ["sirene-mage-hurt", "/assets/plongee/enemies/monsters/sirene-baton-magique/Hurt.png", 2, "hurt", 1, 8, false],
+    ["sirene-mage-death", "/assets/plongee/enemies/monsters/sirene-baton-magique/Death.png", 6, "death", 5, 6, false],
+    ["poisson-explosif-idle", "/assets/plongee/enemies/monsters/poisson-explosif/Idle.png", 4, "idle", 3, 5, true],
+    ["poisson-explosif-walk", "/assets/plongee/enemies/monsters/poisson-explosif/Walk.png", 4, "walk", 3, 7, true],
+    ["poisson-explosif-attack", "/assets/plongee/enemies/monsters/poisson-explosif/Attack.png", 6, "attack", 5, 10, false],
+    ["poisson-explosif-hurt", "/assets/plongee/enemies/monsters/poisson-explosif/Hurt.png", 2, "hurt", 1, 8, false],
+    ["poisson-explosif-death", "/assets/plongee/enemies/monsters/poisson-explosif/Death.png", 6, "death", 5, 8, false],
+    ["monstre-lance-idle", "/assets/plongee/enemies/monsters/monstre-lance/Idle.png", 4, "idle", 3, 4, true],
+    ["monstre-lance-walk", "/assets/plongee/enemies/monsters/monstre-lance/Walk.png", 6, "walk", 5, 6, true],
+    ["monstre-lance-attack", "/assets/plongee/enemies/monsters/monstre-lance/Attack.png", 6, "attack", 5, 8, false],
+    ["monstre-lance-hurt", "/assets/plongee/enemies/monsters/monstre-lance/Hurt.png", 2, "hurt", 1, 8, false],
+    ["monstre-lance-death", "/assets/plongee/enemies/monsters/monstre-lance/Death.png", 6, "death", 5, 6, false],
+  ];
 
-  k.loadSprite("rock-fond1", "/assets/plongee/items/rocher-fond1.png");
-  k.loadSprite("rock-fond2", "/assets/plongee/items/rocher-fond2.png");
-  k.loadSprite("rock-fond3", "/assets/plongee/items/rocher-fond3.png");
-  k.loadSprite(
-    "rock-under1",
-    "/assets/plongee/items/rocher-fond-sous-map1.png",
-  );
-  k.loadSprite(
-    "rock-under2",
-    "/assets/plongee/items/rocher-fond-sous-map2.png",
-  );
-
-  // --- UI ---
-  k.loadSprite("hp-bar", "/assets/plongee/ui/bar_fill_health.png", {
-    sliceX: 17, // L'image contient 17 états (de vide à plein)
-    sliceY: 1,
-  });
-
-  k.loadSprite("o2-bar", "/assets/plongee/ui/bar_fill_mana.png", {
-    sliceX: 17, // L'image contient 17 états (de vide à plein)
-    sliceY: 1,
-  });
-  k.loadSprite("depth-cursor", "/assets/plongee/ui/UI_Flat_IconArrow01a.png");
-
-  // ==========================================
-  // CHARGEMENT DES ENNEMIS (ZONE 1)
-  // ⚠️ À MODIFIER : Ajuste le 'sliceX' et le 'to' selon le vrai nombre d'images de chaque fichier !
-  // Exemple: si Attack.png a 6 images, met sliceX: 6 et to: 5.
-  // ==========================================
-
-  // --- ANGUILLE ---
-  k.loadSprite(
-    "anguille-idle",
-    "/assets/plongee/enemies/fishes/anguille/Idle.png",
-    {
-      sliceX: 4,
+  for (const [name, path, sliceX, animName, to, speed, loop] of ANIMATED_SPRITES) {
+    k.loadSprite(name, path, {
+      sliceX,
       sliceY: 1,
-      anims: { idle: { from: 0, to: 3, loop: true, speed: 6 } },
-    },
-  );
-  k.loadSprite(
-    "anguille-walk",
-    "/assets/plongee/enemies/fishes/anguille/Walk.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { walk: { from: 0, to: 5, loop: true, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "anguille-attack",
-    "/assets/plongee/enemies/fishes/anguille/Attack.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 5, loop: false, speed: 12 } },
-    },
-  );
-  k.loadSprite(
-    "anguille-hurt",
-    "/assets/plongee/enemies/fishes/anguille/Hurt.png",
-    {
-      sliceX: 2,
-      sliceY: 1,
-      anims: { hurt: { from: 0, to: 1, loop: false, speed: 10 } },
-    },
-  );
-  k.loadSprite(
-    "anguille-death",
-    "/assets/plongee/enemies/fishes/anguille/Death.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { death: { from: 0, to: 5, loop: false, speed: 8 } },
-    },
-  );
-
-  // --- MEDUSE ---
-  k.loadSprite(
-    "meduse-idle",
-    "/assets/plongee/enemies/fishes/meduse/Idle.png",
-    {
-      sliceX: 4,
-      sliceY: 1,
-      anims: { idle: { from: 0, to: 3, loop: true, speed: 5 } },
-    },
-  );
-  k.loadSprite(
-    "meduse-walk",
-    "/assets/plongee/enemies/fishes/meduse/Walk.png",
-    {
-      sliceX: 4,
-      sliceY: 1,
-      anims: { walk: { from: 0, to: 3, loop: true, speed: 6 } },
-    },
-  );
-  k.loadSprite(
-    "meduse-attack",
-    "/assets/plongee/enemies/fishes/meduse/Attack.png",
-    {
-      sliceX: 4,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 3, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "meduse-hurt",
-    "/assets/plongee/enemies/fishes/meduse/Hurt.png",
-    {
-      sliceX: 2,
-      sliceY: 1,
-      anims: { hurt: { from: 0, to: 1, loop: false, speed: 10 } },
-    },
-  );
-  k.loadSprite(
-    "meduse-death",
-    "/assets/plongee/enemies/fishes/meduse/Death.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { death: { from: 0, to: 5, loop: false, speed: 6 } },
-    },
-  );
-
-  // --- TORTUE ---
-  k.loadSprite(
-    "tortue-idle",
-    "/assets/plongee/enemies/fishes/tortue/Idle.png",
-    {
-      sliceX: 4,
-      sliceY: 1,
-      anims: { idle: { from: 0, to: 3, loop: true, speed: 3 } },
-    },
-  );
-  k.loadSprite(
-    "tortue-walk",
-    "/assets/plongee/enemies/fishes/tortue/Walk.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { walk: { from: 0, to: 5, loop: true, speed: 4 } },
-    },
-  );
-  k.loadSprite(
-    "tortue-attack",
-    "/assets/plongee/enemies/fishes/tortue/Attack.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 5, loop: false, speed: 6 } },
-    },
-  );
-  k.loadSprite(
-    "tortue-hurt",
-    "/assets/plongee/enemies/fishes/tortue/Hurt.png",
-    {
-      sliceX: 2,
-      sliceY: 1,
-      anims: { hurt: { from: 0, to: 1, loop: false, speed: 10 } },
-    },
-  );
-  k.loadSprite(
-    "tortue-death",
-    "/assets/plongee/enemies/fishes/tortue/Death.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { death: { from: 0, to: 5, loop: false, speed: 5 } },
-    },
-  );
-
-  // --- NOUVEAUX REQUINS DE LA ZONE 3 (Sprites 64x64, 9 frames) ---
-  k.loadSprite(
-    "requin-boss-move",
-    "/assets/plongee/enemies/monsters/requin-boss/spr_shark_move_strip9.png",
-    {
-      sliceX: 9,
-      sliceY: 1,
-      anims: { move: { from: 0, to: 8, loop: true, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "requin-boss-attack",
-    "/assets/plongee/enemies/monsters/requin-boss/spr_shark_attack_strip9.png",
-    {
-      sliceX: 9,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 8, loop: false, speed: 10 } },
-    },
-  );
-
-  k.loadSprite(
-    "requin-marteau-move",
-    "/assets/plongee/enemies/monsters/requin-marteau/spr_hammerhead_shark_move_strip9.png",
-    {
-      sliceX: 9,
-      sliceY: 1,
-      anims: { move: { from: 0, to: 8, loop: true, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "requin-marteau-attack",
-    "/assets/plongee/enemies/monsters/requin-marteau/spr_hammerhead_shark_attack_strip9.png",
-    {
-      sliceX: 9,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 8, loop: false, speed: 10 } },
-    },
-  );
-
-  k.loadSprite(
-    "requin-tigre-move",
-    "/assets/plongee/enemies/monsters/requin-tigre/spr_tiger_shark_move_strip9.png",
-    {
-      sliceX: 9,
-      sliceY: 1,
-      anims: { move: { from: 0, to: 8, loop: true, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "requin-tigre-attack",
-    "/assets/plongee/enemies/monsters/requin-tigre/spr_tiger_shark_attack_strip9.png",
-    {
-      sliceX: 9,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 8, loop: false, speed: 10 } },
-    },
-  );
-
-  // --- PIEUVRE (ZONE 2) ---
-  k.loadSprite(
-    "pieuvre-idle",
-    "/assets/plongee/enemies/fishes/pieuvre/Idle.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { idle: { from: 0, to: 5, loop: true, speed: 5 } },
-    },
-  );
-  k.loadSprite(
-    "pieuvre-walk",
-    "/assets/plongee/enemies/fishes/pieuvre/Walk.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { walk: { from: 0, to: 5, loop: true, speed: 6 } },
-    },
-  );
-  k.loadSprite(
-    "pieuvre-attack",
-    "/assets/plongee/enemies/fishes/pieuvre/Attack.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 5, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "pieuvre-hurt",
-    "/assets/plongee/enemies/fishes/pieuvre/Hurt.png",
-    {
-      sliceX: 2,
-      sliceY: 1,
-      anims: { hurt: { from: 0, to: 1, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "pieuvre-death",
-    "/assets/plongee/enemies/fishes/pieuvre/Death.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { death: { from: 0, to: 5, loop: false, speed: 6 } },
-    },
-  );
-
-  // --- POISSON-LANTERNE (ZONE 2 & 3) ---
-  k.loadSprite(
-    "lanterne-idle",
-    "/assets/plongee/enemies/fishes/poisson-lanterne/Idle.png",
-    {
-      sliceX: 4,
-      sliceY: 1,
-      anims: { idle: { from: 0, to: 3, loop: true, speed: 4 } },
-    },
-  );
-  k.loadSprite(
-    "lanterne-walk",
-    "/assets/plongee/enemies/fishes/poisson-lanterne/Walk.png",
-    {
-      sliceX: 4,
-      sliceY: 1,
-      anims: { walk: { from: 0, to: 3, loop: true, speed: 5 } },
-    },
-  );
-  k.loadSprite(
-    "lanterne-attack",
-    "/assets/plongee/enemies/fishes/poisson-lanterne/Attack.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 5, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "lanterne-hurt",
-    "/assets/plongee/enemies/fishes/poisson-lanterne/Hurt.png",
-    {
-      sliceX: 2,
-      sliceY: 1,
-      anims: { hurt: { from: 0, to: 1, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "lanterne-death",
-    "/assets/plongee/enemies/fishes/poisson-lanterne/Death.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { death: { from: 0, to: 5, loop: false, speed: 6 } },
-    },
-  );
-
-  // --- MINES DES PROFONDEURS ---
-  k.loadSprite("mine-big", "/assets/plongee/enemies/monsters/mine-big.png");
-
-  // --- SIRÈNE ÉPÉE & BOUCLIER (ZONE 2) ---
-  k.loadSprite(
-    "sirene-epee-idle",
-    "/assets/plongee/enemies/monsters/sirene-epee-bouclier/Idle.png",
-    {
-      sliceX: 4,
-      sliceY: 1,
-      anims: { idle: { from: 0, to: 3, loop: true, speed: 4 } },
-    },
-  );
-  k.loadSprite(
-    "sirene-epee-walk",
-    "/assets/plongee/enemies/monsters/sirene-epee-bouclier/Walk.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { walk: { from: 0, to: 5, loop: true, speed: 6 } },
-    },
-  );
-  k.loadSprite(
-    "sirene-epee-attack",
-    "/assets/plongee/enemies/monsters/sirene-epee-bouclier/Attack.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 5, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "sirene-epee-hurt",
-    "/assets/plongee/enemies/monsters/sirene-epee-bouclier/Hurt.png",
-    {
-      sliceX: 2,
-      sliceY: 1,
-      anims: { hurt: { from: 0, to: 1, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "sirene-epee-death",
-    "/assets/plongee/enemies/monsters/sirene-epee-bouclier/Death.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { death: { from: 0, to: 5, loop: false, speed: 6 } },
-    },
-  );
-
-  // --- SIRÈNE BÂTON MAGIQUE (ZONE 2 & 3) ---
-  k.loadSprite(
-    "sirene-mage-idle",
-    "/assets/plongee/enemies/monsters/sirene-baton-magique/Idle.png",
-    {
-      sliceX: 4,
-      sliceY: 1,
-      anims: { idle: { from: 0, to: 3, loop: true, speed: 4 } },
-    },
-  );
-  k.loadSprite(
-    "sirene-mage-walk",
-    "/assets/plongee/enemies/monsters/sirene-baton-magique/Walk.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { walk: { from: 0, to: 5, loop: true, speed: 5 } },
-    },
-  );
-  k.loadSprite(
-    "sirene-mage-attack",
-    "/assets/plongee/enemies/monsters/sirene-baton-magique/Attack.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 5, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "sirene-mage-hurt",
-    "/assets/plongee/enemies/monsters/sirene-baton-magique/Hurt.png",
-    {
-      sliceX: 2,
-      sliceY: 1,
-      anims: { hurt: { from: 0, to: 1, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "sirene-mage-death",
-    "/assets/plongee/enemies/monsters/sirene-baton-magique/Death.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { death: { from: 0, to: 5, loop: false, speed: 6 } },
-    },
-  );
-  k.loadSprite(
-    "sirene-mage-projectile",
-    "/assets/plongee/enemies/monsters/sirene-baton-magique/Projectile.png",
-  );
-
-  // --- POISSON EXPLOSIF (ZONE 2 & 3) ---
-  k.loadSprite(
-    "poisson-explosif-idle",
-    "/assets/plongee/enemies/monsters/poisson-explosif/Idle.png",
-    {
-      sliceX: 4,
-      sliceY: 1,
-      anims: { idle: { from: 0, to: 3, loop: true, speed: 5 } },
-    },
-  );
-  k.loadSprite(
-    "poisson-explosif-walk",
-    "/assets/plongee/enemies/monsters/poisson-explosif/Walk.png",
-    {
-      sliceX: 4,
-      sliceY: 1,
-      anims: { walk: { from: 0, to: 3, loop: true, speed: 7 } },
-    },
-  );
-  k.loadSprite(
-    "poisson-explosif-attack",
-    "/assets/plongee/enemies/monsters/poisson-explosif/Attack.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 5, loop: false, speed: 10 } },
-    },
-  );
-  k.loadSprite(
-    "poisson-explosif-hurt",
-    "/assets/plongee/enemies/monsters/poisson-explosif/Hurt.png",
-    {
-      sliceX: 2,
-      sliceY: 1,
-      anims: { hurt: { from: 0, to: 1, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "poisson-explosif-death",
-    "/assets/plongee/enemies/monsters/poisson-explosif/Death.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { death: { from: 0, to: 5, loop: false, speed: 8 } },
-    },
-  );
-
-  // --- MONSTRE À LA LANCE (ZONE 3) ---
-  k.loadSprite(
-    "monstre-lance-idle",
-    "/assets/plongee/enemies/monsters/monstre-lance/Idle.png",
-    {
-      sliceX: 4,
-      sliceY: 1,
-      anims: { idle: { from: 0, to: 3, loop: true, speed: 4 } },
-    },
-  );
-  k.loadSprite(
-    "monstre-lance-walk",
-    "/assets/plongee/enemies/monsters/monstre-lance/Walk.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { walk: { from: 0, to: 5, loop: true, speed: 6 } },
-    },
-  );
-  k.loadSprite(
-    "monstre-lance-attack",
-    "/assets/plongee/enemies/monsters/monstre-lance/Attack.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { attack: { from: 0, to: 5, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "monstre-lance-hurt",
-    "/assets/plongee/enemies/monsters/monstre-lance/Hurt.png",
-    {
-      sliceX: 2,
-      sliceY: 1,
-      anims: { hurt: { from: 0, to: 1, loop: false, speed: 8 } },
-    },
-  );
-  k.loadSprite(
-    "monstre-lance-death",
-    "/assets/plongee/enemies/monsters/monstre-lance/Death.png",
-    {
-      sliceX: 6,
-      sliceY: 1,
-      anims: { death: { from: 0, to: 5, loop: false, speed: 6 } },
-    },
-  );
+      anims: { [animName]: { from: 0, to, loop, speed } },
+    });
+  }
 
   k.scene("dive", () => {
     k.play("bgm-dive", { loop: true, volume: 0.5 });

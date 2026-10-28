@@ -329,51 +329,60 @@ export function spawnBossRequin(k, startX, startY, player) {
 }
 
 // ==========================================
-// 1b. LE REQUIN MARTEAU (Zone 3 - Titan Blindé : Énormément de PV, Vitesse modérée, Dégâts mesurés)
+// 1b & 1c. REQUINS PRÉDATEURS DE LA ZONE 3 (Factory commune Anti-Duplication)
 // ==========================================
 /**
- * Fait apparaître un Requin-Marteau blindé dans la Zone 3.
- * Titan très résistant (145 PV) qui traque le plongeur à portée d'aggro.
+ * Usine générique de fabrication des requins prédateurs de la Zone 3.
+ * Factorise la logique de patrouille, de poursuite agressive et d'attaque pour éliminer la duplication.
  *
  * @param {import("kaplay").KaplayCtx} k - Instance du contexte Kaplay.
  * @param {number} startX - Position X initiale.
  * @param {number} startY - Position Y initiale.
  * @param {import("kaplay").GameObj} player - Référence du joueur cible.
- * @returns {import("kaplay").GameObj} Entité du requin-marteau.
+ * @param {object} config - Configuration spécifique de l'espèce de requin.
+ * @returns {import("kaplay").GameObj} Entité requin instanciée.
  */
-export function spawnRequinMarteau(k, startX, startY, player) {
-  const PATROL_SPEED = 85;
-  const CHASE_SPEED = 175;
+function createZone3Shark(k, startX, startY, player, config) {
+  const {
+    speciesTag,
+    moveSprite,
+    attackSprite,
+    hp,
+    damage,
+    patrolSpeed,
+    chaseSpeed,
+    aggroDist,
+  } = config;
   const MIN_Y = 7050;
   const MAX_Y = 11800;
-  const AGGRO_DIST = 600;
 
   const requin = k.add([
-    k.sprite("requin-marteau-move"),
+    k.sprite(moveSprite),
     k.pos(startX, startY),
     k.scale(2.4),
     k.anchor("center"),
     k.rotate(0),
     k.area({ shape: new k.Rect(k.vec2(0, 0), 40, 18) }),
     k.body({ isStatic: true }),
-    k.health(170), // Blindé avec beaucoup de PV
+    k.health(hp),
     k.state("patrol", ["patrol", "chase", "attack", "hurt", "death"]),
     k.timer(),
     "enemy",
     "requin",
-    "requin-marteau",
-    { dirX: 1, damage: 20, attackCooldown: false },
+    speciesTag,
+    { dirX: 1, damage, attackCooldown: false },
   ]);
 
   requin.play("move");
 
   requin.onStateEnter("patrol", () => {
-    requin.use(k.sprite("requin-marteau-move"));
+    requin.use(k.sprite(moveSprite));
     requin.play("move");
   });
 
   requin.onStateUpdate("patrol", () => {
-    requin.move(PATROL_SPEED * requin.dirX, 0);
+    if (!requin.exists()) return;
+    requin.move(patrolSpeed * requin.dirX, 0);
 
     if (requin.pos.x < -7800 || requin.pos.x > 7800) {
       requin.dirX *= -1;
@@ -382,13 +391,13 @@ export function spawnRequinMarteau(k, startX, startY, player) {
 
     requin.pos.y = k.clamp(requin.pos.y, MIN_Y, MAX_Y);
 
-    if (player && player.pos && player.pos.y >= 7000 && requin.pos.dist(player.pos) < AGGRO_DIST) {
+    if (player && player.pos && player.pos.y >= 7000 && requin.pos.dist(player.pos) < aggroDist) {
       requin.enterState("chase");
     }
   });
 
   requin.onStateEnter("chase", () => {
-    requin.use(k.sprite("requin-marteau-move"));
+    requin.use(k.sprite(moveSprite));
     requin.play("move");
   });
 
@@ -411,13 +420,13 @@ export function spawnRequinMarteau(k, startX, startY, player) {
     } else {
       dir = dir.unit();
     }
-    requin.move(dir.scale(CHASE_SPEED));
+    requin.move(dir.scale(chaseSpeed));
     requin.flipX = dir.x < 0;
     requin.pos.y = k.clamp(requin.pos.y, MIN_Y, MAX_Y);
   });
 
   requin.onStateEnter("attack", () => {
-    requin.use(k.sprite("requin-marteau-attack"));
+    requin.use(k.sprite(attackSprite));
     requin.play("attack");
     requin.attackCooldown = true;
 
@@ -436,7 +445,6 @@ export function spawnRequinMarteau(k, startX, startY, player) {
     });
   });
 
-  // Dégâts visuels sans sprite 'hurt'
   requin.on("hurt", () => {
     if (requin.state === "death" || !requin.exists()) return;
     spawnDamageHitFX(k, requin.pos);
@@ -459,7 +467,6 @@ export function spawnRequinMarteau(k, startX, startY, player) {
     }
   });
 
-  // Mort dynamique : renversement 180° et chute vers les fonds marins
   requin.on("death", () => requin.enterState("death"));
   requin.onStateEnter("death", () => {
     requin.untag("enemy");
@@ -497,9 +504,29 @@ export function spawnRequinMarteau(k, startX, startY, player) {
   return requin;
 }
 
-// ==========================================
-// 1c. LE REQUIN TIGRE (Zone 3 - Traqueur Féroce : Moins de PV que le Marteau, Ultra-Rapide, Dégâts vifs)
-// ==========================================
+/**
+ * Fait apparaître un Requin-Marteau blindé dans la Zone 3.
+ * Titan très résistant (170 PV) qui traque le plongeur à portée d'aggro.
+ *
+ * @param {import("kaplay").KaplayCtx} k - Instance du contexte Kaplay.
+ * @param {number} startX - Position X initiale.
+ * @param {number} startY - Position Y initiale.
+ * @param {import("kaplay").GameObj} player - Référence du joueur cible.
+ * @returns {import("kaplay").GameObj} Entité du requin-marteau.
+ */
+export function spawnRequinMarteau(k, startX, startY, player) {
+  return createZone3Shark(k, startX, startY, player, {
+    speciesTag: "requin-marteau",
+    moveSprite: "requin-marteau-move",
+    attackSprite: "requin-marteau-attack",
+    hp: 170,
+    damage: 20,
+    patrolSpeed: 85,
+    chaseSpeed: 175,
+    aggroDist: 600,
+  });
+}
+
 /**
  * Fait apparaître un Requin-Tigre traqueur féroce dans la Zone 3.
  * Prédateur très rapide et agressif avec une longue portée de détection.
@@ -511,160 +538,16 @@ export function spawnRequinMarteau(k, startX, startY, player) {
  * @returns {import("kaplay").GameObj} Entité du requin-tigre.
  */
 export function spawnRequinTigre(k, startX, startY, player) {
-  const PATROL_SPEED = 125;
-  const CHASE_SPEED = 255;
-  const MIN_Y = 7050;
-  const MAX_Y = 11800;
-  const AGGRO_DIST = 650;
-
-  const requin = k.add([
-    k.sprite("requin-tigre-move"),
-    k.pos(startX, startY),
-    k.scale(2.4),
-    k.anchor("center"),
-    k.rotate(0),
-    k.area({ shape: new k.Rect(k.vec2(0, 0), 40, 18) }),
-    k.body({ isStatic: true }),
-    k.health(100),
-    k.state("patrol", ["patrol", "chase", "attack", "hurt", "death"]),
-    k.timer(),
-    "enemy",
-    "requin",
-    "requin-tigre",
-    { dirX: 1, damage: 24, attackCooldown: false },
-  ]);
-
-  requin.play("move");
-
-  requin.onStateEnter("patrol", () => {
-    requin.use(k.sprite("requin-tigre-move"));
-    requin.play("move");
+  return createZone3Shark(k, startX, startY, player, {
+    speciesTag: "requin-tigre",
+    moveSprite: "requin-tigre-move",
+    attackSprite: "requin-tigre-attack",
+    hp: 100,
+    damage: 24,
+    patrolSpeed: 125,
+    chaseSpeed: 255,
+    aggroDist: 650,
   });
-
-  requin.onStateUpdate("patrol", () => {
-    if (!requin.exists()) return;
-    requin.move(PATROL_SPEED * requin.dirX, 0);
-
-    if (requin.pos.x < -7800 || requin.pos.x > 7800) {
-      requin.dirX *= -1;
-      requin.flipX = requin.dirX < 0;
-    }
-
-    requin.pos.y = k.clamp(requin.pos.y, MIN_Y, MAX_Y);
-
-    if (player && player.pos && player.pos.y >= 7000 && requin.pos.dist(player.pos) < AGGRO_DIST) {
-      requin.enterState("chase");
-    }
-  });
-
-  requin.onStateEnter("chase", () => {
-    requin.use(k.sprite("requin-tigre-move"));
-    requin.play("move");
-  });
-
-  requin.onStateUpdate("chase", () => {
-    if (!requin.exists()) return;
-    if (!player || !player.pos || player.pos.y < 7000) {
-      requin.enterState("patrol");
-      return;
-    }
-
-    const dist = requin.pos.dist(player.pos);
-    if (dist < 80 && !requin.attackCooldown) {
-      requin.enterState("attack");
-      return;
-    }
-
-    let dir = player.pos.sub(requin.pos);
-    if (dir.len() < 0.001) {
-      dir = k.vec2(1, 0);
-    } else {
-      dir = dir.unit();
-    }
-    requin.move(dir.scale(CHASE_SPEED));
-    requin.flipX = dir.x < 0;
-    requin.pos.y = k.clamp(requin.pos.y, MIN_Y, MAX_Y);
-  });
-
-  requin.onStateEnter("attack", () => {
-    requin.use(k.sprite("requin-tigre-attack"));
-    requin.play("attack");
-    requin.attackCooldown = true;
-
-    if (player && player.pos && requin.pos.dist(player.pos) < 90) {
-      if (player.takeDamage) player.takeDamage(requin.damage);
-    }
-
-    requin.wait(0.65, () => {
-      if (requin.state !== "death" && requin.exists()) {
-        requin.enterState("chase");
-      }
-    });
-
-    requin.wait(1.6, () => {
-      requin.attackCooldown = false;
-    });
-  });
-
-  // Dégâts visuels
-  requin.on("hurt", () => {
-    if (requin.state === "death" || !requin.exists()) return;
-    spawnDamageHitFX(k, requin.pos);
-    k.shake(4);
-
-    requin.color = k.rgb(255, 60, 60);
-    requin.wait(0.12, () => {
-      if (requin.exists()) requin.color = k.rgb(255, 200, 200);
-    });
-    requin.wait(0.24, () => {
-      if (requin.exists()) requin.color = k.rgb(255, 255, 255);
-    });
-
-    if (player && player.pos) {
-      let pushDir = requin.pos.sub(player.pos);
-      if (pushDir.len() >= 0.001) {
-        pushDir = pushDir.unit();
-        requin.pos = requin.pos.add(pushDir.scale(18));
-      }
-    }
-  });
-
-  // Mort dynamique
-  requin.on("death", () => requin.enterState("death"));
-  requin.onStateEnter("death", () => {
-    requin.untag("enemy");
-    requin.unuse("area");
-    k.shake(6);
-    spawnDamageHitFX(k, requin.pos);
-
-    let destroyed = false;
-    const finishDeath = () => {
-      if (destroyed) return;
-      destroyed = true;
-      const dropPos = requin.pos ? k.vec2(requin.pos.x, requin.pos.y) : null;
-      k.destroy(requin);
-      if (dropPos) spawnLootItem(k, dropPos, "shark_tooth");
-    };
-
-    let deathTimer = 0;
-    const deathDuration = 1.1;
-    requin.onUpdate(() => {
-      if (!requin.exists() || requin.state !== "death") return;
-      deathTimer += k.dt();
-      requin.angle = k.lerp(0, 180, Math.min(1, deathTimer * 2));
-      requin.pos.y += 40 * k.dt();
-      requin.opacity = Math.max(0, 1 - deathTimer / deathDuration);
-
-      if (deathTimer >= deathDuration) {
-        finishDeath();
-      }
-    });
-
-    requin.wait(deathDuration + 0.1, finishDeath);
-  });
-
-  requin.enterState("patrol");
-  return requin;
 }
 
 // ==========================================
