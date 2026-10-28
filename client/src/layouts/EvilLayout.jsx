@@ -1,6 +1,9 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 
 function EvilLayout() {
+  const location = useLocation();
+  const isDiving = location.pathname.includes("/plongee");
+
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 font-sans flex flex-col">
       {/* Barre de navigation Evil */}
@@ -42,13 +45,13 @@ function EvilLayout() {
         </div>
       </header>
 
-      {/* Contenu dynamique des pages */}
-      <div className="flex-1 w-full max-w-7xl mx-auto p-6">
+      {/* Contenu dynamique des pages (Pleine largeur sans marge pour le jeu de plongée) */}
+      <div className={`flex-1 w-full ${isDiving ? "p-0 overflow-hidden flex flex-col min-h-0" : "max-w-7xl mx-auto p-6"}`}>
         <Outlet />
       </div>
 
-      {/* Footer fixe */}
-      <footer className="text-center p-4 text-sm text-gray-500 border-t border-gray-800 mt-auto">
+      {/* Footer fixe visible sur toutes les pages */}
+      <footer className="text-center p-3 text-xs text-gray-500 border-t border-gray-800 shrink-0">
         Projet étudiant SAE - Ceci n'est pas une plateforme officielle
       </footer>
     </div>

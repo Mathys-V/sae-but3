@@ -1,3 +1,11 @@
+/**
+ * Construit les obstacles physiques de délimitation du terrain : bouées flottantes,
+ * chaînes d'ancrage, murs invisibles verticaux et plancher sous-marin.
+ *
+ * @param {import("kaplay").KaplayCtx} k - Instance du contexte Kaplay.
+ * @param {number} waterLevel - Niveau Y de la surface de l'eau (0).
+ * @param {number} oceanDepth - Profondeur maximale de l'océan (12 000).
+ */
 export function setupTerrain(k, waterLevel, oceanDepth) {
   // ================= PARAMÈTRES À RÉGLER =================
   const PLAYABLE_WIDTH = 16000; // largeur jouable (garde OCEAN_WIDTH de map.js > cette valeur)
@@ -99,6 +107,13 @@ export function setupTerrain(k, waterLevel, oceanDepth) {
   setupSeabed(k, oceanDepth);
 }
 
+/**
+ * Génère le décor rocheux du lit océanique avec un générateur pseudo-aléatoire à graine fixe
+ * assurant un paysage sous-marin strictement identique et déterministe.
+ *
+ * @param {import("kaplay").KaplayCtx} k - Instance du contexte Kaplay.
+ * @param {number} oceanDepth - Coordonnée Y du fond de l'océan.
+ */
 function setupSeabed(k, oceanDepth) {
   // ================= PARAMÈTRES =================
   const SEABED_WIDTH = 20000; // = OCEAN_WIDTH de map.js

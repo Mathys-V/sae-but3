@@ -4,20 +4,30 @@ import {
   spawnTortue,
 } from "../entities/ennemies/fishes.js";
 
-export function populateZone1(k, borderLeft, borderRight) {
+/**
+ * Peuple la Zone 1 (Surface à 3 000 m) avec des créatures pacifiques et défensives :
+ * anguilles électriques, méduses dérivantes et tortues marines protectrices.
+ *
+ * @param {import("kaplay").KaplayCtx} k - Instance du contexte Kaplay.
+ * @param {number} borderLeft - Limite X gauche d'apparition.
+ * @param {number} borderRight - Limite X droite d'apparition.
+ * @param {import("kaplay").GameObj} player - Référence du joueur cible.
+ */
+export function populateZone1(k, borderLeft, borderRight, player) {
   const ZONE1_START_Y = 200;
-  const ZONE1_END_Y = 3000; // 👈 On double la limite basse de spawn
+  const ZONE1_END_Y = 3000;
 
-  // 👈 On multiplie les quantités pour remplir cet immense océan
-  const ANGUILLES_COUNT = 60;
-  const MEDUSES_COUNT = 50;
-  const TORTUES_COUNT = 25;
+  // Faune équilibrée et fluide pour la Zone 1
+  const ANGUILLES_COUNT = 18;
+  const MEDUSES_COUNT = 14;
+  const TORTUES_COUNT = 6;
 
   for (let i = 0; i < ANGUILLES_COUNT; i++) {
     spawnAnguille(
       k,
       k.rand(borderLeft, borderRight),
       k.rand(ZONE1_START_Y, ZONE1_END_Y),
+      player,
     );
   }
 
@@ -26,6 +36,7 @@ export function populateZone1(k, borderLeft, borderRight) {
       k,
       k.rand(borderLeft, borderRight),
       k.rand(ZONE1_START_Y, ZONE1_END_Y),
+      player,
     );
   }
 
@@ -34,6 +45,7 @@ export function populateZone1(k, borderLeft, borderRight) {
       k,
       k.rand(borderLeft, borderRight),
       k.rand(ZONE1_START_Y, ZONE1_END_Y),
+      player,
     );
   }
 }

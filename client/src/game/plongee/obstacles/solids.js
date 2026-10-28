@@ -1,4 +1,11 @@
-// Tout objet avec k.area() + le tag "solid" bloque le joueur.
+/**
+ * Configure la gestion des collisions continues AABB (Axis-Aligned Bounding Box) entre le joueur
+ * et les solides statiques du décor (plancher de la barque, parois de bouées, rochers).
+ * Résout les pénétrations d'axe X puis d'axe Y pour garantir un contact fluide sans traversée.
+ *
+ * @param {import("kaplay").KaplayCtx} k - Instance du contexte Kaplay.
+ * @param {import("kaplay").GameObj} player - Entité du joueur à contraindre.
+ */
 export function setupSolids(k, player) {
   // Boîte du joueur calculée à la main (centrée sur pos, comme sur ton debug)
   // hitbox 12x12 * scale 2 = 24x24 -> demi-taille 12
@@ -33,8 +40,21 @@ export function setupSolids(k, player) {
   let grounded = false;
   player.isGrounded = () => grounded;
 
+  // Permet de réinitialiser la position de référence lors d'une téléportation (ex: respawn)
+  // pour éviter que le moteur ne croie à un déplacement ascendant violent et écrase le joueur sous le plancher
+  player.resetSolidsHistory = (x, y) => {
+    prevX = x !== undefined ? x : player.pos.x;
+    prevY = y !== undefined ? y : player.pos.y;
+  };
+
+  // Mise en cache des solides statiques pour éviter des itérations lourdes à 60 FPS
+  let cachedSolids = null;
+
   player.onUpdate(() => {
-    const solids = k.get("solid").map(sBox);
+    if (!cachedSolids) {
+      cachedSolids = k.get("solid").map(sBox);
+    }
+    const solids = cachedSolids;
     const curX = player.pos.x;
     const curY = player.pos.y;
     grounded = false;
