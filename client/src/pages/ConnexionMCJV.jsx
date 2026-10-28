@@ -9,7 +9,7 @@ const staffFaq = [
       <p>
         {" "}
         Oh non, la machine est ENCORE HS ????? Pas de souci, vous pouvez
-        toujours vous rendre <a>ici</a> pour une pause gourmande.
+        toujours vous rendre <button type="button" className="link-button">ici</button> pour une pause gourmande.
       </p>
     ),
   },
@@ -23,20 +23,20 @@ const staffFaq = [
     answer: (
       <p>
         Ce genre de situation peut s'avérer agaçante. Gardez votre calme, faites
-        comme si vous n'avez rien vu et <a>cliquez ici</a> pour vous détendre.
+        comme si vous n'avez rien vu et <button type="button" className="link-button">cliquez ici</button> pour vous détendre.
       </p>
     ),
   },
   {
     question: "Ne me clique pas",
-    answer: <a>Ne clique pas sur moi, suuuurtout pas.</a>,
+    answer: <button type="button" className="link-button">Ne clique pas sur moi, suuuurtout pas.</button>,
   },
   {
     question: "Je ne trouve pas la réponse à mon problème.",
     answer: (
       <p>
         {" "}
-        Ca tombe bien, <a>cliquez ici</a> et vous aurez toutes les réponses à
+        Ca tombe bien, <button type="button" className="link-button">cliquez ici</button> et vous aurez toutes les réponses à
         vos questions.
       </p>
     ),
@@ -50,7 +50,7 @@ const studentFaq = [
       <>
         <p>
           Pourquoi vouloir accéder à la plateforme PasMesCoursJV alors qu'il
-          existe un site bien meilleur ? Clique <a>ici</a>.
+          existe un site bien meilleur ? Clique <button type="button" className="link-button">ici</button>.
         </p>
       </>
     ),
@@ -60,7 +60,7 @@ const studentFaq = [
     answer: (
       <p>
         Laissez tomber Roblox, c'est un jeu pour les enfants. Vous pouvez
-        toujours rejoindre la cour des grands <a>ici</a>.
+        toujours rejoindre la cour des grands <button type="button" className="link-button">ici</button>.
       </p>
     ),
   },
@@ -83,7 +83,7 @@ const studentFaq = [
     answer: (
       <p>
         {" "}
-        Clique <a>ici</a> pour te faire de nouveaux amis et t'intégrer dans ton
+        Clique <button type="button" className="link-button">ici</button> pour te faire de nouveaux amis et t'intégrer dans ton
         groupe de travail.
       </p>
     ),
@@ -93,7 +93,7 @@ const studentFaq = [
     answer: (
       <p>
         {" "}
-        Ca tombe bien, <a>cliquez ici</a> et vous aurez toutes les réponses à
+        Ca tombe bien, <button type="button" className="link-button">cliquez ici</button> et vous aurez toutes les réponses à
         vos questions.
       </p>
     ),
@@ -126,7 +126,6 @@ function ConnexionMCJV() {
   const [evilIdentifier, setEvilIdentifier] = useState("");
   const [evilPassword, setEvilPassword] = useState("");
   const [showEvilPassword, setShowEvilPassword] = useState(false);
-  const [evilProfile, setEvilProfile] = useState("Étudiant");
   const [loginButtonPosition, setLoginButtonPosition] = useState(null);
   const [popUpButtons, setPopUpButtons] = useState([]);
   const loginButtonRef = useRef(null);
@@ -399,7 +398,7 @@ function ConnexionMCJV() {
           </form>
           <p className="signup-copy">
             Tu souhaites travailler avec sérieux ? Ne clique pas{" "}
-            <a onClick={activateEvil}>ici</a>
+            <button type="button" className="link-button" onClick={activateEvil}>ici</button>
           </p>
         </section>
         {!isEvil && (

@@ -39,6 +39,26 @@ a {
 a:hover {
   color: #075c77;
 }
+.link-button {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #087f9a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  font: inherit;
+}
+.link-button:hover {
+  color: #075c77;
+}
+.evil-transformation .link-button {
+  color: #ff5264;
+}
+.evil-transformation .link-button:hover {
+  color: #ff808e;
+}
 button:focus-visible,
 a:focus-visible,
 select:focus-visible,
@@ -537,7 +557,7 @@ summary:focus-visible {
   font-size: 18px;
 }
 .material-symbols-outlined {
-  font-family: "Material Symbols Outlined";
+  font-family: "Material Symbols Outlined", sans-serif;
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
