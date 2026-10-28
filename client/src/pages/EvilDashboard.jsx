@@ -38,9 +38,11 @@ function EvilDashboard() {
 
   return (
     <main className="space-y-8 animate-fade-in">
-      {/* Bandeau de bienvenue (Modifié pour afficher le pseudo) */}
-      <div className="bg-red-900 text-white p-8 text-center rounded shadow-lg border border-red-700">
-        <h1 className="text-5xl font-bold">Bienvenue sur evilJV, {user} !</h1>
+      {/* Titre EvilJV centré et imposant */}
+      <div className="w-full text-center mb-12 flex justify-center items-center">
+        <h1 className="text-8xl sm:text-9xl md:text-[12rem] lg:text-[15rem] font-redden tracking-widest leading-none drop-shadow-[0_6px_20px_rgba(0,0,0,0.9)] select-none">
+          EvilJV
+        </h1>
       </div>
 
       {/* Les 3 cartes principales */}

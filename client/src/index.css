@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: "Redden";
+  src: url("./assets/fonts/Redden.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@theme {
+  --font-redden: "Redden", sans-serif;
+}
+
+.font-redden {
+  font-family: "Redden", sans-serif;
+}
