@@ -14,9 +14,6 @@ function SiteHeader() {
       <p className="header-warn">
         Projet étudiant - Ceci n'est pas la plateforme officielle
       </p>
-      <Link className="header-login" to="/connexionMCJV#connexion">
-        <span aria-hidden="true">⇥</span> Connexion
-      </Link>
     </header>
   );
 }
