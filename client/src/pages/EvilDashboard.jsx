@@ -5,6 +5,14 @@ import { useAuthStore } from "../store/authStore.js";
 import LoginForm from "../components/LoginForm.jsx";
 import Leaderboard from "../components/Leaderboard.jsx";
 
+// Import des icônes et fonds
+import bookIcon from "../assets/icons/book.png";
+import portalIcon from "../assets/icons/portal.png";
+import medalIcon from "../assets/icons/medal.png";
+import libraryBg from "../assets/librarybg.jpg";
+import spaceBg from "../assets/spacebg.jpg";
+import treasureBg from "../assets/treasurebg.jpg";
+
 function EvilDashboard() {
   // 1. TOUS LES HOOKS EN PREMIER (Règle d'or de React)
   const { user } = useAuthStore();
@@ -37,39 +45,81 @@ function EvilDashboard() {
 
       {/* Les 3 cartes principales */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gray-800 p-4 rounded border border-gray-700 flex flex-col items-center">
-          <div className="text-6xl mb-4">📖💡</div>
-          <h2 className="text-xl font-bold mb-4 w-full border-b border-gray-700 pb-2 text-center">
-            Tutoriel
-          </h2>
+        {/* Carte Tutoriel */}
+        <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden flex flex-col group transition-all duration-300 shadow-lg">
           <Link
             to="/evil/jeux/tutoriel"
-            className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-center block"
+            className="relative w-full h-52 bg-cover bg-center flex items-center justify-center overflow-hidden border-b border-gray-700/80 cursor-pointer block"
+            style={{ backgroundImage: `url(${libraryBg})` }}
           >
-            Accéder
+            <div className="absolute inset-0 bg-black/35 group-hover:bg-black/15 transition-colors duration-300" />
+            <img
+              src={bookIcon}
+              alt="Tutoriel"
+              className="relative z-10 w-32 h-32 md:w-36 md:h-36 object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)] transition-transform duration-300 ease-out group-hover:scale-115"
+            />
           </Link>
+          <div className="p-4 flex flex-col items-center flex-1 justify-between">
+            <h2 className="text-xl font-bold mb-4 w-full border-b border-gray-700 pb-2 text-center text-white">
+              Tutoriel
+            </h2>
+            <Link
+              to="/evil/jeux/tutoriel"
+              className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-center block text-white font-medium transition-colors"
+            >
+              Accéder
+            </Link>
+          </div>
         </div>
-        <div className="bg-gray-800 p-4 rounded border border-gray-700 flex flex-col items-center">
-          <div className="text-6xl mb-4">🌍</div>
-          <h2 className="text-xl font-bold mb-4 w-full border-b border-gray-700 pb-2 text-center">
-            Monde de jeux
-          </h2>
+
+        {/* Carte Monde de jeux */}
+        <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden flex flex-col group transition-all duration-300 shadow-lg">
           <Link
             to="/evil/jeux"
-            className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-center block"
+            className="relative w-full h-52 bg-cover bg-center flex items-center justify-center overflow-hidden border-b border-gray-700/80 cursor-pointer block"
+            style={{ backgroundImage: `url(${spaceBg})` }}
           >
-            Accéder
+            <div className="absolute inset-0 bg-black/35 group-hover:bg-black/15 transition-colors duration-300" />
+            <img
+              src={portalIcon}
+              alt="Monde de jeux"
+              className="relative z-10 w-32 h-32 md:w-36 md:h-36 object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)] transition-transform duration-300 ease-out group-hover:scale-115"
+            />
           </Link>
+          <div className="p-4 flex flex-col items-center flex-1 justify-between">
+            <h2 className="text-xl font-bold mb-4 w-full border-b border-gray-700 pb-2 text-center text-white">
+              Monde de jeux
+            </h2>
+            <Link
+              to="/evil/jeux"
+              className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-center block text-white font-medium transition-colors"
+            >
+              Accéder
+            </Link>
+          </div>
         </div>
-        <div className="bg-gray-800 p-4 rounded border border-gray-700 flex flex-col items-center relative">
-          <div className="absolute -top-4 -right-4 text-4xl">🦆</div>
-          <div className="text-6xl mb-4">🏅</div>
-          <h2 className="text-xl font-bold mb-4 w-full border-b border-gray-700 pb-2 text-center">
-            Succès
-          </h2>
-          <button className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded">
-            Accéder
-          </button>
+
+        {/* Carte Succès */}
+        <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden flex flex-col group transition-all duration-300 shadow-lg">
+          <div
+            className="relative w-full h-52 bg-cover bg-center flex items-center justify-center overflow-hidden border-b border-gray-700/80 cursor-pointer"
+            style={{ backgroundImage: `url(${treasureBg})` }}
+          >
+            <div className="absolute inset-0 bg-black/35 group-hover:bg-black/15 transition-colors duration-300" />
+            <img
+              src={medalIcon}
+              alt="Succès"
+              className="relative z-10 w-32 h-32 md:w-36 md:h-36 object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)] transition-transform duration-300 ease-out group-hover:scale-115"
+            />
+          </div>
+          <div className="p-4 flex flex-col items-center flex-1 justify-between">
+            <h2 className="text-xl font-bold mb-4 w-full border-b border-gray-700 pb-2 text-center text-white">
+              Succès
+            </h2>
+            <button className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded text-white font-medium transition-colors">
+              Accéder
+            </button>
+          </div>
         </div>
       </div>
 
