@@ -822,4 +822,5 @@ summary:focus-visible {
     url("assets/fonts/pixelzone-e4mv4-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }

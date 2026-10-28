@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const staffFaq = [
+const getStaffFaq = (onActivateEvil) => [
   {
     question:
       "Rupture totale de café à la machine du hall, que dois-je faire ?",
@@ -9,7 +9,15 @@ const staffFaq = [
       <p>
         {" "}
         Oh non, la machine est ENCORE HS ????? Pas de souci, vous pouvez
-        toujours vous rendre <button type="button" className="link-button">ici</button> pour une pause gourmande.
+        toujours vous rendre{" "}
+        <button
+          type="button"
+          className="link-button"
+          onClick={onActivateEvil}
+        >
+          ici
+        </button>{" "}
+        pour une pause gourmande.
       </p>
     ),
   },
@@ -23,34 +31,65 @@ const staffFaq = [
     answer: (
       <p>
         Ce genre de situation peut s'avérer agaçante. Gardez votre calme, faites
-        comme si vous n'avez rien vu et <button type="button" className="link-button">cliquez ici</button> pour vous détendre.
+        comme si vous n'avez rien vu et{" "}
+        <button
+          type="button"
+          className="link-button"
+          onClick={onActivateEvil}
+        >
+          cliquez ici
+        </button>{" "}
+        pour vous détendre.
       </p>
     ),
   },
   {
     question: "Ne me clique pas",
-    answer: <button type="button" className="link-button">Ne clique pas sur moi, suuuurtout pas.</button>,
+    answer: (
+      <button
+        type="button"
+        className="link-button"
+        onClick={onActivateEvil}
+      >
+        Ne clique pas sur moi, suuuurtout pas.
+      </button>
+    ),
   },
   {
     question: "Je ne trouve pas la réponse à mon problème.",
     answer: (
       <p>
         {" "}
-        Ca tombe bien, <button type="button" className="link-button">cliquez ici</button> et vous aurez toutes les réponses à
-        vos questions.
+        Ca tombe bien,{" "}
+        <button
+          type="button"
+          className="link-button"
+          onClick={onActivateEvil}
+        >
+          cliquez ici
+        </button>{" "}
+        et vous aurez toutes les réponses à vos questions.
       </p>
     ),
   },
 ];
 
-const studentFaq = [
+const getStudentFaq = (onActivateEvil) => [
   {
     question: "Comment accéder à la plateforme PasMesCoursJV ?",
     answer: (
       <>
         <p>
           Pourquoi vouloir accéder à la plateforme PasMesCoursJV alors qu'il
-          existe un site bien meilleur ? Clique <button type="button" className="link-button">ici</button>.
+          existe un site bien meilleur ? Clique{" "}
+          <button
+            type="button"
+            className="link-button"
+            onClick={onActivateEvil}
+          >
+            ici
+          </button>
+          .
         </p>
       </>
     ),
@@ -60,7 +99,15 @@ const studentFaq = [
     answer: (
       <p>
         Laissez tomber Roblox, c'est un jeu pour les enfants. Vous pouvez
-        toujours rejoindre la cour des grands <button type="button" className="link-button">ici</button>.
+        toujours rejoindre la cour des grands{" "}
+        <button
+          type="button"
+          className="link-button"
+          onClick={onActivateEvil}
+        >
+          ici
+        </button>
+        .
       </p>
     ),
   },
@@ -83,8 +130,15 @@ const studentFaq = [
     answer: (
       <p>
         {" "}
-        Clique <button type="button" className="link-button">ici</button> pour te faire de nouveaux amis et t'intégrer dans ton
-        groupe de travail.
+        Clique{" "}
+        <button
+          type="button"
+          className="link-button"
+          onClick={onActivateEvil}
+        >
+          ici
+        </button>{" "}
+        pour te faire de nouveaux amis et t'intégrer dans ton groupe de travail.
       </p>
     ),
   },
@@ -93,8 +147,15 @@ const studentFaq = [
     answer: (
       <p>
         {" "}
-        Ca tombe bien, <button type="button" className="link-button">cliquez ici</button> et vous aurez toutes les réponses à
-        vos questions.
+        Ca tombe bien,{" "}
+        <button
+          type="button"
+          className="link-button"
+          onClick={onActivateEvil}
+        >
+          cliquez ici
+        </button>{" "}
+        et vous aurez toutes les réponses à vos questions.
       </p>
     ),
   },
@@ -223,19 +284,17 @@ function ConnexionMCJV() {
     }, 5000);
     return () => window.clearInterval(interval);
   }, [isEvil]);
-  const questions = activeTab === "enseignants" ? staffFaq : studentFaq;
-
   function activateEvil(event) {
-    event.preventDefault();
+    event?.preventDefault?.();
     setPopUpButtons([]);
     setLoginButtonPosition(null);
     setIsEvil(true);
   }
 
-  function activateEvilFromFaq(event) {
-    if (!event.target.closest("a")) return;
-    activateEvil(event);
-  }
+  const questions =
+    activeTab === "enseignants"
+      ? getStaffFaq(activateEvil)
+      : getStudentFaq(activateEvil);
 
   useEffect(() => {
     function resetInstitution() {
@@ -405,7 +464,6 @@ function ConnexionMCJV() {
           <section
             className="faq-section"
             aria-labelledby="faq-title"
-            onClick={activateEvilFromFaq}
           >
             <div className="faq-heading">
               <span className="faq-kicker">Aide et assistance</span>
