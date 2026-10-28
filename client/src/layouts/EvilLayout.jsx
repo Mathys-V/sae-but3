@@ -9,27 +9,24 @@ function EvilLayout() {
       {/* Barre de navigation Evil */}
       <header className="bg-gray-950 border-b border-red-900 p-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-6">
-          <div className="text-red-600 font-bold text-2xl tracking-widest">
-            EVIL<span className="text-gray-100">JV</span>
-          </div>
           <nav className="flex gap-6 font-medium">
             <Link
               to="/evil"
               className="hover:text-red-500 flex items-center gap-2"
             >
-              🏠 Accueil
+              Accueil
             </Link>
             <Link
               to="/evil/jeux"
               className="hover:text-red-500 flex items-center gap-2"
             >
-              🎮 Mes jeux
+              Mes jeux
             </Link>
             <span className="text-yellow-500 flex items-center gap-2 cursor-not-allowed">
-              🪙 Coins
+              Coins
             </span>
             <span className="text-gray-400 flex items-center gap-2 cursor-not-allowed">
-              👥 Multijoueurs
+              Multijoueurs
             </span>
           </nav>
         </div>
