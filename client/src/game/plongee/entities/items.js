@@ -140,7 +140,7 @@ export function spawnLootItem(k, pos, lootType) {
         const badgeW = Math.max(160, itemInfo.name.length * 10 + 60);
         const badgeBg = k.add([
           k.rect(badgeW, 26),
-          k.pos(this.pos.x, this.pos.y - 20),
+          k.pos(this.pos.x, this.pos.y - 35),
           k.anchor("center"),
           k.color(10, 18, 30),
           k.outline(2, k.rgb(250, 204, 21)),
@@ -153,7 +153,7 @@ export function spawnLootItem(k, pos, lootType) {
             size: 13,
             font: "Silkscreen",
           }),
-          k.pos(this.pos.x, this.pos.y - 20),
+          k.pos(this.pos.x, this.pos.y - 35),
           k.color(254, 240, 138),
           k.anchor("center"),
           k.z(151),

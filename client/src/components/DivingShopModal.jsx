@@ -56,7 +56,6 @@ const UPGRADE_DEFINITIONS = {
  */
 function DivingShopModal({ isOpen, onClose }) {
   const [tick, setTick] = useState(0);
-  void tick;
   const [srMessage, setSrMessage] = useState("");
   const closeButtonRef = useRef(null);
 
@@ -145,6 +144,7 @@ function DivingShopModal({ isOpen, onClose }) {
   return (
     <dialog
       open
+      data-render-tick={tick}
       aria-labelledby="shop-modal-title"
       aria-describedby="shop-modal-desc"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-3 sm:p-4 animate-fade-in w-full h-full max-w-none max-h-none border-none m-0"

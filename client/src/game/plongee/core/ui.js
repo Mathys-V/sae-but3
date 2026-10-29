@@ -136,10 +136,10 @@ export function setupUI(k, player) {
     k.opacity(0),
   ]);
 
-  // Bannière de notification centrale (sous la bannière d'interaction, en plein milieu de l'écran)
+  // Bannière de notification HUD (positionnée plus haut que le centre de l'écran pour dégager la vue du joueur)
   const notifBannerBg = k.add([
     k.rect(660, 50, { radius: 0 }),
-    k.pos(k.width() / 2, k.height() / 2 + 22),
+    k.pos(k.width() / 2, k.height() / 2 - 115),
     k.anchor("center"),
     k.color(10, 18, 30),
     k.outline(3, k.rgb(251, 191, 36)),
@@ -150,7 +150,7 @@ export function setupUI(k, player) {
 
   const notifBannerText = k.add([
     k.text("", { size: 17, font: "Silkscreen" }),
-    k.pos(k.width() / 2, k.height() / 2 + 22),
+    k.pos(k.width() / 2, k.height() / 2 - 115),
     k.anchor("center"),
     k.color(255, 255, 255),
     k.fixed(),

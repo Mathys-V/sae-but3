@@ -44,7 +44,6 @@ function DivingGame() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [inventoryTick, setInventoryTick] = useState(0);
-  void inventoryTick;
   const [isIntroOpen, setIsIntroOpen] = useState(() => {
     // Affiche le tutoriel des règles lors de la première session du joueur
     return !localStorage.getItem("plongee_intro_seen");
@@ -166,6 +165,7 @@ function DivingGame() {
   return (
     <div
       ref={containerRef}
+      data-render-tick={inventoryTick}
       className={`diving-page-wrapper w-full flex flex-col items-center justify-center relative ${
         isFullscreen ? "h-screen fixed inset-0 z-50" : "flex-1 min-h-0"
       }`}
