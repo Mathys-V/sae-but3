@@ -142,12 +142,11 @@ function DivingShopModal({ isOpen, onClose }) {
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      open
       aria-labelledby="shop-modal-title"
       aria-describedby="shop-modal-desc"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-3 sm:p-4 animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-3 sm:p-4 animate-fade-in w-full h-full max-w-none max-h-none border-none m-0"
     >
       {/* Zone accessible aux lecteurs d'écran (WCAG 4.1.3 Live Region) */}
       <div role="status" aria-live="polite" className="sr-only">
@@ -235,15 +234,13 @@ function DivingShopModal({ isOpen, onClose }) {
                 Le tonneau est vide. Ramène des créatures de tes plongées et dépose-les dans le tonneau avec <strong>(E)</strong> sur la barque !
               </p>
             ) : (
-              <div
-                role="list"
+              <ul
                 aria-label="Contenu du tonneau"
-                className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-32 overflow-y-auto pr-1"
+                className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-32 overflow-y-auto pr-1 list-none p-0 m-0"
               >
                 {barrelItems.map((item, idx) => (
-                  <div
-                    key={idx}
-                    role="listitem"
+                  <li
+                    key={item.id || item.name || idx}
                     className="pixel-card p-1.5 flex items-center justify-between text-xs"
                   >
                     <div className="truncate pr-1">
@@ -253,9 +250,9 @@ function DivingShopModal({ isOpen, onClose }) {
                     <span className="bg-slate-800 text-cyan-300 font-bold px-1.5 py-0.5 text-[10px] shrink-0 border border-slate-700 pixel-font">
                       x{item.qty || 1}
                     </span>
-                  </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
 
             {personalBagItems.length > 0 && (
@@ -409,7 +406,7 @@ function DivingShopModal({ isOpen, onClose }) {
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }
 

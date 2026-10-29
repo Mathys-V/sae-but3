@@ -21,7 +21,7 @@ import "./DivingGame.css";
  * @returns {string} Durée formatée sous la forme "MM:SS".
  */
 function formatTime(seconds) {
-  if (typeof seconds !== "number" || isNaN(seconds) || seconds < 0) {
+  if (typeof seconds !== "number" || Number.isNaN(seconds) || seconds < 0) {
     return "00:00";
   }
   const minutes = Math.floor(seconds / 60);
@@ -273,7 +273,6 @@ function DivingGame() {
           <div className="arcade-screen-viewport">
             <canvas
               ref={canvasRef}
-              role="application"
               tabIndex={0}
               aria-label="Jeu de plongée sous-marine MesCoursJV. Contrôles : ZQSD ou Flèches pour nager, Clic gauche pour attaquer au harpon, E pour interagir sur la barque, B pour la boutique."
               className="arcade-game-canvas focus:outline-none"

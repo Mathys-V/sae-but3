@@ -12,6 +12,7 @@ export function PixelCoralTopLeft() {
       width="60"
       height="60"
       shapeRendering="crispEdges"
+      aria-hidden="true"
       className="pixel-art-svg pixel-coral-tl"
     >
       <rect x="5" y="1" width="2" height="1" fill="#3b0716" />
@@ -183,6 +184,7 @@ export function PixelStarfishTopRight() {
       width="60"
       height="60"
       shapeRendering="crispEdges"
+      aria-hidden="true"
       className="pixel-art-svg pixel-starfish-tr"
     >
       <rect x="13" y="1" width="2" height="1" fill="#0f766e" />
@@ -513,6 +515,7 @@ export function PixelShellBottomLeft() {
       width="50"
       height="50"
       shapeRendering="crispEdges"
+      aria-hidden="true"
       className="pixel-art-svg pixel-shell-bl"
     >
       <rect x="11" y="2" width="7" height="1" fill="#042f2e" />
@@ -679,6 +682,7 @@ export function PixelCrystalBottomRight() {
       width="50"
       height="50"
       shapeRendering="crispEdges"
+      aria-hidden="true"
       className="pixel-art-svg pixel-crystal-br"
     >
       <rect x="10" y="2" width="3" height="1" fill="#1e1b4b" />
@@ -898,6 +902,7 @@ export function PixelAmbientSea({ flipped = false }) {
     <svg
       viewBox="0 0 100 600"
       shapeRendering="crispEdges"
+      aria-hidden="true"
       className={`w-full h-full pixel-art-svg ${flipped ? "transform -scale-x-100" : ""}`}
     >
       <g fill="#0b4a44" opacity="0.45">
@@ -1010,6 +1015,7 @@ export function PixelTrophy({ width = 84, height = 84 }) {
       width={width}
       height={height}
       shapeRendering="crispEdges"
+      aria-hidden="true"
       className="pixel-art-svg inline-block drop-shadow-[0_4px_0_#000]"
     >
       {/* Anses */}

@@ -40,12 +40,11 @@ function DivingIntroModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      open
       aria-labelledby="intro-dialog-title"
       aria-describedby="intro-dialog-desc"
-      className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in"
+      className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in w-full h-full max-w-none max-h-none border-none m-0"
     >
       <div className="pixel-modal-frame max-w-2xl w-full p-5 sm:p-6 text-white flex flex-col max-h-[90vh] overflow-y-auto">
         {/* En-tête */}
@@ -168,7 +167,7 @@ function DivingIntroModal({ isOpen, onClose }) {
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }
 

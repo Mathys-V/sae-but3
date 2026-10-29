@@ -58,39 +58,30 @@ export function setupPlayer(k, startX, startY) {
     );
   };
 
+  const getTargetAnim = (moving, isUnderwater) => {
+    if (moving) {
+      return isUnderwater
+        ? { anim: "swim", sprite: "diver-swim" }
+        : { anim: "walk", sprite: "diver-walk" };
+    }
+    return isUnderwater
+      ? { anim: "idle", sprite: "diver-idle" }
+      : { anim: "idle-boat", sprite: "diver-idle-boat" };
+  };
+
   const updateMovementAnimation = () => {
     if (isAttacking || isDying) return;
 
     const moving = isMoving();
     const isUnderwater = player.pos.y > WATER_LEVEL;
+    const target = getTargetAnim(moving, isUnderwater);
 
-    if (moving) {
-      if (isUnderwater) {
-        if (currentAnim !== "swim") {
-          player.use(k.sprite("diver-swim"));
-          player.play("swim");
-          currentAnim = "swim";
-        }
-      } else {
-        if (currentAnim !== "walk") {
-          player.use(k.sprite("diver-walk"));
-          player.play("walk");
-          currentAnim = "walk";
-        }
+    if (currentAnim !== target.anim) {
+      player.use(k.sprite(target.sprite));
+      if (target.anim !== "idle-boat") {
+        player.play(target.anim);
       }
-    } else {
-      if (isUnderwater) {
-        if (currentAnim !== "idle") {
-          player.use(k.sprite("diver-idle"));
-          player.play("idle");
-          currentAnim = "idle";
-        }
-      } else {
-        if (currentAnim !== "idle-boat") {
-          player.use(k.sprite("diver-idle-boat"));
-          currentAnim = "idle-boat";
-        }
-      }
+      currentAnim = target.anim;
     }
 
     player.flipX = facingLeft;
@@ -201,67 +192,68 @@ export function setupPlayer(k, startX, startY) {
     window.dispatchEvent(new CustomEvent("plongee-inventory-updated"));
   };
 
-  // GESTION DE LA PHYSIQUE, DE LA SURVIE ET DES INTERACTIONS SUR LE BATEAU
-  k.onUpdate(() => {
-    if (isDying) return;
-    const dt = k.dt();
+  const updateInvulnerability = (dt) => {
+    if (invulnerableTimer <= 0) return;
+    invulnerableTimer -= dt;
+    player.opacity = Math.floor(invulnerableTimer * 10) % 2 === 0 ? 0.35 : 1;
 
-    // Gestion du timer d'invulnérabilité post-dégâts (i-frames 1.0s avec clignotement)
-    if (invulnerableTimer > 0) {
-      invulnerableTimer -= dt;
-      // Clignotement visuel à 10Hz : alterne entre translucide (0.35) et visible (1.0)
-      player.opacity = Math.floor(invulnerableTimer * 10) % 2 === 0 ? 0.35 : 1;
-
-      if (invulnerableTimer <= 0) {
-        invulnerableTimer = 0;
-        isInvincible = false;
-        player.opacity = 1;
-      }
+    if (invulnerableTimer <= 0) {
+      invulnerableTimer = 0;
+      isInvincible = false;
+      player.opacity = 1;
     }
+  };
 
-    const isOnBoat = player.pos.y <= WATER_LEVEL + 40 && Math.abs(player.pos.x) < 250;
-    stats.isPlayerOnBoat = isOnBoat;
-
+  const updateEnvironmentAndVitals = (dt) => {
     if (player.pos.y > WATER_LEVEL) {
-      // 1. SOUS L'EAU
       player.gravityScale = 0;
       if (player.vel) {
         player.vel.x *= 0.9;
         player.vel.y *= 0.9;
       }
-
       stats.o2 = Math.max(0, stats.o2 - dt);
-
       if (stats.o2 <= 0) {
-        player.takeDamage(12 * dt, true); // true = suffocation continue sans i-frames
+        player.takeDamage(12 * dt, true);
       }
     } else {
-      // 2. SUR LA BARQUE / SURFACE
       player.gravityScale = 1;
       stats.o2 = Math.min(stats.maxO2, stats.o2 + dt * 25);
       stats.hp = Math.min(stats.maxHp, stats.hp + dt * 8);
     }
+  };
 
-    // Détection proximité Tonneau (-58) ou Pêcheur (+65) sur le bateau
+  const checkBoatInteractions = (isOnBoat) => {
+    if (!isOnBoat) return null;
     const barrels = k.get("inventory-barrel");
     const barrel = barrels.length > 0 ? barrels[0] : null;
     const fishermen = k.get("fisherman");
     const fisherman = fishermen.length > 0 ? fishermen[0] : null;
 
-    let interaction = null;
-    if (isOnBoat) {
-      const distBarrel = barrel ? Math.abs(player.pos.x - barrel.pos.x) : 999;
-      // Le sprite du pêcheur a son personnage dans la moitié gauche du frame (visuel à pos.x - 25 à scale 2.8)
-      const fishermanVisualX = fisherman ? fisherman.pos.x - 25 : 999;
-      const distFisherman = fisherman ? Math.abs(player.pos.x - fishermanVisualX) : 999;
+    const distBarrel = barrel ? Math.abs(player.pos.x - barrel.pos.x) : 999;
+    const fishermanVisualX = fisherman ? fisherman.pos.x - 25 : 999;
+    const distFisherman = fisherman ? Math.abs(player.pos.x - fishermanVisualX) : 999;
 
-      if (distBarrel < 48 && distBarrel < distFisherman) {
-        interaction = "barrel";
-      } else if (distFisherman < 48 && distFisherman < distBarrel) {
-        interaction = "fisherman";
-      }
+    if (distBarrel < 48 && distBarrel < distFisherman) {
+      return "barrel";
     }
-    stats.currentInteraction = interaction;
+    if (distFisherman < 48 && distFisherman < distBarrel) {
+      return "fisherman";
+    }
+    return null;
+  };
+
+  // GESTION DE LA PHYSIQUE, DE LA SURVIE ET DES INTERACTIONS SUR LE BATEAU
+  k.onUpdate(() => {
+    if (isDying) return;
+    const dt = k.dt();
+
+    updateInvulnerability(dt);
+
+    const isOnBoat = player.pos.y <= WATER_LEVEL + 40 && Math.abs(player.pos.x) < 250;
+    stats.isPlayerOnBoat = isOnBoat;
+
+    updateEnvironmentAndVitals(dt);
+    stats.currentInteraction = checkBoatInteractions(isOnBoat);
 
     player.flipX = facingLeft;
     updateMovementAnimation();
@@ -394,51 +386,51 @@ export function setupPlayer(k, startX, startY) {
 
   k.onMousePress("left", attack);
 
+  const depositBagIntoBarrel = (barrel) => {
+    const personalItems = stats.inventory || [];
+    if (personalItems.length === 0) {
+      triggerNotification("( ! ) Sac vide : plongez pour recolter du butin !", [251, 191, 36], 3.0);
+      return;
+    }
+
+    if (!stats.barrelInventory) stats.barrelInventory = [];
+
+    for (const item of personalItems) {
+      const existing = stats.barrelInventory.find((b) => b.id === item.id);
+      if (existing) {
+        existing.qty = (existing.qty || 1) + (item.qty || 1);
+      } else {
+        stats.barrelInventory.push({ ...item });
+      }
+    }
+
+    const count = personalItems.reduce((sum, i) => sum + (i.qty || 1), 0);
+    stats.inventory = [];
+
+    if (barrel) {
+      barrel.use(k.sprite("barrel-full"));
+      barrel.use(k.scale(2.8));
+    }
+
+    try {
+      k.play("sfx-deposit", { volume: 0.8 });
+    } catch {
+      /* Audio error ignored */
+    }
+
+    triggerNotification(`( + ) ${count} butin(s) depose(s) dans le Tonneau !`, [56, 189, 248], 3.0);
+    window.dispatchEvent(new CustomEvent("plongee-inventory-updated"));
+  };
+
   // ÉTAPE 3 : INTERACTION AU TONNEAU ET AU MARCHAND (TOUCHE E)
   k.onKeyPress("e", () => {
     if (!stats.isPlayerOnBoat) return;
 
-    const barrels = k.get("inventory-barrel");
-    const barrel = barrels.length > 0 ? barrels[0] : null;
-
     if (stats.currentInteraction === "barrel") {
-      // Dépôt du sac personnel dans le tonneau commun
-      const personalItems = stats.inventory || [];
-      if (personalItems.length === 0) {
-        triggerNotification("( ! ) Sac vide : plongez pour recolter du butin !", [251, 191, 36], 3.0);
-        return;
-      }
-
-      if (!stats.barrelInventory) stats.barrelInventory = [];
-
-      for (const item of personalItems) {
-        const existing = stats.barrelInventory.find((b) => b.id === item.id);
-        if (existing) {
-          existing.qty = (existing.qty || 1) + (item.qty || 1);
-        } else {
-          stats.barrelInventory.push({ ...item });
-        }
-      }
-
-      const count = personalItems.reduce((sum, i) => sum + (i.qty || 1), 0);
-      stats.inventory = [];
-
-      if (barrel) {
-        barrel.use(k.sprite("barrel-full"));
-        barrel.use(k.scale(2.8));
-      }
-
-      try {
-        k.play("sfx-deposit", { volume: 0.8 });
-      } catch {
-        /* Audio error ignored */
-      }
-
-      triggerNotification(`( + ) ${count} butin(s) depose(s) dans le Tonneau !`, [56, 189, 248], 3.0);
-
-      window.dispatchEvent(new CustomEvent("plongee-inventory-updated"));
+      const barrels = k.get("inventory-barrel");
+      const barrel = barrels.length > 0 ? barrels[0] : null;
+      depositBagIntoBarrel(barrel);
     } else if (stats.currentInteraction === "fisherman") {
-      // Parler au pêcheur pour vendre le tonneau et acheter des améliorations
       window.dispatchEvent(new CustomEvent("plongee-open-shop"));
     }
   });

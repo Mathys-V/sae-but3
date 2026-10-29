@@ -406,19 +406,19 @@
    11. CADRES & MODALES PIXEL ART 16-BIT (RETRO MODALS)
    ============================================================ */
 .pixel-font {
-  font-family: "Silkscreen", monospace !important;
+  font-family: "Silkscreen", monospace;
 }
 
 .pixel-font-title {
-  font-family: "Press Start 2P", "Silkscreen", monospace !important;
+  font-family: "Press Start 2P", "Silkscreen", monospace;
   letter-spacing: 0.5px;
 }
 
 /* Cadre de fenêtre en pierre sous-marine 16-bit */
 .pixel-modal-frame {
   background: #071521;
-  border: 4px solid #000000 !important;
-  border-radius: 0 !important;
+  border: 4px solid #000000;
+  border-radius: 0;
   box-shadow:
     inset 4px 4px 0 #1e5264,
     inset -4px -4px 0 #03080e,
@@ -429,8 +429,8 @@
 /* Cadre royal doré pour l'écran de Victoire */
 .pixel-gold-frame {
   background: linear-gradient(180deg, #101c2e 0%, #070e17 100%);
-  border: 4px solid #000000 !important;
-  border-radius: 0 !important;
+  border: 4px solid #000000;
+  border-radius: 0;
   box-shadow:
     inset 4px 4px 0 #fde047,
     inset -4px -4px 0 #78350f,
@@ -443,8 +443,8 @@
 /* Boîte / Carte intérieure Pixel Art */
 .pixel-card {
   background: #091c2b;
-  border: 2px solid #000000 !important;
-  border-radius: 0 !important;
+  border: 2px solid #000000;
+  border-radius: 0;
   box-shadow:
     inset 2px 2px 0 #1b4257,
     inset -2px -2px 0 #040d14;
@@ -452,8 +452,8 @@
 
 .pixel-card-gold {
   background: #1e1b09;
-  border: 2px solid #000000 !important;
-  border-radius: 0 !important;
+  border: 2px solid #000000;
+  border-radius: 0;
   box-shadow:
     inset 2px 2px 0 #a16207,
     inset -2px -2px 0 #422006;
@@ -461,8 +461,8 @@
 
 .pixel-card-amber {
   background: #241407;
-  border: 2px solid #000000 !important;
-  border-radius: 0 !important;
+  border: 2px solid #000000;
+  border-radius: 0;
   box-shadow:
     inset 2px 2px 0 #b45309,
     inset -2px -2px 0 #451a03;
@@ -470,8 +470,8 @@
 
 .pixel-card-emerald {
   background: #062016;
-  border: 2px solid #000000 !important;
-  border-radius: 0 !important;
+  border: 2px solid #000000;
+  border-radius: 0;
   box-shadow:
     inset 2px 2px 0 #059669,
     inset -2px -2px 0 #022c22;

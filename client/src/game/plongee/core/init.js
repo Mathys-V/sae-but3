@@ -81,7 +81,7 @@ export function initDivingGame(canvasElement) {
     "trident-tip", "shark-tooth", "shark-king-tooth",
   ];
   for (const itemKey of LOOT_ITEMS) {
-    k.loadSprite(`loot-${itemKey}`, `/assets/plongee/items/loots/loot_${itemKey.replace(/-/g, "_")}.png`);
+    k.loadSprite(`loot-${itemKey}`, `/assets/plongee/items/loots/loot_${itemKey.replaceAll("-", "_")}.png`);
   }
 
   // Barres d'interface multi-états

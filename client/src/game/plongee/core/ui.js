@@ -6,7 +6,7 @@ import { stats } from "../entities/stats.js";
  * @returns {string} Durée formatée.
  */
 function formatTime(seconds) {
-  if (typeof seconds !== "number" || isNaN(seconds) || seconds < 0) {
+  if (typeof seconds !== "number" || Number.isNaN(seconds) || seconds < 0) {
     return "00:00";
   }
   const minutes = Math.floor(seconds / 60);
@@ -210,41 +210,40 @@ export function setupUI(k, player) {
   let cachedItems = "";
   let cachedBossHp = -1;
 
-  // --- 7. MISE À JOUR DYNAMIQUE OPTIMISÉE ---
-  k.onUpdate(() => {
-    // Chronomètre Speedrun
-    if (stats.isTimerRunning && !stats.bossDefeated) {
-      stats.gameTimer += k.dt();
-      const currentSec = Math.floor(stats.gameTimer);
-      if (currentSec !== cachedTimerSec) {
-        cachedTimerSec = currentSec;
-        timerText.text = `CHRONO: ${formatTime(stats.gameTimer)}`;
-      }
+  // --- 7. SOUS-FONCTIONS DE MISE À JOUR POUR RÉDUIRE LA COMPLEXITÉ COGNITIVE ---
+  const updateChrono = () => {
+    if (!stats.isTimerRunning || stats.bossDefeated) return;
+    stats.gameTimer += k.dt();
+    const currentSec = Math.floor(stats.gameTimer);
+    if (currentSec !== cachedTimerSec) {
+      cachedTimerSec = currentSec;
+      timerText.text = `CHRONO: ${formatTime(stats.gameTimer)}`;
     }
+  };
 
-    // Jauge de profondeur
-    if (player && player.pos) {
-      const depthRatio = Math.max(0, Math.min(player.pos.y / MAX_DEPTH, 1));
-      const currentY = 50 + depthRatio * 292;
-      cursor.pos.y = currentY;
-      depthText.pos.y = currentY - 4;
+  const updateDepthGauge = () => {
+    if (!player || !player.pos) return;
+    const depthRatio = Math.max(0, Math.min(player.pos.y / MAX_DEPTH, 1));
+    const currentY = 50 + depthRatio * 292;
+    cursor.pos.y = currentY;
+    depthText.pos.y = currentY - 4;
 
-      const DIVISEUR_PROFONDEUR = 35;
-      const displayDepth = Math.max(0, Math.floor(player.pos.y / DIVISEUR_PROFONDEUR));
-      if (displayDepth !== cachedDepth) {
-        cachedDepth = displayDepth;
-        depthText.text = `${displayDepth}m`;
-      }
+    const DIVISEUR_PROFONDEUR = 35;
+    const displayDepth = Math.max(0, Math.floor(player.pos.y / DIVISEUR_PROFONDEUR));
+    if (displayDepth !== cachedDepth) {
+      cachedDepth = displayDepth;
+      depthText.text = `${displayDepth}m`;
     }
+  };
 
-    // Barres O2 et HP (sprites 17 frames)
+  const updateVitalsBars = () => {
     const o2Frame = Math.round((stats.o2 / stats.maxO2) * 16);
     const hpFrame = Math.round((stats.hp / stats.maxHp) * 16);
-
     o2Bar.frame = Math.max(0, Math.min(16, o2Frame));
     hpBar.frame = Math.max(0, Math.min(16, hpFrame));
+  };
 
-    // Or et Inventaire
+  const updateInventoryHUD = () => {
     const curCoins = stats.coins || 0;
     if (curCoins !== cachedCoins) {
       cachedCoins = curCoins;
@@ -258,8 +257,9 @@ export function setupUI(k, player) {
       cachedItems = invKey;
       inventoryText.text = `SAC: ${curBag} | TONNEAU: ${curBarrel}`;
     }
+  };
 
-    // Bannière d'interaction dynamique (HUD fixe)
+  const updateInteractionPrompt = () => {
     if (stats.currentInteraction === "barrel") {
       actionPromptBg.opacity = 0.95;
       actionPromptBg.outline.color = k.rgb(56, 189, 248);
@@ -270,14 +270,13 @@ export function setupUI(k, player) {
       actionPromptBg.outline.color = k.rgb(250, 204, 21);
       actionPromptText.opacity = 1;
       actionPromptText.text = "(E) Parler au Pecheur (Vente & Boutique)";
-    } else {
-      if (actionPromptBg.opacity !== 0) {
-        actionPromptBg.opacity = 0;
-        actionPromptText.opacity = 0;
-      }
+    } else if (actionPromptBg.opacity !== 0) {
+      actionPromptBg.opacity = 0;
+      actionPromptText.opacity = 0;
     }
+  };
 
-    // Bannière de notification centrale temporaire (ex: Sac vide, sombré, butin déposé)
+  const updateNotificationBanner = () => {
     if (stats.notification && stats.notification.timer > 0) {
       stats.notification.timer -= k.dt();
       const alpha = Math.min(1, stats.notification.timer * 1.5);
@@ -287,14 +286,13 @@ export function setupUI(k, player) {
       const col = stats.notification.color || [255, 255, 255];
       notifBannerBg.outline.color = k.rgb(col[0], col[1], col[2]);
       notifBannerText.color = k.rgb(col[0], col[1], col[2]);
-    } else {
-      if (notifBannerBg.opacity !== 0) {
-        notifBannerBg.opacity = 0;
-        notifBannerText.opacity = 0;
-      }
+    } else if (notifBannerBg.opacity !== 0) {
+      notifBannerBg.opacity = 0;
+      notifBannerText.opacity = 0;
     }
+  };
 
-    // Boss Bar dynamique
+  const updateBossBar = () => {
     if (stats.bossActive && !stats.bossDefeated) {
       bossTitle.opacity = 1;
       bossBarBg.opacity = 0.9;
@@ -308,13 +306,22 @@ export function setupUI(k, player) {
         bossBarFill.width = Math.max(1, BOSS_BAR_W * hpRatio);
         bossHpText.text = `${curBossHp} / ${stats.bossMaxHp} PV`;
       }
-    } else {
-      if (bossTitle.opacity !== 0) {
-        bossTitle.opacity = 0;
-        bossBarBg.opacity = 0;
-        bossBarFill.opacity = 0;
-        bossHpText.opacity = 0;
-      }
+    } else if (bossTitle.opacity !== 0) {
+      bossTitle.opacity = 0;
+      bossBarBg.opacity = 0;
+      bossBarFill.opacity = 0;
+      bossHpText.opacity = 0;
     }
+  };
+
+  // --- MISE À JOUR DYNAMIQUE OPTIMISÉE ---
+  k.onUpdate(() => {
+    updateChrono();
+    updateDepthGauge();
+    updateVitalsBars();
+    updateInventoryHUD();
+    updateInteractionPrompt();
+    updateNotificationBanner();
+    updateBossBar();
   });
 }

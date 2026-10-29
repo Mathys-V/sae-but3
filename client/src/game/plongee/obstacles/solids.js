@@ -50,47 +50,57 @@ export function setupSolids(k, player) {
   // Mise en cache des solides statiques pour éviter des itérations lourdes à 60 FPS
   let cachedSolids = null;
 
+  const resolveHorizontalCollisions = (startX, historyY, historyX, solids) => {
+    let x = startX;
+    for (const s of solids) {
+      if (!hit(pBox(x, historyY), s)) continue;
+      if (x > historyX) {
+        x = s.l - HALF_W - OFFSET_X;
+      } else if (x < historyX) {
+        x = s.r + HALF_W - OFFSET_X;
+      }
+      if (player.vel) player.vel.x = 0;
+    }
+    return x;
+  };
+
+  const resolveVerticalCollisions = (x, startY, historyY, solids) => {
+    let y = startY;
+    let isGrounded = false;
+    let correctedX = x;
+
+    for (const s of solids) {
+      if (!hit(pBox(correctedX, y), s)) continue;
+      if (y > historyY) {
+        y = s.t - HALF_H - OFFSET_Y;
+        isGrounded = true;
+        if (player.vel && player.vel.y > 0) player.vel.y = 0;
+      } else if (y < historyY) {
+        y = s.b + HALF_H - OFFSET_Y;
+        if (player.vel && player.vel.y < 0) player.vel.y = 0;
+      } else {
+        const left = correctedX + HALF_W - s.l;
+        const right = s.r - (correctedX - HALF_W);
+        correctedX += left < right ? -left : right;
+      }
+    }
+
+    return { x: correctedX, y, isGrounded };
+  };
+
   player.onUpdate(() => {
     if (!cachedSolids) {
       cachedSolids = k.get("solid").map(sBox);
     }
     const solids = cachedSolids;
-    const curX = player.pos.x;
-    const curY = player.pos.y;
-    grounded = false;
 
-    let x = curX;
-    let y = curY;
+    const xAfterH = resolveHorizontalCollisions(player.pos.x, prevY, prevX, solids);
+    const vResult = resolveVerticalCollisions(xAfterH, player.pos.y, prevY, solids);
 
-    // --- Axe X, testé à la hauteur de la frame précédente ---
-    for (const s of solids) {
-      if (!hit(pBox(x, prevY), s)) continue;
-      if (x > prevX) x = s.l - HALF_W - OFFSET_X;
-      else if (x < prevX) x = s.r + HALF_W - OFFSET_X;
-      if (player.vel) player.vel.x = 0;
-    }
-
-    // --- Axe Y, avec le X corrigé ---
-    for (const s of solids) {
-      if (!hit(pBox(x, y), s)) continue;
-      if (y > prevY) {
-        y = s.t - HALF_H - OFFSET_Y; // on se pose dessus
-        grounded = true;
-        if (player.vel && player.vel.y > 0) player.vel.y = 0;
-      } else if (y < prevY) {
-        y = s.b + HALF_H - OFFSET_Y; // on se cogne dessous
-        if (player.vel && player.vel.y < 0) player.vel.y = 0;
-      } else {
-        // aucun mouvement vertical mais chevauchement : on éjecte par le côté le plus court en X
-        const left = x + HALF_W - s.l;
-        const right = s.r - (x - HALF_W);
-        x += left < right ? -left : right;
-      }
-    }
-
-    player.pos.x = x;
-    player.pos.y = y;
-    prevX = x;
-    prevY = y;
+    grounded = vResult.isGrounded;
+    player.pos.x = vResult.x;
+    player.pos.y = vResult.y;
+    prevX = vResult.x;
+    prevY = vResult.y;
   });
 }

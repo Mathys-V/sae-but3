@@ -1,9 +1,9 @@
 // client/scripts/generate-loot-sprites.js
 // Générateur de sprites Pixel Art 16x16 pour tous les butins sous-marins
 
-const fs = require("fs");
-const path = require("path");
-const zlib = require("zlib");
+const fs = require("node:fs");
+const path = require("node:path");
+const zlib = require("node:zlib");
 
 const crcTable = new Uint32Array(256);
 for (let n = 0; n < 256; n++) {
@@ -62,10 +62,10 @@ function createPng(width, height, rgbaBuffer) {
 function hexToRgba(hex) {
   if (hex === "." || !hex) return [0, 0, 0, 0];
   const clean = hex.replace("#", "");
-  const r = parseInt(clean.substring(0, 2), 16);
-  const g = parseInt(clean.substring(2, 4), 16);
-  const b = parseInt(clean.substring(4, 6), 16);
-  const a = clean.length === 8 ? parseInt(clean.substring(6, 8), 16) : 255;
+  const r = Number.parseInt(clean.substring(0, 2), 16);
+  const g = Number.parseInt(clean.substring(2, 4), 16);
+  const b = Number.parseInt(clean.substring(4, 6), 16);
+  const a = clean.length === 8 ? Number.parseInt(clean.substring(6, 8), 16) : 255;
   return [r, g, b, a];
 }
 

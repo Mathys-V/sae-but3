@@ -104,7 +104,7 @@ export function spawnLootItem(k, pos, lootType) {
     color: [255, 255, 255],
   };
 
-  const spriteKey = `loot-${lootType.replace(/_/g, "-")}`;
+  const spriteKey = `loot-${lootType.replaceAll("_", "-")}`;
 
   // Sprite Pixel Art 16x16 du butin
   const loot = k.add([
