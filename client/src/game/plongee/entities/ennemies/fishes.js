@@ -1,5 +1,5 @@
 import { spawnLootItem } from "../items.js";
-import { spawnDamageHitFX } from "./monsters.js";
+import { setEntitySprite, spawnDamageHitFX } from "./monsters.js";
 
 // Limites d'habitat de la Zone 1 (Surface à 3 000 m)
 const ZONE1_MIN_Y = 60;
@@ -40,8 +40,7 @@ export function spawnAnguille(k, startX, startY, player) {
 
   // ÉTAT : PAUSE (Attend paisiblement sur place)
   anguille.onStateEnter("idle", () => {
-    anguille.use(k.sprite("anguille-idle"));
-    anguille.play("idle");
+    setEntitySprite(anguille, k, "anguille-idle", "idle");
     anguille.wait(k.rand(1, 3), () => {
       if (anguille.state === "idle") anguille.enterState("walk");
     });
@@ -49,12 +48,9 @@ export function spawnAnguille(k, startX, startY, player) {
 
   // ÉTAT : PATROUILLE PAISIBLE
   anguille.onStateEnter("walk", () => {
-    anguille.use(k.sprite("anguille-walk"));
-    anguille.play("walk");
-
     anguille.dirX = k.rand(-1, 1);
     anguille.dirY = k.rand(-0.4, 0.4);
-    anguille.flipX = anguille.dirX < 0;
+    setEntitySprite(anguille, k, "anguille-walk", "walk", anguille.dirX < 0);
 
     anguille.wait(k.rand(2, 5), () => {
       if (anguille.state === "walk") anguille.enterState("idle");
@@ -75,8 +71,7 @@ export function spawnAnguille(k, startX, startY, player) {
 
   // ÉTAT : POURSUITE AGGRESSIVE (Déclenché uniquement si attaquée)
   anguille.onStateEnter("chase", () => {
-    anguille.use(k.sprite("anguille-walk"));
-    anguille.play("walk");
+    setEntitySprite(anguille, k, "anguille-walk", "walk");
   });
 
   anguille.onStateUpdate("chase", () => {
@@ -114,8 +109,7 @@ export function spawnAnguille(k, startX, startY, player) {
   });
 
   anguille.onStateEnter("hurt", () => {
-    anguille.use(k.sprite("anguille-hurt"));
-    anguille.play("hurt");
+    setEntitySprite(anguille, k, "anguille-hurt", "hurt");
     anguille.wait(0.25, () => {
       if (anguille.state !== "death" && anguille.exists()) {
         anguille.enterState("chase");
@@ -126,8 +120,7 @@ export function spawnAnguille(k, startX, startY, player) {
   anguille.on("death", () => anguille.enterState("death"));
   anguille.onStateEnter("death", () => {
     anguille.untag("enemy");
-    anguille.use(k.sprite("anguille-death"));
-    anguille.play("death");
+    setEntitySprite(anguille, k, "anguille-death", "death");
     anguille.unuse("area");
 
     let destroyed = false;
@@ -183,10 +176,9 @@ export function spawnMeduse(k, startX, startY, player) {
   ]);
 
   meduse.onStateEnter("drift", () => {
-    meduse.use(k.sprite("meduse-idle"));
-    meduse.play("idle");
     meduse.dirX = k.rand(-0.4, 0.4);
     meduse.dirY = k.rand(-0.6, 0.6);
+    setEntitySprite(meduse, k, "meduse-idle", "idle", meduse.dirX < 0);
 
     meduse.wait(k.rand(3, 6), () => {
       if (meduse.state === "drift") meduse.enterState("drift");
@@ -195,14 +187,16 @@ export function spawnMeduse(k, startX, startY, player) {
 
   meduse.onStateUpdate("drift", () => {
     meduse.move(DRIFT_SPEED * meduse.dirX, DRIFT_SPEED * meduse.dirY);
+    if (meduse.dirX !== 0) {
+      meduse.flipX = meduse.dirX < 0;
+    }
     meduse.pos.y += Math.sin(k.time() * 2) * 0.2;
     meduse.pos.y = k.clamp(meduse.pos.y, ZONE1_MIN_Y, ZONE1_MAX_Y);
   });
 
   // ÉTAT : POURSUITE AGGRESSIVE
   meduse.onStateEnter("chase", () => {
-    meduse.use(k.sprite("meduse-walk"));
-    meduse.play("walk");
+    setEntitySprite(meduse, k, "meduse-walk", "walk");
   });
 
   meduse.onStateUpdate("chase", () => {
@@ -225,6 +219,9 @@ export function spawnMeduse(k, startX, startY, player) {
       dir = dir.unit();
     }
     meduse.move(dir.scale(CHASE_SPEED));
+    if (dir.x !== 0) {
+      meduse.flipX = dir.x < 0;
+    }
     meduse.pos.y = k.clamp(meduse.pos.y, ZONE1_MIN_Y, ZONE1_MAX_Y);
   });
 
@@ -236,8 +233,7 @@ export function spawnMeduse(k, startX, startY, player) {
   });
 
   meduse.onStateEnter("hurt", () => {
-    meduse.use(k.sprite("meduse-hurt"));
-    meduse.play("hurt");
+    setEntitySprite(meduse, k, "meduse-hurt", "hurt");
     meduse.wait(0.25, () => {
       if (meduse.state !== "death" && meduse.exists()) {
         meduse.enterState("chase");
@@ -248,8 +244,7 @@ export function spawnMeduse(k, startX, startY, player) {
   meduse.on("death", () => meduse.enterState("death"));
   meduse.onStateEnter("death", () => {
     meduse.untag("enemy");
-    meduse.use(k.sprite("meduse-death"));
-    meduse.play("death");
+    setEntitySprite(meduse, k, "meduse-death", "death");
     meduse.unuse("area");
 
     let destroyed = false;
@@ -305,10 +300,8 @@ export function spawnTortue(k, startX, startY, player) {
   ]);
 
   tortue.onStateEnter("walk", () => {
-    tortue.use(k.sprite("tortue-walk"));
-    tortue.play("walk");
     tortue.dirX = k.chance(0.5) ? 1 : -1;
-    tortue.flipX = tortue.dirX < 0;
+    setEntitySprite(tortue, k, "tortue-walk", "walk", tortue.dirX < 0);
   });
 
   tortue.onStateUpdate("walk", () => {
@@ -322,8 +315,7 @@ export function spawnTortue(k, startX, startY, player) {
 
   // ÉTAT : CHARGE / POURSUITE LORSQU'ATTAQUÉE
   tortue.onStateEnter("chase", () => {
-    tortue.use(k.sprite("tortue-walk"));
-    tortue.play("walk");
+    setEntitySprite(tortue, k, "tortue-walk", "walk");
   });
 
   tortue.onStateUpdate("chase", () => {
@@ -357,8 +349,7 @@ export function spawnTortue(k, startX, startY, player) {
   });
 
   tortue.onStateEnter("hurt", () => {
-    tortue.use(k.sprite("tortue-hurt"));
-    tortue.play("hurt");
+    setEntitySprite(tortue, k, "tortue-hurt", "hurt");
     tortue.wait(0.25, () => {
       if (tortue.state !== "death" && tortue.exists()) {
         tortue.enterState("chase");
@@ -369,8 +360,7 @@ export function spawnTortue(k, startX, startY, player) {
   tortue.on("death", () => tortue.enterState("death"));
   tortue.onStateEnter("death", () => {
     tortue.untag("enemy");
-    tortue.use(k.sprite("tortue-death"));
-    tortue.play("death");
+    setEntitySprite(tortue, k, "tortue-death", "death");
     tortue.unuse("area");
 
     let destroyed = false;

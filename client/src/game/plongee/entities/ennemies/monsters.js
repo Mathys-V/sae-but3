@@ -44,6 +44,26 @@ export function spawnDamageHitFX(k, pos) {
   });
 }
 
+/**
+ * Met à jour le sprite et l'animation d'une entité en préservant ou en ajustant son orientation (flipX).
+ * Résout le comportement par défaut de Kaplay qui réinitialise flipX à false lors de obj.use(k.sprite(...)).
+ *
+ * @param {import("kaplay").GameObj} obj - Entité cible.
+ * @param {import("kaplay").KaplayCtx} k - Instance du contexte Kaplay.
+ * @param {string} spriteName - Nom de l'asset sprite à appliquer.
+ * @param {string} [animName] - Nom de l'animation à jouer.
+ * @param {boolean} [forcedFlipX] - Orientation horizontale forcée (ex: face au joueur).
+ */
+export function setEntitySprite(obj, k, spriteName, animName, forcedFlipX = undefined) {
+  if (!obj || !obj.exists()) return;
+  const targetFlip = forcedFlipX !== undefined ? forcedFlipX : obj.flipX;
+  obj.use(k.sprite(spriteName));
+  obj.flipX = targetFlip;
+  if (animName) {
+    obj.play(animName);
+  }
+}
+
 // ==========================================
 // 1. LE BOSS REQUIN - BOSS FINAL UNIQUE
 // Sprite : requin-boss (64x64, 9 frames)
@@ -135,8 +155,7 @@ export function spawnBossRequin(k, startX, startY, player) {
 
   // ÉTAT : PATROUILLE MENAÇANTE
   boss.onStateEnter("patrol", () => {
-    boss.use(k.sprite("requin-boss-move"));
-    boss.play("move");
+    setEntitySprite(boss, k, "requin-boss-move", "move", boss.dirX < 0);
   });
 
   boss.onStateUpdate("patrol", () => {
@@ -156,8 +175,7 @@ export function spawnBossRequin(k, startX, startY, player) {
 
   // ÉTAT : POURSUITE ACTIVE DU JOUEUR
   boss.onStateEnter("chase", () => {
-    boss.use(k.sprite("requin-boss-move"));
-    boss.play("move");
+    setEntitySprite(boss, k, "requin-boss-move", "move");
 
     boss.wait(k.rand(2.5, 4.0), () => {
       if (boss.state === "chase" && player && player.pos && player.pos.y >= 7000 && boss.pos.dist(player.pos) < 750) {
@@ -192,13 +210,11 @@ export function spawnBossRequin(k, startX, startY, player) {
 
   // ÉTAT : CHARGE DÉVASTATRICE
   boss.onStateEnter("charge", () => {
-    boss.use(k.sprite("requin-boss-attack"));
-    boss.play("attack");
-
+    let faceCharge = boss.flipX;
     if (player && player.pos && player.pos.y >= 7000) {
-      let dir = player.pos.sub(boss.pos);
+      const dir = player.pos.sub(boss.pos);
       chargeDir = dir.len() < 0.001 ? k.vec2(1, 0) : dir.unit();
-      boss.flipX = chargeDir.x < 0;
+      faceCharge = chargeDir.x < 0;
       isCharging = true;
 
       boss.wait(1.1, () => {
@@ -210,6 +226,7 @@ export function spawnBossRequin(k, startX, startY, player) {
     } else {
       boss.enterState("chase");
     }
+    setEntitySprite(boss, k, "requin-boss-attack", "attack", faceCharge);
   });
 
   boss.onStateUpdate("charge", () => {
@@ -227,8 +244,8 @@ export function spawnBossRequin(k, startX, startY, player) {
 
   // ÉTAT : ATTAQUE MORSURE
   boss.onStateEnter("attack", () => {
-    boss.use(k.sprite("requin-boss-attack"));
-    boss.play("attack");
+    const facePlayer = player && player.pos ? player.pos.x < boss.pos.x : boss.flipX;
+    setEntitySprite(boss, k, "requin-boss-attack", "attack", facePlayer);
     boss.attackCooldown = true;
 
     if (player && player.pos && boss.pos.dist(player.pos) < 135) {
@@ -376,8 +393,7 @@ function createZone3Shark(k, startX, startY, player, config) {
   requin.play("move");
 
   requin.onStateEnter("patrol", () => {
-    requin.use(k.sprite(moveSprite));
-    requin.play("move");
+    setEntitySprite(requin, k, moveSprite, "move", requin.dirX < 0);
   });
 
   requin.onStateUpdate("patrol", () => {
@@ -397,8 +413,7 @@ function createZone3Shark(k, startX, startY, player, config) {
   });
 
   requin.onStateEnter("chase", () => {
-    requin.use(k.sprite(moveSprite));
-    requin.play("move");
+    setEntitySprite(requin, k, moveSprite, "move");
   });
 
   requin.onStateUpdate("chase", () => {
@@ -426,8 +441,8 @@ function createZone3Shark(k, startX, startY, player, config) {
   });
 
   requin.onStateEnter("attack", () => {
-    requin.use(k.sprite(attackSprite));
-    requin.play("attack");
+    const facePlayer = player && player.pos ? player.pos.x < requin.pos.x : requin.flipX;
+    setEntitySprite(requin, k, attackSprite, "attack", facePlayer);
     requin.attackCooldown = true;
 
     if (player && player.pos && requin.pos.dist(player.pos) < 90) {
@@ -587,8 +602,7 @@ export function spawnSireneEpee(k, startX, startY, player) {
   ]);
 
   sirene.onStateEnter("idle", () => {
-    sirene.use(k.sprite("sirene-epee-idle"));
-    sirene.play("idle");
+    setEntitySprite(sirene, k, "sirene-epee-idle", "idle");
     sirene.wait(k.rand(1, 2.5), () => {
       if (sirene.state === "idle") sirene.enterState("walk");
     });
@@ -603,10 +617,8 @@ export function spawnSireneEpee(k, startX, startY, player) {
   });
 
   sirene.onStateEnter("walk", () => {
-    sirene.use(k.sprite("sirene-epee-walk"));
-    sirene.play("walk");
     sirene.dirX = k.chance(0.5) ? 1 : -1;
-    sirene.flipX = sirene.dirX < 0;
+    setEntitySprite(sirene, k, "sirene-epee-walk", "walk", sirene.dirX < 0);
     sirene.wait(k.rand(2, 4), () => {
       if (sirene.state === "walk") sirene.enterState("idle");
     });
@@ -631,8 +643,7 @@ export function spawnSireneEpee(k, startX, startY, player) {
 
   // ÉTAT : POURSUITE AGGRESSIVE
   sirene.onStateEnter("chase", () => {
-    sirene.use(k.sprite("sirene-epee-walk"));
-    sirene.play("walk");
+    setEntitySprite(sirene, k, "sirene-epee-walk", "walk");
   });
 
   sirene.onStateUpdate("chase", () => {
@@ -660,8 +671,8 @@ export function spawnSireneEpee(k, startX, startY, player) {
   });
 
   sirene.onStateEnter("attack", () => {
-    sirene.use(k.sprite("sirene-epee-attack"));
-    sirene.play("attack");
+    const facePlayer = player && player.pos ? player.pos.x < sirene.pos.x : sirene.flipX;
+    setEntitySprite(sirene, k, "sirene-epee-attack", "attack", facePlayer);
     if (player && player.pos && sirene.pos.dist(player.pos) < 85) {
       if (player.takeDamage) player.takeDamage(sirene.damage);
     }
@@ -679,8 +690,7 @@ export function spawnSireneEpee(k, startX, startY, player) {
   });
 
   sirene.onStateEnter("hurt", () => {
-    sirene.use(k.sprite("sirene-epee-hurt"));
-    sirene.play("hurt");
+    setEntitySprite(sirene, k, "sirene-epee-hurt", "hurt");
     sirene.wait(0.25, () => {
       if (sirene.state !== "death" && sirene.exists()) {
         sirene.enterState("chase");
@@ -691,8 +701,7 @@ export function spawnSireneEpee(k, startX, startY, player) {
   sirene.on("death", () => sirene.enterState("death"));
   sirene.onStateEnter("death", () => {
     sirene.untag("enemy");
-    sirene.use(k.sprite("sirene-epee-death"));
-    sirene.play("death");
+    setEntitySprite(sirene, k, "sirene-epee-death", "death");
     sirene.unuse("area");
 
     let destroyed = false;
@@ -816,8 +825,7 @@ export function spawnSireneMage(k, startX, startY, player) {
   ]);
 
   mage.onStateEnter("idle", () => {
-    mage.use(k.sprite("sirene-mage-idle"));
-    mage.play("idle");
+    setEntitySprite(mage, k, "sirene-mage-idle", "idle");
     mage.wait(k.rand(1.5, 3), () => {
       if (mage.state === "idle" && mage.exists()) mage.enterState("walk");
     });
@@ -833,10 +841,8 @@ export function spawnSireneMage(k, startX, startY, player) {
   });
 
   mage.onStateEnter("walk", () => {
-    mage.use(k.sprite("sirene-mage-walk"));
-    mage.play("walk");
     mage.dirX = k.chance(0.5) ? 1 : -1;
-    mage.flipX = mage.dirX < 0;
+    setEntitySprite(mage, k, "sirene-mage-walk", "walk", mage.dirX < 0);
     mage.wait(k.rand(2, 4), () => {
       if (mage.state === "walk" && mage.exists()) mage.enterState("idle");
     });
@@ -861,8 +867,7 @@ export function spawnSireneMage(k, startX, startY, player) {
   });
 
   mage.onStateEnter("chase", () => {
-    mage.use(k.sprite("sirene-mage-walk"));
-    mage.play("walk");
+    setEntitySprite(mage, k, "sirene-mage-walk", "walk");
   });
 
   mage.onStateUpdate("chase", () => {
@@ -890,12 +895,8 @@ export function spawnSireneMage(k, startX, startY, player) {
   });
 
   mage.onStateEnter("attack", () => {
-    mage.use(k.sprite("sirene-mage-attack"));
-    mage.play("attack");
-
-    if (player && player.pos) {
-      mage.flipX = player.pos.x < mage.pos.x;
-    }
+    const facePlayer = player && player.pos ? player.pos.x < mage.pos.x : mage.flipX;
+    setEntitySprite(mage, k, "sirene-mage-attack", "attack", facePlayer);
 
     // Incantation avec délai visible (0.35s) : le projectile se charge et part à vitesse modérée
     mage.wait(0.35, () => {
@@ -921,8 +922,7 @@ export function spawnSireneMage(k, startX, startY, player) {
   });
 
   mage.onStateEnter("hurt", () => {
-    mage.use(k.sprite("sirene-mage-hurt"));
-    mage.play("hurt");
+    setEntitySprite(mage, k, "sirene-mage-hurt", "hurt");
     mage.wait(0.25, () => {
       if (mage.state !== "death" && mage.exists()) {
         mage.enterState("chase");
@@ -933,8 +933,7 @@ export function spawnSireneMage(k, startX, startY, player) {
   mage.on("death", () => mage.enterState("death"));
   mage.onStateEnter("death", () => {
     mage.untag("enemy");
-    mage.use(k.sprite("sirene-mage-death"));
-    mage.play("death");
+    setEntitySprite(mage, k, "sirene-mage-death", "death");
     mage.unuse("area");
 
     let destroyed = false;
@@ -993,11 +992,9 @@ export function spawnPoissonExplosif(k, startX, startY, player) {
   ]);
 
   poisson.onStateEnter("drift", () => {
-    poisson.use(k.sprite("poisson-explosif-walk"));
-    poisson.play("walk");
     poisson.dirX = k.rand(-0.6, 0.6);
     poisson.dirY = k.rand(-0.3, 0.3);
-    poisson.flipX = poisson.dirX < 0;
+    setEntitySprite(poisson, k, "poisson-explosif-walk", "walk", poisson.dirX < 0);
     poisson.wait(k.rand(3, 6), () => {
       if (poisson.state === "drift") poisson.enterState("drift");
     });
@@ -1021,8 +1018,7 @@ export function spawnPoissonExplosif(k, startX, startY, player) {
   });
 
   poisson.onStateEnter("chase", () => {
-    poisson.use(k.sprite("poisson-explosif-walk"));
-    poisson.play("walk");
+    setEntitySprite(poisson, k, "poisson-explosif-walk", "walk");
   });
 
   poisson.onStateUpdate("chase", () => {
@@ -1051,8 +1047,8 @@ export function spawnPoissonExplosif(k, startX, startY, player) {
 
   poisson.onStateEnter("explode", () => {
     poisson.untag("enemy");
-    poisson.use(k.sprite("poisson-explosif-death"));
-    poisson.play("death");
+    const facePlayer = player && player.pos ? player.pos.x < poisson.pos.x : poisson.flipX;
+    setEntitySprite(poisson, k, "poisson-explosif-death", "death", facePlayer);
     k.shake(6);
 
     if (player && player.pos && poisson.pos.dist(player.pos) < 85) {
@@ -1081,8 +1077,7 @@ export function spawnPoissonExplosif(k, startX, startY, player) {
   });
 
   poisson.onStateEnter("hurt", () => {
-    poisson.use(k.sprite("poisson-explosif-hurt"));
-    poisson.play("hurt");
+    setEntitySprite(poisson, k, "poisson-explosif-hurt", "hurt");
     poisson.wait(0.2, () => {
       if (poisson.state !== "death" && poisson.state !== "explode" && poisson.exists()) {
         poisson.enterState("chase");
@@ -1136,8 +1131,7 @@ export function spawnMonstreLance(k, startX, startY, player) {
   ]);
 
   lancier.onStateEnter("idle", () => {
-    lancier.use(k.sprite("monstre-lance-idle"));
-    lancier.play("idle");
+    setEntitySprite(lancier, k, "monstre-lance-idle", "idle");
     lancier.wait(k.rand(1, 3), () => {
       if (lancier.state === "idle" && lancier.exists()) lancier.enterState("walk");
     });
@@ -1153,10 +1147,8 @@ export function spawnMonstreLance(k, startX, startY, player) {
   });
 
   lancier.onStateEnter("walk", () => {
-    lancier.use(k.sprite("monstre-lance-walk"));
-    lancier.play("walk");
     lancier.dirX = k.chance(0.5) ? 1 : -1;
-    lancier.flipX = lancier.dirX < 0;
+    setEntitySprite(lancier, k, "monstre-lance-walk", "walk", lancier.dirX < 0);
     lancier.wait(k.rand(2, 4), () => {
       if (lancier.state === "walk" && lancier.exists()) lancier.enterState("idle");
     });
@@ -1181,8 +1173,7 @@ export function spawnMonstreLance(k, startX, startY, player) {
   });
 
   lancier.onStateEnter("chase", () => {
-    lancier.use(k.sprite("monstre-lance-walk"));
-    lancier.play("walk");
+    setEntitySprite(lancier, k, "monstre-lance-walk", "walk");
   });
 
   lancier.onStateUpdate("chase", () => {
@@ -1210,8 +1201,8 @@ export function spawnMonstreLance(k, startX, startY, player) {
   });
 
   lancier.onStateEnter("attack", () => {
-    lancier.use(k.sprite("monstre-lance-attack"));
-    lancier.play("attack");
+    const facePlayer = player && player.pos ? player.pos.x < lancier.pos.x : lancier.flipX;
+    setEntitySprite(lancier, k, "monstre-lance-attack", "attack", facePlayer);
 
     if (player && player.pos && lancier.pos.dist(player.pos) < 95) {
       if (player.takeDamage) player.takeDamage(lancier.damage);
@@ -1231,8 +1222,7 @@ export function spawnMonstreLance(k, startX, startY, player) {
   });
 
   lancier.onStateEnter("hurt", () => {
-    lancier.use(k.sprite("monstre-lance-hurt"));
-    lancier.play("hurt");
+    setEntitySprite(lancier, k, "monstre-lance-hurt", "hurt");
     lancier.wait(0.25, () => {
       if (lancier.state !== "death" && lancier.exists()) {
         lancier.enterState("chase");
@@ -1243,8 +1233,7 @@ export function spawnMonstreLance(k, startX, startY, player) {
   lancier.on("death", () => lancier.enterState("death"));
   lancier.onStateEnter("death", () => {
     lancier.untag("enemy");
-    lancier.use(k.sprite("monstre-lance-death"));
-    lancier.play("death");
+    setEntitySprite(lancier, k, "monstre-lance-death", "death");
     lancier.unuse("area");
 
     let destroyed = false;
@@ -1303,8 +1292,7 @@ export function spawnPieuvre(k, startX, startY, player) {
   ]);
 
   pieuvre.onStateEnter("idle", () => {
-    pieuvre.use(k.sprite("pieuvre-idle"));
-    pieuvre.play("idle");
+    setEntitySprite(pieuvre, k, "pieuvre-idle", "idle");
     pieuvre.wait(k.rand(1, 3), () => {
       if (pieuvre.state === "idle" && pieuvre.exists()) pieuvre.enterState("walk");
     });
@@ -1320,11 +1308,9 @@ export function spawnPieuvre(k, startX, startY, player) {
   });
 
   pieuvre.onStateEnter("walk", () => {
-    pieuvre.use(k.sprite("pieuvre-walk"));
-    pieuvre.play("walk");
     pieuvre.dirX = k.rand(-1, 1);
     pieuvre.dirY = k.rand(-0.4, 0.4);
-    pieuvre.flipX = pieuvre.dirX < 0;
+    setEntitySprite(pieuvre, k, "pieuvre-walk", "walk", pieuvre.dirX < 0);
     pieuvre.wait(k.rand(2, 4), () => {
       if (pieuvre.state === "walk" && pieuvre.exists()) pieuvre.enterState("idle");
     });
@@ -1349,8 +1335,7 @@ export function spawnPieuvre(k, startX, startY, player) {
   });
 
   pieuvre.onStateEnter("chase", () => {
-    pieuvre.use(k.sprite("pieuvre-walk"));
-    pieuvre.play("walk");
+    setEntitySprite(pieuvre, k, "pieuvre-walk", "walk");
   });
 
   pieuvre.onStateUpdate("chase", () => {
@@ -1378,8 +1363,8 @@ export function spawnPieuvre(k, startX, startY, player) {
   });
 
   pieuvre.onStateEnter("attack", () => {
-    pieuvre.use(k.sprite("pieuvre-attack"));
-    pieuvre.play("attack");
+    const facePlayer = player && player.pos ? player.pos.x < pieuvre.pos.x : pieuvre.flipX;
+    setEntitySprite(pieuvre, k, "pieuvre-attack", "attack", facePlayer);
     if (player && player.pos && pieuvre.pos.dist(player.pos) < 85) {
       if (player.takeDamage) player.takeDamage(pieuvre.damage);
     }
@@ -1397,8 +1382,7 @@ export function spawnPieuvre(k, startX, startY, player) {
   });
 
   pieuvre.onStateEnter("hurt", () => {
-    pieuvre.use(k.sprite("pieuvre-hurt"));
-    pieuvre.play("hurt");
+    setEntitySprite(pieuvre, k, "pieuvre-hurt", "hurt");
     pieuvre.wait(0.25, () => {
       if (pieuvre.state !== "death" && pieuvre.exists()) {
         pieuvre.enterState("chase");
@@ -1409,8 +1393,7 @@ export function spawnPieuvre(k, startX, startY, player) {
   pieuvre.on("death", () => pieuvre.enterState("death"));
   pieuvre.onStateEnter("death", () => {
     pieuvre.untag("enemy");
-    pieuvre.use(k.sprite("pieuvre-death"));
-    pieuvre.play("death");
+    setEntitySprite(pieuvre, k, "pieuvre-death", "death");
     pieuvre.unuse("area");
 
     let destroyed = false;
@@ -1469,8 +1452,7 @@ export function spawnPoissonLanterne(k, startX, startY, player) {
   ]);
 
   lanterne.onStateEnter("idle", () => {
-    lanterne.use(k.sprite("lanterne-idle"));
-    lanterne.play("idle");
+    setEntitySprite(lanterne, k, "lanterne-idle", "idle");
     lanterne.wait(k.rand(1, 3), () => {
       if (lanterne.state === "idle" && lanterne.exists()) lanterne.enterState("walk");
     });
@@ -1486,10 +1468,8 @@ export function spawnPoissonLanterne(k, startX, startY, player) {
   });
 
   lanterne.onStateEnter("walk", () => {
-    lanterne.use(k.sprite("lanterne-walk"));
-    lanterne.play("walk");
     lanterne.dirX = k.chance(0.5) ? 1 : -1;
-    lanterne.flipX = lanterne.dirX < 0;
+    setEntitySprite(lanterne, k, "lanterne-walk", "walk", lanterne.dirX < 0);
     lanterne.wait(k.rand(2, 5), () => {
       if (lanterne.state === "walk" && lanterne.exists()) lanterne.enterState("idle");
     });
@@ -1514,8 +1494,7 @@ export function spawnPoissonLanterne(k, startX, startY, player) {
   });
 
   lanterne.onStateEnter("chase", () => {
-    lanterne.use(k.sprite("lanterne-walk"));
-    lanterne.play("walk");
+    setEntitySprite(lanterne, k, "lanterne-walk", "walk");
   });
 
   lanterne.onStateUpdate("chase", () => {
@@ -1543,8 +1522,8 @@ export function spawnPoissonLanterne(k, startX, startY, player) {
   });
 
   lanterne.onStateEnter("attack", () => {
-    lanterne.use(k.sprite("lanterne-attack"));
-    lanterne.play("attack");
+    const facePlayer = player && player.pos ? player.pos.x < lanterne.pos.x : lanterne.flipX;
+    setEntitySprite(lanterne, k, "lanterne-attack", "attack", facePlayer);
     if (player && player.pos && lanterne.pos.dist(player.pos) < 75) {
       if (player.takeDamage) player.takeDamage(lanterne.damage);
     }
@@ -1562,8 +1541,7 @@ export function spawnPoissonLanterne(k, startX, startY, player) {
   });
 
   lanterne.onStateEnter("hurt", () => {
-    lanterne.use(k.sprite("lanterne-hurt"));
-    lanterne.play("hurt");
+    setEntitySprite(lanterne, k, "lanterne-hurt", "hurt");
     lanterne.wait(0.25, () => {
       if (lanterne.state !== "death" && lanterne.exists()) {
         lanterne.enterState("chase");
@@ -1574,8 +1552,7 @@ export function spawnPoissonLanterne(k, startX, startY, player) {
   lanterne.on("death", () => lanterne.enterState("death"));
   lanterne.onStateEnter("death", () => {
     lanterne.untag("enemy");
-    lanterne.use(k.sprite("lanterne-death"));
-    lanterne.play("death");
+    setEntitySprite(lanterne, k, "lanterne-death", "death");
     lanterne.unuse("area");
 
     let destroyed = false;
