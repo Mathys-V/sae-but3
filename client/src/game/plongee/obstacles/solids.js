@@ -64,28 +64,35 @@ export function setupSolids(k, player) {
     return x;
   };
 
-  const resolveVerticalCollisions = (x, startY, historyY, solids) => {
+  const adjustSingleSolidCollision = (s, y, historyY, x) => {
+    if (y > historyY) {
+      if (player.vel?.y > 0) player.vel.y = 0;
+      return { x, y: s.t - HALF_H - OFFSET_Y, isGrounded: true };
+    }
+    if (y < historyY) {
+      if (player.vel?.y < 0) player.vel.y = 0;
+      return { x, y: s.b + HALF_H - OFFSET_Y, isGrounded: false };
+    }
+    const left = x + HALF_W - s.l;
+    const right = s.r - (x - HALF_W);
+    const correctedX = x + (left < right ? -left : right);
+    return { x: correctedX, y, isGrounded: false };
+  };
+
+  const resolveVerticalCollisions = (startX, startY, historyY, solids) => {
     let y = startY;
     let isGrounded = false;
-    let correctedX = x;
+    let x = startX;
 
     for (const s of solids) {
-      if (!hit(pBox(correctedX, y), s)) continue;
-      if (y > historyY) {
-        y = s.t - HALF_H - OFFSET_Y;
-        isGrounded = true;
-        if (player.vel && player.vel.y > 0) player.vel.y = 0;
-      } else if (y < historyY) {
-        y = s.b + HALF_H - OFFSET_Y;
-        if (player.vel && player.vel.y < 0) player.vel.y = 0;
-      } else {
-        const left = correctedX + HALF_W - s.l;
-        const right = s.r - (correctedX - HALF_W);
-        correctedX += left < right ? -left : right;
-      }
+      if (!hit(pBox(x, y), s)) continue;
+      const res = adjustSingleSolidCollision(s, y, historyY, x);
+      x = res.x;
+      y = res.y;
+      if (res.isGrounded) isGrounded = true;
     }
 
-    return { x: correctedX, y, isGrounded };
+    return { x, y, isGrounded };
   };
 
   player.onUpdate(() => {

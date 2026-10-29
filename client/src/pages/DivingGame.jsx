@@ -43,7 +43,8 @@ function DivingGame() {
   const containerRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isShopOpen, setIsShopOpen] = useState(false);
-  const [, setInventoryTick] = useState(0);
+  const [inventoryTick, setInventoryTick] = useState(0);
+  void inventoryTick;
   const [isIntroOpen, setIsIntroOpen] = useState(() => {
     // Affiche le tutoriel des règles lors de la première session du joueur
     return !localStorage.getItem("plongee_intro_seen");

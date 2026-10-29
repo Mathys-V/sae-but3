@@ -55,7 +55,8 @@ const UPGRADE_DEFINITIONS = {
  * @returns {JSX.Element | null} Modale de la boutique ou null si fermée.
  */
 function DivingShopModal({ isOpen, onClose }) {
-  const [, setTick] = useState(0);
+  const [tick, setTick] = useState(0);
+  void tick;
   const [srMessage, setSrMessage] = useState("");
   const closeButtonRef = useRef(null);
 

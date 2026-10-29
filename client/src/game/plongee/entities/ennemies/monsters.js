@@ -55,7 +55,7 @@ export function spawnDamageHitFX(k, pos) {
  * @param {boolean} [forcedFlipX] - Orientation horizontale forcée (ex: face au joueur).
  */
 export function setEntitySprite(obj, k, spriteName, animName, forcedFlipX = undefined) {
-  if (!obj || !obj.exists()) return;
+  if (!obj?.exists()) return;
   const targetFlip = forcedFlipX !== undefined ? forcedFlipX : obj.flipX;
   obj.use(k.sprite(spriteName));
   obj.flipX = targetFlip;
@@ -125,9 +125,7 @@ export function spawnBossRequin(k, startX, startY, player) {
 
     // Régénération complète et reset du Boss si le joueur quitte la Zone 3 ou meurt (anti-suicide exploit)
     const isPlayerInZone3 =
-      player &&
-      player.pos &&
-      player.pos.y >= ZONE3_MIN_Y - 100 &&
+      player?.pos?.y >= ZONE3_MIN_Y - 100 &&
       !stats.bossDefeated;
 
     if (!isPlayerInZone3 && !stats.bossDefeated) {
@@ -168,7 +166,7 @@ export function spawnBossRequin(k, startX, startY, player) {
 
     boss.pos.y = k.clamp(boss.pos.y, ZONE3_MIN_Y, ZONE3_MAX_Y);
 
-    if (player && player.pos && player.pos.y >= 7000 && boss.pos.dist(player.pos) < 850) {
+    if (player?.pos?.y >= 7000 && boss.pos.dist(player.pos) < 850) {
       boss.enterState("chase");
     }
   });
@@ -178,7 +176,7 @@ export function spawnBossRequin(k, startX, startY, player) {
     setEntitySprite(boss, k, "requin-boss-move", "move");
 
     boss.wait(k.rand(2.5, 4.0), () => {
-      if (boss.state === "chase" && player && player.pos && player.pos.y >= 7000 && boss.pos.dist(player.pos) < 750) {
+      if (boss.state === "chase" && player?.pos?.y >= 7000 && boss.pos.dist(player.pos) < 750) {
         boss.enterState("charge");
       }
     });
@@ -186,7 +184,7 @@ export function spawnBossRequin(k, startX, startY, player) {
 
   boss.onStateUpdate("chase", () => {
     if (!boss.exists()) return;
-    if (!player || !player.pos || player.pos.y < 7000) {
+    if (!player?.pos || player.pos.y < 7000) {
       boss.enterState("patrol");
       return;
     }
@@ -211,7 +209,7 @@ export function spawnBossRequin(k, startX, startY, player) {
   // ÉTAT : CHARGE DÉVASTATRICE
   boss.onStateEnter("charge", () => {
     let faceCharge = boss.flipX;
-    if (player && player.pos && player.pos.y >= 7000) {
+    if (player?.pos?.y >= 7000) {
       const dir = player.pos.sub(boss.pos);
       chargeDir = dir.len() < 0.001 ? k.vec2(1, 0) : dir.unit();
       faceCharge = chargeDir.x < 0;
@@ -234,24 +232,20 @@ export function spawnBossRequin(k, startX, startY, player) {
     if (isCharging) {
       boss.move(chargeDir.scale(CHARGE_SPEED));
       boss.pos.y = k.clamp(boss.pos.y, ZONE3_MIN_Y, ZONE3_MAX_Y);
-      if (player && player.pos && boss.pos.dist(player.pos) < 130) {
-        if (player.takeDamage) {
-          player.takeDamage(boss.chargeDamage || 42);
-        }
+      if (player?.pos && boss.pos.dist(player.pos) < 130) {
+        player.takeDamage?.(boss.chargeDamage || 42);
       }
     }
   });
 
   // ÉTAT : ATTAQUE MORSURE
   boss.onStateEnter("attack", () => {
-    const facePlayer = player && player.pos ? player.pos.x < boss.pos.x : boss.flipX;
+    const facePlayer = player?.pos ? player.pos.x < boss.pos.x : boss.flipX;
     setEntitySprite(boss, k, "requin-boss-attack", "attack", facePlayer);
     boss.attackCooldown = true;
 
-    if (player && player.pos && boss.pos.dist(player.pos) < 135) {
-      if (player.takeDamage) {
-        player.takeDamage(boss.damage);
-      }
+    if (player?.pos && boss.pos.dist(player.pos) < 135) {
+      player.takeDamage?.(boss.damage);
     }
 
     boss.wait(0.65, () => {
@@ -279,7 +273,7 @@ export function spawnBossRequin(k, startX, startY, player) {
       if (boss.exists()) boss.color = k.rgb(255, 255, 255);
     });
 
-    if (player && player.pos) {
+    if (player?.pos) {
       let pushDir = boss.pos.sub(player.pos);
       if (pushDir.len() >= 0.001) {
         pushDir = pushDir.unit();
@@ -407,7 +401,7 @@ function createZone3Shark(k, startX, startY, player, config) {
 
     requin.pos.y = k.clamp(requin.pos.y, MIN_Y, MAX_Y);
 
-    if (player && player.pos && player.pos.y >= 7000 && requin.pos.dist(player.pos) < aggroDist) {
+    if (player?.pos?.y >= 7000 && requin.pos.dist(player.pos) < aggroDist) {
       requin.enterState("chase");
     }
   });
@@ -418,7 +412,7 @@ function createZone3Shark(k, startX, startY, player, config) {
 
   requin.onStateUpdate("chase", () => {
     if (!requin.exists()) return;
-    if (!player || !player.pos || player.pos.y < 7000) {
+    if (!player?.pos || player.pos.y < 7000) {
       requin.enterState("patrol");
       return;
     }
@@ -441,12 +435,12 @@ function createZone3Shark(k, startX, startY, player, config) {
   });
 
   requin.onStateEnter("attack", () => {
-    const facePlayer = player && player.pos ? player.pos.x < requin.pos.x : requin.flipX;
+    const facePlayer = player?.pos ? player.pos.x < requin.pos.x : requin.flipX;
     setEntitySprite(requin, k, attackSprite, "attack", facePlayer);
     requin.attackCooldown = true;
 
-    if (player && player.pos && requin.pos.dist(player.pos) < 90) {
-      if (player.takeDamage) player.takeDamage(requin.damage);
+    if (player?.pos && requin.pos.dist(player.pos) < 90) {
+      player?.takeDamage?.(requin.damage);
     }
 
     requin.wait(0.65, () => {
@@ -473,7 +467,7 @@ function createZone3Shark(k, startX, startY, player, config) {
       if (requin.exists()) requin.color = k.rgb(255, 255, 255);
     });
 
-    if (player && player.pos) {
+    if (player?.pos) {
       let pushDir = requin.pos.sub(player.pos);
       if (pushDir.len() >= 0.001) {
         pushDir = pushDir.unit();
@@ -609,7 +603,7 @@ export function spawnSireneEpee(k, startX, startY, player) {
   });
 
   sirene.onStateUpdate("idle", () => {
-    if (player && player.pos && player.pos.y >= 3000 && player.pos.y <= 7000) {
+    if (player?.pos?.y >= 3000 && player?.pos?.y <= 7000) {
       if (sirene.pos.dist(player.pos) < AGGRO_DIST) {
         sirene.enterState("chase");
       }
@@ -634,7 +628,7 @@ export function spawnSireneEpee(k, startX, startY, player) {
 
     sirene.pos.y = k.clamp(sirene.pos.y, MIN_Y, MAX_Y);
 
-    if (player && player.pos && player.pos.y >= 3000 && player.pos.y <= 7000) {
+    if (player?.pos?.y >= 3000 && player?.pos?.y <= 7000) {
       if (sirene.pos.dist(player.pos) < AGGRO_DIST) {
         sirene.enterState("chase");
       }
@@ -648,7 +642,7 @@ export function spawnSireneEpee(k, startX, startY, player) {
 
   sirene.onStateUpdate("chase", () => {
     if (!sirene.exists()) return;
-    if (!player || !player.pos || player.pos.y < 3000 || player.pos.y > 7000) {
+    if (!player?.pos || player.pos.y < 3000 || player.pos.y > 7000) {
       sirene.enterState("walk");
       return;
     }
@@ -671,10 +665,10 @@ export function spawnSireneEpee(k, startX, startY, player) {
   });
 
   sirene.onStateEnter("attack", () => {
-    const facePlayer = player && player.pos ? player.pos.x < sirene.pos.x : sirene.flipX;
+    const facePlayer = player?.pos ? player.pos.x < sirene.pos.x : sirene.flipX;
     setEntitySprite(sirene, k, "sirene-epee-attack", "attack", facePlayer);
-    if (player && player.pos && sirene.pos.dist(player.pos) < 85) {
-      if (player.takeDamage) player.takeDamage(sirene.damage);
+    if (player?.pos && sirene.pos.dist(player.pos) < 85) {
+      player?.takeDamage?.(sirene.damage);
     }
     sirene.wait(0.6, () => {
       if (sirene.state !== "death" && sirene.exists()) {
@@ -779,9 +773,7 @@ export function spawnSireneProjectile(k, startPos, targetPos, damage = 22) {
   proj.onCollide("player", (p) => {
     if (!proj.exists() || proj.exploded) return;
     proj.exploded = true;
-    if (p && p.takeDamage) {
-      p.takeDamage(damage);
-    }
+    p?.takeDamage?.(damage);
     k.destroy(proj);
   });
 
@@ -833,7 +825,7 @@ export function spawnSireneMage(k, startX, startY, player) {
 
   mage.onStateUpdate("idle", () => {
     if (!mage.exists()) return;
-    if (player && player.pos && player.pos.y >= minY && player.pos.y <= maxY) {
+    if (player?.pos?.y >= minY && player?.pos?.y <= maxY) {
       if (mage.pos.dist(player.pos) < AGGRO_DIST) {
         mage.enterState("chase");
       }
@@ -859,7 +851,7 @@ export function spawnSireneMage(k, startX, startY, player) {
 
     mage.pos.y = k.clamp(mage.pos.y, minY, maxY);
 
-    if (player && player.pos && player.pos.y >= minY && player.pos.y <= maxY) {
+    if (player?.pos?.y >= minY && player?.pos?.y <= maxY) {
       if (mage.pos.dist(player.pos) < AGGRO_DIST) {
         mage.enterState("chase");
       }
@@ -872,7 +864,7 @@ export function spawnSireneMage(k, startX, startY, player) {
 
   mage.onStateUpdate("chase", () => {
     if (!mage.exists()) return;
-    if (!player || !player.pos || player.pos.y < minY || player.pos.y > maxY) {
+    if (!player?.pos || player.pos.y < minY || player.pos.y > maxY) {
       mage.enterState("walk");
       return;
     }
@@ -895,13 +887,13 @@ export function spawnSireneMage(k, startX, startY, player) {
   });
 
   mage.onStateEnter("attack", () => {
-    const facePlayer = player && player.pos ? player.pos.x < mage.pos.x : mage.flipX;
+    const facePlayer = player?.pos ? player.pos.x < mage.pos.x : mage.flipX;
     setEntitySprite(mage, k, "sirene-mage-attack", "attack", facePlayer);
 
     // Incantation avec délai visible (0.35s) : le projectile se charge et part à vitesse modérée
     mage.wait(0.35, () => {
       if (mage.state !== "attack" && mage.state !== "death" && !mage.exists()) return;
-      if (player && player.pos && mage.exists()) {
+      if (player?.pos && mage.exists()) {
         const attackDir = mage.flipX ? -1 : 1;
         const staffPos = mage.pos.add(attackDir * 24, -10);
         spawnSireneProjectile(k, staffPos, player.pos, mage.projectileDamage || 25);
@@ -1010,7 +1002,7 @@ export function spawnPoissonExplosif(k, startX, startY, player) {
 
     poisson.pos.y = k.clamp(poisson.pos.y, minY, maxY);
 
-    if (player && player.pos && player.pos.y >= minY && player.pos.y <= maxY) {
+    if (player?.pos?.y >= minY && player?.pos?.y <= maxY) {
       if (poisson.pos.dist(player.pos) < AGGRO_DIST) {
         poisson.enterState("chase");
       }
@@ -1023,7 +1015,7 @@ export function spawnPoissonExplosif(k, startX, startY, player) {
 
   poisson.onStateUpdate("chase", () => {
     if (!poisson.exists()) return;
-    if (!player || !player.pos || player.pos.y < minY || player.pos.y > maxY) {
+    if (!player?.pos || player.pos.y < minY || player.pos.y > maxY) {
       poisson.enterState("drift");
       return;
     }
@@ -1047,12 +1039,12 @@ export function spawnPoissonExplosif(k, startX, startY, player) {
 
   poisson.onStateEnter("explode", () => {
     poisson.untag("enemy");
-    const facePlayer = player && player.pos ? player.pos.x < poisson.pos.x : poisson.flipX;
+    const facePlayer = player?.pos ? player.pos.x < poisson.pos.x : poisson.flipX;
     setEntitySprite(poisson, k, "poisson-explosif-death", "death", facePlayer);
     k.shake(6);
 
-    if (player && player.pos && poisson.pos.dist(player.pos) < 85) {
-      if (player.takeDamage) player.takeDamage(poisson.damage);
+    if (player?.pos && poisson.pos.dist(player.pos) < 85) {
+      player?.takeDamage?.(poisson.damage);
     }
 
     let destroyed = false;
@@ -1139,7 +1131,7 @@ export function spawnMonstreLance(k, startX, startY, player) {
 
   lancier.onStateUpdate("idle", () => {
     if (!lancier.exists()) return;
-    if (player && player.pos && player.pos.y >= MIN_Y && player.pos.y <= MAX_Y) {
+    if (player?.pos?.y >= MIN_Y && player?.pos?.y <= MAX_Y) {
       if (lancier.pos.dist(player.pos) < AGGRO_DIST) {
         lancier.enterState("chase");
       }
@@ -1165,7 +1157,7 @@ export function spawnMonstreLance(k, startX, startY, player) {
 
     lancier.pos.y = k.clamp(lancier.pos.y, MIN_Y, MAX_Y);
 
-    if (player && player.pos && player.pos.y >= MIN_Y && player.pos.y <= MAX_Y) {
+    if (player?.pos?.y >= MIN_Y && player?.pos?.y <= MAX_Y) {
       if (lancier.pos.dist(player.pos) < AGGRO_DIST) {
         lancier.enterState("chase");
       }
@@ -1178,7 +1170,7 @@ export function spawnMonstreLance(k, startX, startY, player) {
 
   lancier.onStateUpdate("chase", () => {
     if (!lancier.exists()) return;
-    if (!player || !player.pos || player.pos.y < MIN_Y || player.pos.y > MAX_Y) {
+    if (!player?.pos || player.pos.y < MIN_Y || player.pos.y > MAX_Y) {
       lancier.enterState("walk");
       return;
     }
@@ -1201,11 +1193,11 @@ export function spawnMonstreLance(k, startX, startY, player) {
   });
 
   lancier.onStateEnter("attack", () => {
-    const facePlayer = player && player.pos ? player.pos.x < lancier.pos.x : lancier.flipX;
+    const facePlayer = player?.pos ? player.pos.x < lancier.pos.x : lancier.flipX;
     setEntitySprite(lancier, k, "monstre-lance-attack", "attack", facePlayer);
 
-    if (player && player.pos && lancier.pos.dist(player.pos) < 95) {
-      if (player.takeDamage) player.takeDamage(lancier.damage);
+    if (player?.pos && lancier.pos.dist(player.pos) < 95) {
+      player?.takeDamage?.(lancier.damage);
     }
 
     lancier.wait(0.6, () => {
@@ -1300,7 +1292,7 @@ export function spawnPieuvre(k, startX, startY, player) {
 
   pieuvre.onStateUpdate("idle", () => {
     if (!pieuvre.exists()) return;
-    if (player && player.pos && player.pos.y >= MIN_Y && player.pos.y <= MAX_Y) {
+    if (player?.pos?.y >= MIN_Y && player?.pos?.y <= MAX_Y) {
       if (pieuvre.pos.dist(player.pos) < AGGRO_DIST) {
         pieuvre.enterState("chase");
       }
@@ -1327,7 +1319,7 @@ export function spawnPieuvre(k, startX, startY, player) {
 
     pieuvre.pos.y = k.clamp(pieuvre.pos.y, MIN_Y, MAX_Y);
 
-    if (player && player.pos && player.pos.y >= MIN_Y && player.pos.y <= MAX_Y) {
+    if (player?.pos?.y >= MIN_Y && player?.pos?.y <= MAX_Y) {
       if (pieuvre.pos.dist(player.pos) < AGGRO_DIST) {
         pieuvre.enterState("chase");
       }
@@ -1340,7 +1332,7 @@ export function spawnPieuvre(k, startX, startY, player) {
 
   pieuvre.onStateUpdate("chase", () => {
     if (!pieuvre.exists()) return;
-    if (!player || !player.pos || player.pos.y < MIN_Y || player.pos.y > MAX_Y) {
+    if (!player?.pos || player.pos.y < MIN_Y || player.pos.y > MAX_Y) {
       pieuvre.enterState("walk");
       return;
     }
@@ -1363,10 +1355,10 @@ export function spawnPieuvre(k, startX, startY, player) {
   });
 
   pieuvre.onStateEnter("attack", () => {
-    const facePlayer = player && player.pos ? player.pos.x < pieuvre.pos.x : pieuvre.flipX;
+    const facePlayer = player?.pos ? player.pos.x < pieuvre.pos.x : pieuvre.flipX;
     setEntitySprite(pieuvre, k, "pieuvre-attack", "attack", facePlayer);
-    if (player && player.pos && pieuvre.pos.dist(player.pos) < 85) {
-      if (player.takeDamage) player.takeDamage(pieuvre.damage);
+    if (player?.pos && pieuvre.pos.dist(player.pos) < 85) {
+      player?.takeDamage?.(pieuvre.damage);
     }
     pieuvre.wait(0.6, () => {
       if (pieuvre.state !== "death" && pieuvre.exists()) {
@@ -1460,7 +1452,7 @@ export function spawnPoissonLanterne(k, startX, startY, player) {
 
   lanterne.onStateUpdate("idle", () => {
     if (!lanterne.exists()) return;
-    if (player && player.pos && player.pos.y >= minY && player.pos.y <= maxY) {
+    if (player?.pos?.y >= minY && player?.pos?.y <= maxY) {
       if (lanterne.pos.dist(player.pos) < AGGRO_DIST) {
         lanterne.enterState("chase");
       }
@@ -1486,7 +1478,7 @@ export function spawnPoissonLanterne(k, startX, startY, player) {
 
     lanterne.pos.y = k.clamp(lanterne.pos.y, minY, maxY);
 
-    if (player && player.pos && player.pos.y >= minY && player.pos.y <= maxY) {
+    if (player?.pos?.y >= minY && player?.pos?.y <= maxY) {
       if (lanterne.pos.dist(player.pos) < AGGRO_DIST) {
         lanterne.enterState("chase");
       }
@@ -1499,7 +1491,7 @@ export function spawnPoissonLanterne(k, startX, startY, player) {
 
   lanterne.onStateUpdate("chase", () => {
     if (!lanterne.exists()) return;
-    if (!player || !player.pos || player.pos.y < minY || player.pos.y > maxY) {
+    if (!player?.pos || player.pos.y < minY || player.pos.y > maxY) {
       lanterne.enterState("walk");
       return;
     }
@@ -1522,10 +1514,10 @@ export function spawnPoissonLanterne(k, startX, startY, player) {
   });
 
   lanterne.onStateEnter("attack", () => {
-    const facePlayer = player && player.pos ? player.pos.x < lanterne.pos.x : lanterne.flipX;
+    const facePlayer = player?.pos ? player.pos.x < lanterne.pos.x : lanterne.flipX;
     setEntitySprite(lanterne, k, "lanterne-attack", "attack", facePlayer);
-    if (player && player.pos && lanterne.pos.dist(player.pos) < 75) {
-      if (player.takeDamage) player.takeDamage(lanterne.damage);
+    if (player?.pos && lanterne.pos.dist(player.pos) < 75) {
+      player?.takeDamage?.(lanterne.damage);
     }
     lanterne.wait(0.6, () => {
       if (lanterne.state !== "death" && lanterne.exists()) {
@@ -1608,9 +1600,7 @@ export function spawnMine(k, startX, startY, isBig = false) {
     if (mine.isExploded || !mine.exists()) return;
     mine.isExploded = true;
     mine.untag("enemy");
-    if (p.takeDamage) {
-      p.takeDamage(damage);
-    }
+    p?.takeDamage?.(damage);
     k.shake(isBig ? 10 : 5);
     k.destroy(mine);
   });

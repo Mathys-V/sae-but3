@@ -336,7 +336,7 @@ export function setupPlayer(k, startX, startY) {
     harpoonHitbox.onCollide("enemy", hitTarget);
     harpoonHitbox.onCollide("npc", hitTarget);
     harpoonHitbox.onCollide("enemy-projectile", (proj) => {
-      if (proj && proj.exists()) {
+      if (proj?.exists()) {
         try {
           k.play("sfx-hit", { volume: 0.75 });
         } catch {
@@ -437,7 +437,7 @@ export function setupPlayer(k, startX, startY) {
 
   // COLLISIONS : Dégâts au contact des ennemis (premier contact & contact continu)
   const handleEnemyHit = (enemy) => {
-    if (!enemy || !enemy.exists() || isInvincible || isDying) return;
+    if (!enemy?.exists() || isInvincible || isDying) return;
     const enemyDmg = enemy.damage || 15;
     player.takeDamage(enemyDmg);
 

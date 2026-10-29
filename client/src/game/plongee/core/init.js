@@ -200,7 +200,7 @@ export function initDivingGame(canvasElement) {
     const SKY_MARGIN = 150;
 
     k.onUpdate(() => {
-      if (!localPlayer || !localPlayer.pos) return;
+      if (!localPlayer?.pos) return;
       const t = k.clamp(
         1 - (localPlayer.pos.y - WATER_LEVEL) / TRANSITION,
         0,

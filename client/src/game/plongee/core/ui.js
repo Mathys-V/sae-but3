@@ -222,7 +222,7 @@ export function setupUI(k, player) {
   };
 
   const updateDepthGauge = () => {
-    if (!player || !player.pos) return;
+    if (!player?.pos) return;
     const depthRatio = Math.max(0, Math.min(player.pos.y / MAX_DEPTH, 1));
     const currentY = 50 + depthRatio * 292;
     cursor.pos.y = currentY;
@@ -277,7 +277,7 @@ export function setupUI(k, player) {
   };
 
   const updateNotificationBanner = () => {
-    if (stats.notification && stats.notification.timer > 0) {
+    if (stats.notification?.timer > 0) {
       stats.notification.timer -= k.dt();
       const alpha = Math.min(1, stats.notification.timer * 1.5);
       notifBannerBg.opacity = 0.95 * alpha;

@@ -76,7 +76,7 @@ export function spawnAnguille(k, startX, startY, player) {
 
   anguille.onStateUpdate("chase", () => {
     if (!anguille.exists()) return;
-    if (!player || !player.pos) {
+    if (!player?.pos) {
       anguille.enterState("idle");
       return;
     }
@@ -201,7 +201,7 @@ export function spawnMeduse(k, startX, startY, player) {
 
   meduse.onStateUpdate("chase", () => {
     if (!meduse.exists()) return;
-    if (!player || !player.pos) {
+    if (!player?.pos) {
       meduse.enterState("drift");
       return;
     }
@@ -320,7 +320,7 @@ export function spawnTortue(k, startX, startY, player) {
 
   tortue.onStateUpdate("chase", () => {
     if (!tortue.exists()) return;
-    if (!player || !player.pos) {
+    if (!player?.pos) {
       tortue.enterState("walk");
       return;
     }
