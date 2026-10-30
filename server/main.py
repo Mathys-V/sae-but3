@@ -15,6 +15,8 @@ app = FastAPI(
 # Vite tourne par défaut sur le port 5173
 origins = [
     "http://localhost:5173",
+    "http://localhost", 
+    "http://localhost:80" #Nginx (port 80)
 ]
 
 app.add_middleware(
@@ -31,7 +33,7 @@ app.include_router(leaderboard.router)
 
 # 3. Initialisation du serveur Socket.IO (Mode Asynchrone)
 # On autorise également le port 5173 pour les WebSockets
-sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins="http://localhost:5173")
+sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins="*") #permet a nginx de se connecter
 
 # 4. Fusion de FastAPI et Socket.IO dans une seule application ASGI
 # C'est cette variable 'socket_app' que le serveur Uvicorn va lancer
