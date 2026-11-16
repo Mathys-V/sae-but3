@@ -19,7 +19,7 @@ function CourseCard({ cours }) {
       style={
         cours.bgImage
           ? {
-              backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.84) 0%, rgba(15, 23, 42, 0.94) 100%), url(${cours.bgImage})`,
+              backgroundImage: `linear-gradient(to right, rgba(8, 18, 35, 0.72) 0%, rgba(12, 28, 52, 0.45) 55%, rgba(12, 28, 52, 0.2) 100%), url(${cours.bgImage})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }
@@ -49,14 +49,14 @@ function CourseCard({ cours }) {
             </span>
           )}
         </div>
-        <div className="font-bold text-sm text-gray-100 line-clamp-2 leading-snug group-hover:text-cyan-200 transition-colors">
+        <div className="font-bold text-sm text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] line-clamp-2 leading-snug group-hover:text-cyan-200 transition-colors">
           {cours.nom}
         </div>
       </div>
 
       {/* Bas de carte : Progression & Bouton d'accès */}
-      <div className="flex justify-between items-center mt-3 pt-2 border-t border-gray-700/50 relative z-10">
-        <span className="text-xs text-gray-400 font-medium">0 % terminé</span>
+      <div className="flex justify-between items-center mt-3 pt-2 border-t border-gray-700/60 bg-slate-950/40 -mx-3.5 -mb-3.5 px-3.5 pb-2.5 rounded-b-lg relative z-10 backdrop-blur-[2px]">
+        <span className="text-xs text-gray-200 font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">0 % terminé</span>
         <Link
           to={cours.path ? cours.path : `/evil/jeux/${cours.id}`}
           className={`font-bold text-xs sm:text-sm flex items-center gap-1.5 px-3 py-1.5 rounded transition-all duration-200 ${
