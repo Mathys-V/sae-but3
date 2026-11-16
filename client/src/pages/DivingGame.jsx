@@ -72,21 +72,34 @@ function DivingGame({
     canvasRef.current?.focus();
   };
 
-  // Initialisation du moteur Kaplay sur le canvas au montage du composant
+  const optionsRef = useRef({
+    socket,
+    sessionId,
+    initialPlayers: playerList,
+    isMultiplayer,
+    mock: enableMockTeammate,
+  });
+
+  // Maintient la référence des options réseau sans provoquer de redémarrage du moteur Kaplay
   useEffect(() => {
-    const quitGame = initDivingGame(canvasRef.current, {
+    optionsRef.current = {
       socket,
       sessionId,
       initialPlayers: playerList,
       isMultiplayer,
       mock: enableMockTeammate,
-    });
+    };
+  }, [socket, sessionId, playerList, isMultiplayer, enableMockTeammate]);
+
+  // Initialisation du moteur Kaplay sur le canvas strictement au montage du composant
+  useEffect(() => {
+    const quitGame = initDivingGame(canvasRef.current, optionsRef.current);
     return () => {
       if (typeof quitGame === "function") {
         quitGame();
       }
     };
-  }, [socket, sessionId, playerList, isMultiplayer, enableMockTeammate]);
+  }, []);
 
   /**
    * Bascule entre le mode fenêtré standard et le mode plein écran natif de l'API Browser.
