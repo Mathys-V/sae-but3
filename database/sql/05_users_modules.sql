@@ -16,6 +16,6 @@ CREATE TABLE users_modules (
     attempts INTEGER NOT NULL DEFAULT 0,
     best_score INTEGER,    
     best_time INTEGER,
-    date_completion TIMESTAMP,  
+    date_completion TIMESTAMPTZ,  
     UNIQUE (user_id, module_id) -- un couple joueur-module unique
 );

@@ -12,5 +12,5 @@ CREATE TABLE user_settings (
     control_scheme VARCHAR(20) NOT NULL DEFAULT 'arrows'
         CHECK (control_scheme IN ('arrows', 'letters', 'zqsd')),
     colorblind_flag BOOLEAN NOT NULL DEFAULT FALSE,
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

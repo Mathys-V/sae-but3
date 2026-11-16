@@ -94,7 +94,7 @@ FROM (VALUES
         'hard',
         '{"time_per_question":10,"points_per_correct":100,"max_possible":100}',
         FALSE, 1::SMALLINT, 1::SMALLINT, TRUE,
-        LOCALTIMESTAMP - INTERVAL '15 days', NULL::TIMESTAMP
+        LOCALTIMESTAMP - INTERVAL '15 days', NULL::TIMESTAMPTZ
     )
 ) AS v(module_name, name, description, data, difficulty, config,
        multiplayer_flag, min_players, max_players, active_flag, created_at, updated_at)

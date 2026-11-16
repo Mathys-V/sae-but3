@@ -56,7 +56,7 @@ pip install -r requirements.txt
 
 
 
-Vous n'avez à en choisir qu'un en fonction de ce que vous souaitez faire.
+Vous n'avez à en choisir qu'un en fonction de ce que vous souhaitez faire.
 
 
 

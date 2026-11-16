@@ -15,7 +15,7 @@ CREATE TABLE sessions_users (
         CHECK (role IN ('host', 'player')),
     ready_flag BOOLEAN NOT NULL DEFAULT FALSE,
     connected_flag BOOLEAN NOT NULL DEFAULT TRUE,
-    joined_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    left_at TIMESTAMP,
+    joined_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    left_at TIMESTAMPTZ,
     UNIQUE (session_id, user_id)
 );

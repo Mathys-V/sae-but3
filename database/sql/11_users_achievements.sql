@@ -11,6 +11,6 @@ CREATE TABLE users_achievements (
         REFERENCES users(user_id) ON DELETE CASCADE,
     achievement_id INTEGER NOT NULL
         REFERENCES achievements(achievement_id) ON DELETE CASCADE,
-    unlocked_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    unlocked_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE (user_id, achievement_id)  -- un succès n'est débloqué qu'une fois
 );
