@@ -2,11 +2,88 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ressourcesBUT } from "../data/ressources.js";
 
+/**
+ * Composant de carte de ressource / mini-jeu (le profil du bloc de jeu).
+ * Met en valeur les jeux dotés d'assets dédiés (fond d'ambiance, sprite pixel art, tag).
+ */
+function CourseCard({ cours }) {
+  const hasGame = Boolean(cours.path);
+
+  return (
+    <div
+      className={`relative rounded-lg border overflow-hidden p-3.5 flex flex-col justify-between min-h-[9.5rem] transition-all duration-300 group shadow-md ${
+        hasGame
+          ? "border-cyan-500/60 bg-slate-900/90 hover:border-cyan-400 hover:shadow-cyan-900/30 hover:shadow-lg"
+          : "bg-gray-800 border-gray-700 hover:border-gray-600"
+      }`}
+      style={
+        cours.bgImage
+          ? {
+              backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.84) 0%, rgba(15, 23, 42, 0.94) 100%), url(${cours.bgImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }
+          : undefined
+      }
+    >
+      {/* Sprite ou illustration du jeu dans le coin supérieur droit */}
+      {cours.spriteIcon && (
+        <div className="absolute top-2 right-2 pointer-events-none opacity-85 group-hover:opacity-100 group-hover:scale-110 transition-transform duration-300">
+          <img
+            src={cours.spriteIcon}
+            alt={cours.nom}
+            className="w-16 h-16 object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)] [image-rendering:pixelated]"
+          />
+        </div>
+      )}
+
+      {/* En-tête : Badge identifiant & Titre du cours */}
+      <div className="relative z-10 pr-14">
+        <div className="flex flex-wrap items-center gap-2 mb-1.5">
+          <span className="font-mono text-xs font-bold px-1.5 py-0.5 rounded bg-gray-700/80 text-cyan-300 border border-gray-600/50">
+            {cours.id}
+          </span>
+          {cours.tag && (
+            <span className="text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-700/50">
+              {cours.tag}
+            </span>
+          )}
+        </div>
+        <div className="font-bold text-sm text-gray-100 line-clamp-2 leading-snug group-hover:text-cyan-200 transition-colors">
+          {cours.nom}
+        </div>
+      </div>
+
+      {/* Bas de carte : Progression & Bouton d'accès */}
+      <div className="flex justify-between items-center mt-3 pt-2 border-t border-gray-700/50 relative z-10">
+        <span className="text-xs text-gray-400 font-medium">0 % terminé</span>
+        <Link
+          to={cours.path ? cours.path : `/evil/jeux/${cours.id}`}
+          className={`font-bold text-xs sm:text-sm flex items-center gap-1.5 px-3 py-1.5 rounded transition-all duration-200 ${
+            hasGame
+              ? "bg-cyan-600 hover:bg-cyan-500 text-white shadow-md hover:shadow-cyan-500/40"
+              : "text-blue-400 hover:text-blue-300 hover:bg-blue-950/40"
+          }`}
+        >
+          <span>▶</span>
+          <span>Lancer</span>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 function EvilGames() {
-  // On récupère 3 ressources pour afficher le Casino + 2 cours
+  // Ressources BUT 1
   const jeuxBUT1 = ressourcesBUT.BUT1.slice(0, 6);
-  const jeuxBUT2 = ressourcesBUT.BUT2.slice(0, 2);
-  const jeuxBUT3 = ressourcesBUT.BUT3.slice(0, 2);
+
+  // Ressources BUT 2 (Déverrouillées pour le développement)
+  const jeuxBUT2 = ressourcesBUT.BUT2.slice(0, 3);
+
+  // Ressources BUT 3 : inclut en priorité le jeu de plongée R5.A.06
+  const divingGame = ressourcesBUT.BUT3.find((c) => c.id === "R5.A.06");
+  const otherBUT3 = ressourcesBUT.BUT3.filter((c) => c.id !== "R5.A.06").slice(0, 2);
+  const jeuxBUT3 = divingGame ? [divingGame, ...otherBUT3] : ressourcesBUT.BUT3.slice(0, 3);
 
   useEffect(() => {
     document.title = "EvilJV | Mes Jeux";
@@ -25,73 +102,41 @@ function EvilGames() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {jeuxBUT1.map((cours) => (
-            <div
-              key={cours.id}
-              className="bg-gray-800 rounded border border-gray-700 p-3 flex flex-col justify-between h-32"
-            >
-              <div className="font-bold text-sm text-gray-300">
-                {cours.id} - {cours.nom}
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-sm text-gray-400">0 % terminé</span>
-                {/* On utilise un Link au lieu d'un simple button */}
-                <Link 
-                  to={cours.path ? cours.path : `/evil/jeux/${cours.id}`}
-                  className="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1"
-                >
-                  ▶ Lancer
-                </Link>
-              </div>
-            </div>
+            <CourseCard key={cours.id} cours={cours} />
           ))}
         </div>
       </section>
 
-      {/* BUT 2 - Verrouillé */}
-      <section className="relative bg-gray-800/50 p-6 rounded border border-gray-700 opacity-60 grayscale">
-        <div className="absolute inset-0 flex items-center justify-center z-10 bg-gray-900/50 backdrop-blur-sm rounded">
-          <h2 className="text-4xl font-bold text-white flex items-center gap-4">
-            🔒 But 2 : verrouillé
+      {/* BUT 2 - Déverrouillé pour le dev */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">
+            But 2 : complétez toutes les ressources
           </h2>
+          <span className="text-xs px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-semibold">
+            🔓 Déverrouillé (Dev)
+          </span>
         </div>
-        {/* Contenu visible en filigrane sous le cadenas */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {jeuxBUT2.map((cours) => (
-            <div
-              key={cours.id}
-              className="bg-gray-800 rounded border border-gray-700 p-3 flex flex-col justify-between h-32 opacity-50"
-            >
-              <div className="font-bold text-sm text-gray-300">
-                {cours.id} - {cours.nom}
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-sm text-gray-500">Bloqué</span>
-              </div>
-            </div>
+            <CourseCard key={cours.id} cours={cours} />
           ))}
         </div>
       </section>
 
-      {/* BUT 3 - Verrouillé */}
-      <section className="relative bg-gray-800/50 p-6 rounded border border-gray-700 opacity-60 grayscale">
-        <div className="absolute inset-0 flex items-center justify-center z-10 bg-gray-900/50 backdrop-blur-sm rounded">
-          <h2 className="text-4xl font-bold text-white flex items-center gap-4">
-            🔒 But 3 : verrouillé
+      {/* BUT 3 - Déverrouillé pour le dev */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">
+            But 3 : complétez toutes les ressources
           </h2>
+          <span className="text-xs px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-mono font-semibold">
+            🔓 Déverrouillé (Dev)
+          </span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {jeuxBUT3.map((cours) => (
-            <div
-              key={cours.id}
-              className="bg-gray-800 rounded border border-gray-700 p-3 flex flex-col justify-between h-32 opacity-50"
-            >
-              <div className="font-bold text-sm text-gray-300">
-                {cours.id} - {cours.nom}
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-sm text-gray-500">Bloqué</span>
-              </div>
-            </div>
+            <CourseCard key={cours.id} cours={cours} />
           ))}
         </div>
       </section>
