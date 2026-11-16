@@ -5,15 +5,18 @@ import { setupUI } from "./ui.js";
 import { setupSolids } from "../obstacles/solids.js";
 import { populateOcean } from "../world/levelManager.js";
 import { stats } from "../entities/stats.js";
+import { setupMultiplayer } from "./multiplayer.js";
 
 /**
  * Initialise l'instance du moteur Kaplay, charge l'ensemble des spritesheets, sons et polices,
  * puis instancie la scène principale de plongée ("dive") avec la physique, la caméra et les écouteurs.
  *
  * @param {HTMLCanvasElement} canvasElement - Élément canvas HTML cible pour le rendu Kaplay.
+ * @param {object} [multiplayerOptions={}] - Configuration multijoueur (socket, session, joueurs, simulation).
  * @returns {() => void} Fonction de destruction et de nettoyage complet du moteur de jeu.
  */
-export function initDivingGame(canvasElement) {
+export function initDivingGame(canvasElement, multiplayerOptions = {}) {
+  let multiController = null;
   const k = kaplay({
     canvas: canvasElement,
     width: 1024,
@@ -174,6 +177,7 @@ export function initDivingGame(canvasElement) {
     populateOcean(k, localPlayer);
     setupUI(k, localPlayer);
     setupSolids(k, localPlayer); // doit être appelé AVANT la caméra et le filet
+    multiController = setupMultiplayer(k, localPlayer, multiplayerOptions);
 
     // Filet de sécurité : le joueur ne peut jamais sortir de la zone
     const PLAYABLE_WIDTH = 16000; // même valeur que terrain.js
@@ -242,6 +246,7 @@ export function initDivingGame(canvasElement) {
 
   k.go("dive");
   return () => {
+    multiController?.cleanup?.();
     window.removeEventListener("plongee-play-sound", handleGlobalSound);
     window.removeEventListener(
       "plongee-inventory-updated",

@@ -1,4 +1,5 @@
 import { stats, triggerNotification } from "./stats.js";
+import { broadcastLocalAction, broadcastBarrelSync } from "../core/multiplayer.js";
 
 /**
  * Instancie et configure l'entité du joueur (plongeur) avec son modèle physique,
@@ -114,6 +115,7 @@ export function setupPlayer(k, startX, startY) {
     }
 
     player.color = k.rgb(255, 80, 80);
+    broadcastLocalAction("hurt", { hp: stats.hp, amount });
     k.wait(0.15, () => {
       player.color = k.rgb(255, 255, 255);
     });
@@ -138,6 +140,7 @@ export function setupPlayer(k, startX, startY) {
     // Réinitialisation survie et perte du butin personnel
     stats.hp = stats.maxHp;
     stats.o2 = stats.maxO2;
+    broadcastLocalAction("death");
     stats.inventory = [];
 
     // Téléportation immédiate sur la barque au centre parfait (x = 0, y = -58)
@@ -300,6 +303,7 @@ export function setupPlayer(k, startX, startY) {
       : "diver-attack";
 
     currentAnim = "attack";
+    broadcastLocalAction("attack", { dir: facingLeft ? -1 : 1 });
     player.use(k.sprite(attackSprite));
     player.play("attack");
     player.flipX = facingLeft;
@@ -420,6 +424,7 @@ export function setupPlayer(k, startX, startY) {
 
     triggerNotification(`( + ) ${count} butin(s) depose(s) dans le Tonneau !`, [56, 189, 248], 3.0);
     window.dispatchEvent(new CustomEvent("plongee-inventory-updated"));
+    broadcastBarrelSync(stats.barrelInventory);
   };
 
   // ÉTAPE 3 : INTERACTION AU TONNEAU ET AU MARCHAND (TOUCHE E)

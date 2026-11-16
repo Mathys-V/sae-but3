@@ -34,11 +34,24 @@ function formatTime(seconds) {
 /**
  * Composant principal de la page du Jeu de Plongée (DivingGame).
  * Gère l'intégration de la borne d'arcade rétro, du canvas Kaplay, des modales
- * (Boutique, Guide des règles, Victoire) et des raccourcis clavier globaux.
+ * (Boutique, Guide des règles, Victoire), des raccourcis clavier globaux
+ * et de la synchronisation multijoueur.
  *
+ * @param {object} [props={}] - Propriétés de configuration optionnelles.
+ * @param {object|null} [props.socket=null] - Instance Socket.IO partagée.
+ * @param {string|null} [props.sessionId=null] - Identifiant du salon multijoueur.
+ * @param {Array<object>} [props.playerList=[]] - Liste des autres joueurs connectés.
+ * @param {boolean} [props.isMultiplayer=false] - Indique si la session est multijoueur.
+ * @param {boolean} [props.enableMockTeammate=false] - Active un coéquipier simulé en local.
  * @returns {JSX.Element} Vue complète du jeu de plongée.
  */
-function DivingGame() {
+function DivingGame({
+  socket = null,
+  sessionId = null,
+  playerList = [],
+  isMultiplayer = false,
+  enableMockTeammate = false,
+} = {}) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -61,13 +74,19 @@ function DivingGame() {
 
   // Initialisation du moteur Kaplay sur le canvas au montage du composant
   useEffect(() => {
-    const quitGame = initDivingGame(canvasRef.current);
+    const quitGame = initDivingGame(canvasRef.current, {
+      socket,
+      sessionId,
+      initialPlayers: playerList,
+      isMultiplayer,
+      mock: enableMockTeammate,
+    });
     return () => {
       if (typeof quitGame === "function") {
         quitGame();
       }
     };
-  }, []);
+  }, [socket, sessionId, playerList, isMultiplayer, enableMockTeammate]);
 
   /**
    * Bascule entre le mode fenêtré standard et le mode plein écran natif de l'API Browser.
