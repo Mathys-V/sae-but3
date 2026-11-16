@@ -6,6 +6,12 @@ import { setupSolids } from "../obstacles/solids.js";
 import { populateOcean } from "../world/levelManager.js";
 import { stats } from "../entities/stats.js";
 import { setupMultiplayer } from "./multiplayer.js";
+import {
+  saveProgression,
+  loadProgression,
+  saveActiveRun,
+  loadActiveRun,
+} from "./statsStorage.js";
 
 /**
  * Initialise l'instance du moteur Kaplay, charge l'ensemble des spritesheets, sons et polices,
@@ -167,16 +173,32 @@ export function initDivingGame(canvasElement, multiplayerOptions = {}) {
   }
 
   let bgmMusic = null;
+  let localPlayerRef = null;
   k.scene("dive", () => {
     try {
       bgmMusic = k.play("bgm-dive", { loop: true, volume: 0.5 });
     } catch {
       /* ignore audio error */
     }
+
+    loadProgression(stats);
+    const activeRun = loadActiveRun();
+    let startX = 0;
+    let startY = -58;
+    if (activeRun && activeRun.pos) {
+      startX = activeRun.pos.x;
+      startY = activeRun.pos.y;
+      if (typeof activeRun.hp === "number") stats.hp = activeRun.hp;
+      if (typeof activeRun.o2 === "number") stats.o2 = activeRun.o2;
+      if (Array.isArray(activeRun.inventory)) stats.inventory = activeRun.inventory;
+      if (typeof activeRun.gameTimer === "number") stats.gameTimer = activeRun.gameTimer;
+    }
+
     setupOceanBoundaries(k);
 
-    // Spawn parfaitement centré sur le plancher du bateau
-    const localPlayer = setupPlayer(k, 0, -58);
+    // Spawn centré sur le bateau ou restauré depuis la session active
+    const localPlayer = setupPlayer(k, startX, startY);
+    localPlayerRef = localPlayer;
 
     // Fait apparaître toute la faune de l'océan (Zones 1, 2, 3)
     populateOcean(k, localPlayer);
@@ -240,6 +262,7 @@ export function initDivingGame(canvasElement, multiplayerOptions = {}) {
 
   // Synchronisation visuelle du sprite du Tonneau (plein vs vide) lors des ventes ou dépôts
   const handleInventoryUpdated = () => {
+    saveProgression(stats);
     const barrels = k.get("inventory-barrel");
     if (barrels.length > 0) {
       const isFull = stats.barrelInventory && stats.barrelInventory.length > 0;
@@ -251,6 +274,14 @@ export function initDivingGame(canvasElement, multiplayerOptions = {}) {
 
   k.go("dive");
   return () => {
+    try {
+      saveProgression(stats);
+      if (localPlayerRef?.pos) {
+        saveActiveRun(stats, localPlayerRef.pos);
+      }
+    } catch {
+      /* ignore */
+    }
     try {
       bgmMusic?.stop?.();
     } catch {

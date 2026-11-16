@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function EvilSettings() {
+  const navigate = useNavigate();
   useEffect(() => {
     document.title = "EvilJV | Paramètres";
   }, []);
@@ -57,6 +59,17 @@ function EvilSettings() {
   return (
     <>
       <main className="space-y-8 max-w-3xl mx-auto relative">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-200 hover:text-white text-sm font-bold transition-all shadow-sm hover:shadow"
+            title="Revenir à la page précédente"
+          >
+            <span>←</span>
+            <span>Retour / Reprendre</span>
+          </button>
+        </div>
+
         <div className="bg-blue-900 text-white p-6 text-center rounded shadow-lg">
           <h1 className="text-4xl font-bold">Paramètres du Système</h1>
         </div>

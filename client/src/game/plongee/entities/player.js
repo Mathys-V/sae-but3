@@ -1,5 +1,6 @@
 import { stats, triggerNotification } from "./stats.js";
 import { broadcastLocalAction, broadcastBarrelSync } from "../core/multiplayer.js";
+import { clearActiveRun, saveProgression } from "../core/statsStorage.js";
 
 /**
  * Instancie et configure l'entité du joueur (plongeur) avec son modèle physique,
@@ -142,6 +143,8 @@ export function setupPlayer(k, startX, startY) {
     stats.o2 = stats.maxO2;
     broadcastLocalAction("death");
     stats.inventory = [];
+    clearActiveRun();
+    saveProgression(stats);
 
     // Téléportation immédiate sur la barque au centre parfait (x = 0, y = -58)
     player.pos = k.vec2(0, -58);
