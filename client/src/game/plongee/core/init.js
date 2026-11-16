@@ -218,7 +218,7 @@ export function initDivingGame(canvasElement, multiplayerOptions = {}) {
       const camY = k.lerp(localPlayer.pos.y, surfaceCenterY, t);
 
       if (Number.isFinite(localPlayer.pos.x) && Number.isFinite(camY)) {
-        k.camPos(localPlayer.pos.x, camY);
+        k.camPos(Math.round(localPlayer.pos.x), Math.round(camY));
       }
     });
   });
