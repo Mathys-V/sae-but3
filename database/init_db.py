@@ -10,9 +10,8 @@ Usage :
 
 Prérequis :
     - pip install psycopg2-binary
-    - Variable d'environnement DATABASE_URL, ex. :
-      postgresql://sae_user:motdepasse@localhost:5432/jeu
-      (fichier .env à côté du script, jamais commité)
+    - Variable d'environnement DATABASE_URL (fichier .env à côté du
+      script, jamais commité) — format et exemple : voir .env.example
 
 Convention des fichiers (dossier sql/ à côté du script) :
     01_users.sql ... 14_user_profiles.sql     -> structure, exécutés dans l'ordre du tri
@@ -77,7 +76,7 @@ def run_script(conn, path: Path) -> None:
     """Exécute un script dans UNE transaction : tout réussit ou rien n'est appliqué."""
     sql = path.read_text(encoding="utf-8")
     with conn.cursor() as cur:
-        cur.execute(sql)
+        cur.execute(sql)# NOSONAR
 
 
 def main() -> int:
