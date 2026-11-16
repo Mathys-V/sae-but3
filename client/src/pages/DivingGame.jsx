@@ -93,10 +93,22 @@ function DivingGame({
 
   // Initialisation du moteur Kaplay sur le canvas strictement au montage du composant
   useEffect(() => {
-    const quitGame = initDivingGame(canvasRef.current, optionsRef.current);
+    let quitGame = null;
+    try {
+      quitGame = initDivingGame(canvasRef.current, optionsRef.current);
+    } catch (err) {
+      console.error("Erreur initialisation plongee :", err);
+    }
     return () => {
       if (typeof quitGame === "function") {
-        quitGame();
+        try {
+          quitGame();
+        } catch (err) {
+          console.warn("Erreur quitGame plongee :", err);
+        }
+      }
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
       }
     };
   }, []);

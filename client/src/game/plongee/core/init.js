@@ -166,8 +166,13 @@ export function initDivingGame(canvasElement, multiplayerOptions = {}) {
     });
   }
 
+  let bgmMusic = null;
   k.scene("dive", () => {
-    k.play("bgm-dive", { loop: true, volume: 0.5 });
+    try {
+      bgmMusic = k.play("bgm-dive", { loop: true, volume: 0.5 });
+    } catch {
+      /* ignore audio error */
+    }
     setupOceanBoundaries(k);
 
     // Spawn parfaitement centré sur le plancher du bateau
@@ -246,12 +251,29 @@ export function initDivingGame(canvasElement, multiplayerOptions = {}) {
 
   k.go("dive");
   return () => {
-    multiController?.cleanup?.();
-    window.removeEventListener("plongee-play-sound", handleGlobalSound);
-    window.removeEventListener(
-      "plongee-inventory-updated",
-      handleInventoryUpdated,
-    );
-    k.quit();
+    try {
+      bgmMusic?.stop?.();
+    } catch {
+      /* ignore audio error */
+    }
+    try {
+      multiController?.cleanup?.();
+    } catch (err) {
+      console.warn("multiController cleanup error:", err);
+    }
+    try {
+      window.removeEventListener("plongee-play-sound", handleGlobalSound);
+      window.removeEventListener(
+        "plongee-inventory-updated",
+        handleInventoryUpdated,
+      );
+    } catch (err) {
+      console.warn("event listener removal error:", err);
+    }
+    try {
+      k.quit();
+    } catch (err) {
+      console.warn("k.quit error:", err);
+    }
   };
 }

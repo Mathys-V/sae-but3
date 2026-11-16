@@ -96,7 +96,11 @@ export function setupMultiplayer(k, localPlayer, options = {}) {
     broadcastAction: (actionType, payload) => broadcastLocalAction(actionType, payload),
     syncBarrel: (barrelInventory) => broadcastBarrelSync(barrelInventory),
     cleanup: () => {
-      unregisterLoop();
+      if (typeof unregisterLoop === "function") {
+        unregisterLoop();
+      } else if (unregisterLoop && typeof unregisterLoop.cancel === "function") {
+        unregisterLoop.cancel();
+      }
       window.removeEventListener("plongee-multi-player-joined", handleExtPlayerJoin);
       window.removeEventListener("plongee-multi-player-left", handleExtPlayerLeave);
       cleanupMultiplayer();
