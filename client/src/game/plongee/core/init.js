@@ -22,6 +22,18 @@ import {
  * @returns {() => void} Fonction de destruction et de nettoyage complet du moteur de jeu.
  */
 export function initDivingGame(canvasElement, multiplayerOptions = {}) {
+  // Purge préventive du cache d'atlas de police WebGL pour éviter l'affichage de rectangles noirs
+  if (
+    typeof window !== "undefined" &&
+    typeof window.__kaplayClearFontCache === "function"
+  ) {
+    try {
+      window.__kaplayClearFontCache();
+    } catch {
+      /* ignore */
+    }
+  }
+
   let multiController = null;
   const k = kaplay({
     canvas: canvasElement,
@@ -305,6 +317,16 @@ export function initDivingGame(canvasElement, multiplayerOptions = {}) {
       k.quit();
     } catch (err) {
       console.warn("k.quit error:", err);
+    }
+    if (
+      typeof window !== "undefined" &&
+      typeof window.__kaplayClearFontCache === "function"
+    ) {
+      try {
+        window.__kaplayClearFontCache();
+      } catch {
+        /* ignore */
+      }
     }
   };
 }
