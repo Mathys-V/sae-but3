@@ -54,6 +54,7 @@ function DivingGame({
 } = {}) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const [canvasSessionKey] = useState(() => Date.now());
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [inventoryTick, setInventoryTick] = useState(0);
@@ -317,6 +318,7 @@ function DivingGame({
           {/* L'ÉCRAN DE JEU ET LE CANVAS KAPLAY */}
           <div className="arcade-screen-viewport">
             <canvas
+              key={canvasSessionKey}
               ref={canvasRef}
               tabIndex={0}
               aria-label="Jeu de plongée sous-marine MesCoursJV. Contrôles : ZQSD ou Flèches pour nager, Clic gauche pour attaquer au harpon, E pour interagir sur la barque, B pour la boutique."
