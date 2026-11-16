@@ -1,0 +1,2 @@
+# Dépendances pour utiliser init_db.py (déploiement de la base).
+psycopg2-binary==2.9.10
