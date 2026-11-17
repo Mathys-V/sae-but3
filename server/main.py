@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # NOUVEAU : Import de nos fichiers de routes
-from routers import auth, leaderboard
+from routers import admin, auth, leaderboard
 
 # 1. Initialisation de l'application FastAPI
 app = FastAPI(
@@ -30,6 +30,7 @@ app.add_middleware(
 # NOUVEAU : Inclusion de nos routes API dans l'application FastAPI
 app.include_router(auth.router)
 app.include_router(leaderboard.router)
+app.include_router(admin.router)
 
 # 3. Initialisation du serveur Socket.IO (Mode Asynchrone)
 # On autorise également le port 5173 pour les WebSockets

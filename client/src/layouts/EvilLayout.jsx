@@ -1,15 +1,23 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 
 function EvilLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isDiving = location.pathname.includes("/plongee");
+  const { user, role, isGuest, logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/connexionMCJV");
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 font-sans flex flex-col">
       {/* Barre de navigation Evil */}
       <header className="bg-gray-950 border-b border-red-900 p-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-6">
-          <nav className="flex gap-6 font-medium">
+          <nav className="flex items-center gap-6 font-medium">
             <Link
               to="/evil"
               className="hover:text-red-500 flex items-center gap-2"
@@ -28,22 +36,74 @@ function EvilLayout() {
             <span className="text-gray-400 flex items-center gap-2 cursor-not-allowed">
               Multijoueurs
             </span>
+
+            {/* Onglet d'Administration & Modération si l'utilisateur est admin */}
+            {role === "admin" && (
+              <Link
+                to="/evil/admin"
+                className="hover:bg-red-900/60 bg-red-950/70 text-red-400 hover:text-red-200 border border-red-700/80 px-2.5 py-1 rounded-md text-sm font-bold flex items-center gap-1.5 transition"
+              >
+                <span>🛡️</span>
+                <span>Modération</span>
+              </Link>
+            )}
           </nav>
         </div>
 
-        {/* Paramètres tout à droite */}
-        <div>
+        {/* Profil & Paramètres tout à droite */}
+        <div className="flex items-center gap-4">
+          {user && (
+            <div className="hidden sm:flex items-center gap-2 text-xs text-gray-300 bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700">
+              <span>👤</span>
+              <span className="font-semibold text-gray-100">{user}</span>
+              {isGuest && (
+                <span className="bg-gray-700 text-gray-400 text-[10px] px-1.5 py-0.5 rounded">
+                  Invité
+                </span>
+              )}
+              {role === "admin" && (
+                <span className="bg-yellow-950 text-yellow-400 border border-yellow-700 text-[10px] px-1.5 py-0.5 rounded font-bold">
+                  Admin
+                </span>
+              )}
+            </div>
+          )}
+
           <Link
             to="/evil/parametres"
-            className="hover:text-red-500 flex items-center gap-2 font-medium"
+            className="hover:text-red-500 flex items-center gap-1.5 font-medium text-sm text-gray-300"
           >
             ⚙️ Paramètres
           </Link>
+
+          {user ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="hover:text-red-400 text-xs text-gray-400 hover:underline transition"
+              title="Se déconnecter"
+            >
+              Déconnexion
+            </button>
+          ) : (
+            <Link
+              to="/connexionMCJV"
+              className="text-xs text-red-400 hover:underline"
+            >
+              Connexion
+            </Link>
+          )}
         </div>
       </header>
 
       {/* Contenu dynamique des pages (Pleine largeur sans marge pour le jeu de plongée) */}
-      <div className={`flex-1 w-full ${isDiving ? "p-0 overflow-hidden flex flex-col min-h-0" : "max-w-7xl mx-auto p-6"}`}>
+      <div
+        className={`flex-1 w-full ${
+          isDiving
+            ? "p-0 overflow-hidden flex flex-col min-h-0"
+            : "max-w-7xl mx-auto p-6"
+        }`}
+      >
         <Outlet />
       </div>
 

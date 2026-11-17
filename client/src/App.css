@@ -593,6 +593,101 @@ summary:focus-visible {
   background: #982533;
   box-shadow: 0 0 18px #dc303b80;
 }
+.evil-auth-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #54202a;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+.evil-auth-tab-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background: #211922;
+  border: 1px solid #4a1d26;
+  border-radius: 4px;
+  color: #ab9aa6;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+.evil-auth-tab-btn:hover {
+  background: #331f28;
+  color: #f7edf3;
+}
+.evil-auth-tab-btn.is-active {
+  background: #751a27;
+  border-color: #e04450;
+  color: #ffffff;
+  box-shadow: 0 0 10px #dc303b40;
+}
+.evil-guest-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 16px 0 10px;
+  color: #8c7886;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+.evil-guest-divider::before,
+.evil-guest-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px dashed #54202a;
+}
+.evil-guest-divider span {
+  padding: 0 10px;
+}
+.evil-guest-button {
+  width: 100%;
+  min-height: 42px;
+  background: #1b1e2a;
+  border: 1px solid #364468;
+  border-radius: 6px;
+  color: #9cb5db;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 180ms ease;
+}
+.evil-guest-button:hover {
+  background: #252d42;
+  border-color: #4f68a3;
+  color: #d2e1f8;
+  box-shadow: 0 0 12px rgba(79, 104, 163, 0.4);
+}
+.evil-auth-error {
+  background: rgba(117, 26, 39, 0.35);
+  border: 1px solid #e04450;
+  color: #ff9da6;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.evil-auth-success {
+  background: rgba(26, 117, 50, 0.35);
+  border: 1px solid #34d399;
+  color: #a7f3d0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
 .evil-profile-links {
   display: flex;
   justify-content: center;
