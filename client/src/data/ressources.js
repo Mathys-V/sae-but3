@@ -1,5 +1,6 @@
 // Liste complète des ressources du BUT Informatique (Parcours A)
 // 1 ressource = 1 mini-jeu potentiel
+
 export const ressourcesBUT = {
   BUT1: [
     // Semestre 1
@@ -16,8 +17,9 @@ export const ressourcesBUT = {
       id: "R1.06",
       nom: "Mathématiques discrètes",
       sem: 1,
-      path: "/evil/jeux/casino",
-      tag: "Casino Mathématique",
+      path: "/casino",
+      bgImage: "/assets/casino/casinobg.jpg",
+      tag: "Casino des probas",
     },
     { id: "R1.07", nom: "Outils mathématiques fondamentaux", sem: 1 },
     { id: "R1.08", nom: "Introduction à la gestion des organisations", sem: 1 },

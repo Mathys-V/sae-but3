@@ -1,0 +1,176 @@
+.casino-slot-page {
+  background-image:
+    linear-gradient(rgb(8 8 14 / 62%), rgb(8 8 14 / 76%)),
+    url("/assets/casino/casinobg.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.slot-machine {
+  position: relative;
+  width: min(100%, 460px);
+  aspect-ratio: 0.78;
+  overflow: hidden;
+  border-radius: 14px;
+  isolation: isolate;
+  filter: drop-shadow(0 18px 24px rgb(0 0 0 / 55%));
+}
+
+.slot-machine-art {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  pointer-events: none;
+  user-select: none;
+}
+
+.slot-price-sign {
+  position: absolute;
+  top: 4%;
+  left: 20%;
+  width: 61%;
+  color: #462417;
+  font: 700 clamp(14px, 3.5vw, 20px) "Trebuchet MS", sans-serif;
+  text-align: center;
+  text-shadow: 0 1px rgb(255 226 165 / 80%);
+  transform: rotate(-1deg);
+}
+
+.slot-bank-display {
+  position: absolute;
+  top: 24%;
+  left: 21%;
+  display: flex;
+  width: 58%;
+  height: 10%;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #d6a637;
+  border-radius: 12px;
+  background: linear-gradient(#090d15, #101b20);
+  box-shadow: inset 0 0 0 2px #31434a, 0 2px 0 #24172a;
+  color: #32d34e;
+  font: 800 clamp(16px, 4vw, 24px) "Courier New", monospace;
+  text-shadow: 0 0 8px rgb(42 255 68 / 75%);
+}
+
+.slot-reel-window {
+  position: absolute;
+  top: 32%;
+  left: 14%;
+  display: grid;
+  width: 72%;
+  height: 31%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: hidden;
+  border: 3px solid #e4c54f;
+  border-radius: 4px;
+  background: #27333b;
+  box-shadow: 0 0 0 2px #301a35, inset 0 0 10px #15202a;
+}
+
+.slot-reel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  border-right: 2px solid #8e9490;
+  background: #c5d4d3;
+}
+
+.slot-reel:last-child {
+  border-right: 0;
+}
+
+.slot-reel-cell {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid #929c98;
+  background: linear-gradient(#e2eadb, #a6bbc1 48%, #e7ebd7);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 28%);
+}
+
+.slot-reel-cell:last-child {
+  border-bottom: 0;
+}
+
+.slot-symbol {
+  display: block;
+  width: min(80%, 52px);
+  height: 46px;
+  flex: none;
+  background-image: var(--slot-sheet);
+  background-repeat: no-repeat;
+  background-size: 384px 384px;
+  image-rendering: pixelated;
+}
+
+.slot-symbol.is-spinning {
+  animation: slot-symbol-bounce 120ms linear infinite alternate;
+}
+
+.slot-symbol.small {
+  width: 28px;
+  height: 24px;
+  max-width: 28px;
+  background-size: 204.8px 204.8px;
+}
+
+@keyframes slot-symbol-bounce {
+  from { transform: translateY(-5px); }
+  to { transform: translateY(5px); }
+}
+
+.slot-spin-button {
+  position: absolute;
+  top: 88%;
+  left: 20%;
+  width: 40%;
+  min-height: 8%;
+  border: 3px solid #f2c84b;
+  border-radius: 999px;
+  background: linear-gradient(#dd2935, #821526);
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 30%), 0 4px 0 #35172b;
+  color: #fff2c7;
+  font: 900 clamp(11px, 3vw, 16px) "Trebuchet MS", sans-serif;
+  letter-spacing: 0.08em;
+  text-shadow: 1px 2px #4a1420;
+  cursor: pointer;
+  transition: filter 120ms ease, transform 120ms ease;
+}
+
+.slot-spin-button:hover:not(:disabled) {
+  filter: brightness(1.2);
+  transform: translateY(-2px);
+}
+
+.slot-spin-button:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+.slot-spin-button:disabled {
+  filter: grayscale(0.65) brightness(0.72);
+  cursor: not-allowed;
+}
+
+.slot-result-message {
+  min-height: 1.75rem;
+  color: #f7d970;
+  font-weight: 800;
+  text-align: center;
+  text-shadow: 0 2px 4px #000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slot-symbol.is-spinning {
+    animation: none;
+  }
+}
