@@ -1,11 +1,21 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
+import rouletteBackground from "../assets/ressourcebg/roulettebg.png";
 
 function EvilLayout() {
   const location = useLocation();
   const isDiving = location.pathname.includes("/plongee");
+  const isCasino = location.pathname.includes("/casino");
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 font-sans flex flex-col">
+    <div
+      className={`min-h-screen ${isCasino ? "" : "bg-gray-900"} text-gray-100 font-sans flex flex-col`}
+      style={isCasino ? {
+        backgroundImage: `url("${rouletteBackground}")`,
+        backgroundPosition: "center top",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      } : undefined}
+    >
       {/* Barre de navigation Evil */}
       <header className="bg-gray-950 border-b border-red-900 p-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-6">
@@ -48,7 +58,7 @@ function EvilLayout() {
       </div>
 
       {/* Footer fixe visible sur toutes les pages */}
-      <footer className="text-center p-3 text-xs text-gray-500 border-t border-gray-800 shrink-0">
+      <footer className="bg-gray-900 text-center p-3 text-xs text-gray-500 border-t border-gray-800 shrink-0">
         Projet étudiant SAE - Ceci n'est pas une plateforme officielle
       </footer>
     </div>
