@@ -9,12 +9,12 @@
 -- -------------------------------------------------------------
 -- Mot de passe démo 'admin123' pour prof, 'alice123' pour alice, 'azerty123' pour les autres
 INSERT INTO users (pseudo, email, password_hash, role, banned_flag, created_at, updated_at, last_login) VALUES
-    ('alice',  'alice@etu.univ.fr',  '$2b$12$UfEU./V5KtQX0Z4Q8qEQJOZXEjR1Jw/jIC4W/7FORfzAwaKOn7L3q',   'player', FALSE, NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day',  NOW() - INTERVAL '2 hours'),
-    ('bob',    'bob@etu.univ.fr',    '$2b$12$7VSB6tSK0aRU.Q4BV28CIeZ9dl1vIhNQIPKZtWs4sKIjuBX8Opeuu',   'player', FALSE, NOW() - INTERVAL '25 days', NOW() - INTERVAL '2 days', NOW() - INTERVAL '3 days'),
-    ('chloe',  'chloe@etu.univ.fr',  '$2b$12$7VSB6tSK0aRU.Q4BV28CIeZ9dl1vIhNQIPKZtWs4sKIjuBX8Opeuu',   'player', FALSE, NOW() - INTERVAL '10 days', NULL,                    NOW() - INTERVAL '1 hour'),
-    ('damien', 'damien@etu.univ.fr', '$2b$12$7VSB6tSK0aRU.Q4BV28CIeZ9dl1vIhNQIPKZtWs4sKIjuBX8Opeuu',  'player', FALSE, NOW() - INTERVAL '8 days',  NULL,                    NOW() - INTERVAL '6 hours'),
-    ('prof',   'prof@univ.fr',       '$2b$12$UfEU./V5KtQX0Z4Q8qEQJOZXEjR1Jw/jIC4W/7FORfzAwaKOn7L3q',   'admin',  FALSE, NOW() - INTERVAL '60 days', NOW() - INTERVAL '3 days', NOW() - INTERVAL '30 min'),
-    ('troll',  'troll@etu.univ.fr',  '$2b$12$7VSB6tSK0aRU.Q4BV28CIeZ9dl1vIhNQIPKZtWs4sKIjuBX8Opeuu',   'player', TRUE,  NOW() - INTERVAL '10 days', NULL,                    NULL);
+    ('alice',  'alice@etu.univ.fr',  '$2b$12$LlfcYOg53WqBVFkDeDn5k.8rSSRa0xRB.qrCNJuUsy5BpDzkOqGn6',   'player', FALSE, NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day',  NOW() - INTERVAL '2 hours'),
+    ('bob',    'bob@etu.univ.fr',    '$2b$12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O',   'player', FALSE, NOW() - INTERVAL '25 days', NOW() - INTERVAL '2 days', NOW() - INTERVAL '3 days'),
+    ('chloe',  'chloe@etu.univ.fr',  '$2b$12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O',   'player', FALSE, NOW() - INTERVAL '10 days', NULL,                    NOW() - INTERVAL '1 hour'),
+    ('damien', 'damien@etu.univ.fr', '$2b$12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O',  'player', FALSE, NOW() - INTERVAL '8 days',  NULL,                    NOW() - INTERVAL '6 hours'),
+    ('prof',   'prof@univ.fr',       '$2b$12$PHTR5Kkpy2flxQcCjCEBJuC3hty6RnUI4xN3iuE8DQXQDAHUkRafe',   'admin',  FALSE, NOW() - INTERVAL '60 days', NOW() - INTERVAL '3 days', NOW() - INTERVAL '30 min'),
+    ('troll',  'troll@etu.univ.fr',  '$2b$12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O',   'player', TRUE,  NOW() - INTERVAL '10 days', NULL,                    NULL);
 
 -- -------------------------------------------------------------
 -- 2. Préférences (user_settings) — création lazy : 2 joueurs sur 6
@@ -40,7 +40,10 @@ FROM (VALUES
     ('Bases de Python', 'Variables, conditions, boucles', 1::SMALLINT, '/assets/modules/but1.png', TRUE,  NOW() - INTERVAL '40 days', NOW() - INTERVAL '5 days'),
     ('R4.1 : Programmation', 'Structures de données et algorithmes', 2::SMALLINT, '/assets/modules/but2.png', TRUE, NOW() - INTERVAL '35 days', NOW() - INTERVAL '4 days'),
     ('Systèmes et réseaux', 'Bases des réseaux informatiques', 2::SMALLINT, '/assets/modules/but2-reseaux.png', FALSE, NOW() - INTERVAL '30 days', NULL::TIMESTAMPTZ),
-    ('Projet final', 'Synthèse et mise en œuvre', 3::SMALLINT, '/assets/modules/but3.png', FALSE, NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ)
+    ('Projet final', 'Synthèse et mise en œuvre', 3::SMALLINT, '/assets/modules/but3.png', FALSE, NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ),
+    ('Tutoriel EvilJV', 'Prise en main d''Evil MescoursJV et règles du jeu', 1::SMALLINT, '/assets/icons/book.png', TRUE, NOW() - INTERVAL '30 days', NULL::TIMESTAMPTZ),
+    ('R1.06 : Mathématiques discrètes', 'Probabilités, logique et combinatoire', 1::SMALLINT, '/assets/treasurebg.jpg', FALSE, NOW() - INTERVAL '30 days', NULL::TIMESTAMPTZ),
+    ('R5.A.06 : Programmation multimédia', 'Moteur Kaplay, animations de sprites et physique aquatique', 3::SMALLINT, '/assets/plongee/env/backgrounds/surface_ocean_jour.png', FALSE, NOW() - INTERVAL '25 days', NULL::TIMESTAMPTZ)
 ) AS v(name, description, cursus_year, image_url, by_default_flag, created_at, updated_at)
 CROSS JOIN users AS admin
 WHERE admin.pseudo = 'prof';
@@ -96,6 +99,36 @@ FROM (VALUES
         '{"time_per_question":10,"points_per_correct":100,"max_possible":100}',
         FALSE, 1::SMALLINT, 1::SMALLINT, TRUE,
         LOCALTIMESTAMP - INTERVAL '15 days', NULL::TIMESTAMPTZ
+    ),
+    (
+        'Tutoriel EvilJV',
+        'Tutoriel EvilJV',
+        'Tutoriel interactif pour maîtriser les mécaniques d''Evil MescoursJV et les contrôles.',
+        '{"steps":[{"id":1,"title":"Bienvenue"},{"id":2,"title":"Bouton secret"},{"id":3,"title":"Contrôles"}]}',
+        'easy',
+        '{"time_limit":120,"points_per_step":25,"max_possible":100}',
+        FALSE, 1::SMALLINT, 1::SMALLINT, TRUE,
+        LOCALTIMESTAMP - INTERVAL '30 days', NULL::TIMESTAMPTZ
+    ),
+    (
+        'R1.06 : Mathématiques discrètes',
+        'Casino Mathématique (R1.06)',
+        'Bandit manchot et défis de calculs de probabilités sur les combinaisons et les gains.',
+        '{"reels":3,"symbols":["7","BAR","CHERRY","COIN","SKULL"]}',
+        'medium',
+        '{"initial_coins":100,"cost_per_spin":10,"max_possible":2000}',
+        FALSE, 1::SMALLINT, 1::SMALLINT, TRUE,
+        LOCALTIMESTAMP - INTERVAL '28 days', NULL::TIMESTAMPTZ
+    ),
+    (
+        'R5.A.06 : Programmation multimédia',
+        'Jeu de Plongée (R5.A.06)',
+        'Exploration sous-marine périlleuse : collectez des perles, gérez votre oxygène et évitez les monstres marins.',
+        '{"zones":["surface","ocean_jour","abysses"],"oxygen_max":100}',
+        'hard',
+        '{"oxygen_depletion_rate":2.5,"pearl_points":50,"relic_points":200,"max_possible":1000}',
+        TRUE, 1::SMALLINT, 4::SMALLINT, TRUE,
+        LOCALTIMESTAMP - INTERVAL '25 days', LOCALTIMESTAMP - INTERVAL '1 day'
     )
 ) AS v(module_name, name, description, data, difficulty, config,
        multiplayer_flag, min_players, max_players, active_flag, created_at, updated_at)
@@ -136,6 +169,31 @@ SELECT u.user_id, m.module_id, 'locked', 0, NULL, NULL, NULL
 FROM users u JOIN modules m ON m.name = 'Bases de Python'
 WHERE u.pseudo = 'damien';
 
+INSERT INTO users_modules (user_id, module_id, status, attempts, best_score, best_time, date_completion)
+SELECT u.user_id, m.module_id, 'completed', 1, 100, 45, NOW() - INTERVAL '28 days'
+FROM users u JOIN modules m ON m.name = 'Tutoriel EvilJV'
+WHERE u.pseudo = 'alice';
+
+INSERT INTO users_modules (user_id, module_id, status, attempts, best_score, best_time, date_completion)
+SELECT u.user_id, m.module_id, 'completed', 2, 100, 55, NOW() - INTERVAL '24 days'
+FROM users u JOIN modules m ON m.name = 'Tutoriel EvilJV'
+WHERE u.pseudo = 'bob';
+
+INSERT INTO users_modules (user_id, module_id, status, attempts, best_score, best_time, date_completion)
+SELECT u.user_id, m.module_id, 'completed', 5, 1450, 140, NOW() - INTERVAL '15 days'
+FROM users u JOIN modules m ON m.name = 'R1.06 : Mathématiques discrètes'
+WHERE u.pseudo = 'alice';
+
+INSERT INTO users_modules (user_id, module_id, status, attempts, best_score, best_time, date_completion)
+SELECT u.user_id, m.module_id, 'in_progress', 3, 520, 240, NULL
+FROM users u JOIN modules m ON m.name = 'R5.A.06 : Programmation multimédia'
+WHERE u.pseudo = 'alice';
+
+INSERT INTO users_modules (user_id, module_id, status, attempts, best_score, best_time, date_completion)
+SELECT u.user_id, m.module_id, 'in_progress', 2, 360, 310, NULL
+FROM users u JOIN modules m ON m.name = 'R5.A.06 : Programmation multimédia'
+WHERE u.pseudo = 'bob';
+
 -- -------------------------------------------------------------
 -- 6. Salons (sessions) — solo terminé, multi en cours, attente, multi terminé
 -- -------------------------------------------------------------
@@ -160,6 +218,81 @@ SELECT u.user_id, 'finished', g.game_id, 'RESULTS1', 4,
        NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days' + INTERVAL '8 min'
 FROM users u CROSS JOIN games g
 WHERE u.pseudo = 'bob' AND g.name = 'Duck Hunt';
+
+-- Sessions pour Tutoriel EvilJV
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'TUTO01', 1, NOW() - INTERVAL '28 days', NOW() - INTERVAL '28 days' + INTERVAL '45 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'alice' AND g.name = 'Tutoriel EvilJV';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'TUTO02', 1, NOW() - INTERVAL '24 days', NOW() - INTERVAL '24 days' + INTERVAL '55 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'bob' AND g.name = 'Tutoriel EvilJV';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'TUTO03', 1, NOW() - INTERVAL '9 days', NOW() - INTERVAL '9 days' + INTERVAL '48 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'chloe' AND g.name = 'Tutoriel EvilJV';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'TUTO04', 1, NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days' + INTERVAL '65 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'damien' AND g.name = 'Tutoriel EvilJV';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at)
+SELECT u.user_id, 'in_progress', g.game_id, 'TUTO05', 1, NOW() - INTERVAL '6 days'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'damien' AND g.name = 'Tutoriel EvilJV';
+
+-- Sessions pour Casino Mathématique (R1.06)
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'CASINO1', 1, NOW() - INTERVAL '15 days', NOW() - INTERVAL '15 days' + INTERVAL '140 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'alice' AND g.name = 'Casino Mathématique (R1.06)';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'CASINO2', 1, NOW() - INTERVAL '12 days', NOW() - INTERVAL '12 days' + INTERVAL '95 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'bob' AND g.name = 'Casino Mathématique (R1.06)';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'CASINO3', 1, NOW() - INTERVAL '4 days', NOW() - INTERVAL '4 days' + INTERVAL '110 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'chloe' AND g.name = 'Casino Mathématique (R1.06)';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'CASINO4', 1, NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days' + INTERVAL '180 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'damien' AND g.name = 'Casino Mathématique (R1.06)';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at)
+SELECT u.user_id, 'in_progress', g.game_id, 'CASINO5', 1, NOW() - INTERVAL '1 day'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'bob' AND g.name = 'Casino Mathématique (R1.06)';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'CASINO6', 1, NOW() - INTERVAL '8 hours', NOW() - INTERVAL '8 hours' + INTERVAL '80 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'chloe' AND g.name = 'Casino Mathématique (R1.06)';
+
+-- Sessions pour Jeu de Plongée (R5.A.06)
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'DIVE01', 1, NOW() - INTERVAL '18 days', NOW() - INTERVAL '18 days' + INTERVAL '260 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'alice' AND g.name = 'Jeu de Plongée (R5.A.06)';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'DIVE02', 4, NOW() - INTERVAL '14 days', NOW() - INTERVAL '14 days' + INTERVAL '310 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'bob' AND g.name = 'Jeu de Plongée (R5.A.06)';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at)
+SELECT u.user_id, 'in_progress', g.game_id, 'DIVE03', 1, NOW() - INTERVAL '6 days'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'damien' AND g.name = 'Jeu de Plongée (R5.A.06)';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at)
+SELECT u.user_id, 'in_progress', g.game_id, 'DIVE04', 1, NOW() - INTERVAL '3 days'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'bob' AND g.name = 'Jeu de Plongée (R5.A.06)';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
+SELECT u.user_id, 'finished', g.game_id, 'DIVE05', 4, NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day' + INTERVAL '240 sec'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'alice' AND g.name = 'Jeu de Plongée (R5.A.06)';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at)
+SELECT u.user_id, 'in_progress', g.game_id, 'DIVE06', 1, NOW() - INTERVAL '12 hours'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'chloe' AND g.name = 'Jeu de Plongée (R5.A.06)';
+
+INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at)
+SELECT u.user_id, 'waiting', g.game_id, 'DIVE07', 4, NOW() - INTERVAL '15 min'
+FROM users u CROSS JOIN games g WHERE u.pseudo = 'alice' AND g.name = 'Jeu de Plongée (R5.A.06)';
 
 -- -------------------------------------------------------------
 -- 7. Présence (sessions_users)
@@ -200,6 +333,89 @@ INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_fla
 SELECT s.session_id, u.user_id, 'player', TRUE, FALSE, NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days' + INTERVAL '8 min'
 FROM sessions s CROSS JOIN users u
 WHERE s.invite_code = 'RESULTS1' AND u.pseudo = 'chloe';
+
+-- Présence salons Tutoriel
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '28 days', NOW() - INTERVAL '28 days' + INTERVAL '45 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'TUTO01' AND u.pseudo = 'alice';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '24 days', NOW() - INTERVAL '24 days' + INTERVAL '55 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'TUTO02' AND u.pseudo = 'bob';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '9 days', NOW() - INTERVAL '9 days' + INTERVAL '48 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'TUTO03' AND u.pseudo = 'chloe';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days' + INTERVAL '65 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'TUTO04' AND u.pseudo = 'damien';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '6 days', NOW() - INTERVAL '6 days' + INTERVAL '25 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'TUTO05' AND u.pseudo = 'damien';
+
+-- Présence salons Casino
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '15 days', NOW() - INTERVAL '15 days' + INTERVAL '140 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'CASINO1' AND u.pseudo = 'alice';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '12 days', NOW() - INTERVAL '12 days' + INTERVAL '95 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'CASINO2' AND u.pseudo = 'bob';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '4 days', NOW() - INTERVAL '4 days' + INTERVAL '110 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'CASINO3' AND u.pseudo = 'chloe';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days' + INTERVAL '180 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'CASINO4' AND u.pseudo = 'damien';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day' + INTERVAL '120 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'CASINO5' AND u.pseudo = 'bob';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '8 hours', NOW() - INTERVAL '8 hours' + INTERVAL '80 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'CASINO6' AND u.pseudo = 'chloe';
+
+-- Présence salons Plongée
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '18 days', NOW() - INTERVAL '18 days' + INTERVAL '260 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'DIVE01' AND u.pseudo = 'alice';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '14 days', NOW() - INTERVAL '14 days' + INTERVAL '310 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'DIVE02' AND u.pseudo = 'bob';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'player', TRUE, FALSE, NOW() - INTERVAL '14 days', NOW() - INTERVAL '14 days' + INTERVAL '310 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'DIVE02' AND u.pseudo = 'chloe';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '6 days', NOW() - INTERVAL '6 days' + INTERVAL '42 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'DIVE03' AND u.pseudo = 'damien';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days' + INTERVAL '180 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'DIVE04' AND u.pseudo = 'bob';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day' + INTERVAL '240 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'DIVE05' AND u.pseudo = 'alice';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'player', TRUE, FALSE, NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day' + INTERVAL '240 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'DIVE05' AND u.pseudo = 'damien';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, FALSE, NOW() - INTERVAL '12 hours', NOW() - INTERVAL '12 hours' + INTERVAL '35 sec'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'DIVE06' AND u.pseudo = 'chloe';
+
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, TRUE, NOW() - INTERVAL '15 min'
+FROM sessions s CROSS JOIN users u WHERE s.invite_code = 'DIVE07' AND u.pseudo = 'alice';
 
 -- -------------------------------------------------------------
 -- 8. Coups (moves) — historique solo et extraits du multi
@@ -274,6 +490,85 @@ SELECT u.user_id, g.game_id, s.session_id, 50, 180, FALSE, NOW() - INTERVAL '5 d
 FROM users u CROSS JOIN games g CROSS JOIN sessions s
 WHERE u.pseudo = 'chloe' AND g.name = 'Duck Hunt' AND s.invite_code = 'RESULTS1';
 
+-- Scores pour Tutoriel EvilJV
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 100, 45, TRUE, NOW() - INTERVAL '28 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'alice' AND g.name = 'Tutoriel EvilJV' AND s.invite_code = 'TUTO01';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 100, 55, TRUE, NOW() - INTERVAL '24 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'bob' AND g.name = 'Tutoriel EvilJV' AND s.invite_code = 'TUTO02';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 100, 48, TRUE, NOW() - INTERVAL '9 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'chloe' AND g.name = 'Tutoriel EvilJV' AND s.invite_code = 'TUTO03';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 90, 65, TRUE, NOW() - INTERVAL '7 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'damien' AND g.name = 'Tutoriel EvilJV' AND s.invite_code = 'TUTO04';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 30, 25, FALSE, NOW() - INTERVAL '6 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'damien' AND g.name = 'Tutoriel EvilJV' AND s.invite_code = 'TUTO05';
+
+-- Scores pour Casino Mathématique (R1.06)
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 1450, 140, TRUE, NOW() - INTERVAL '15 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'alice' AND g.name = 'Casino Mathématique (R1.06)' AND s.invite_code = 'CASINO1';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 820, 95, TRUE, NOW() - INTERVAL '12 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'bob' AND g.name = 'Casino Mathématique (R1.06)' AND s.invite_code = 'CASINO2';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 650, 110, TRUE, NOW() - INTERVAL '4 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'chloe' AND g.name = 'Casino Mathématique (R1.06)' AND s.invite_code = 'CASINO3';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 400, 180, FALSE, NOW() - INTERVAL '2 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'damien' AND g.name = 'Casino Mathématique (R1.06)' AND s.invite_code = 'CASINO4';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 150, 120, FALSE, NOW() - INTERVAL '1 day'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'bob' AND g.name = 'Casino Mathématique (R1.06)' AND s.invite_code = 'CASINO5';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 920, 80, TRUE, NOW() - INTERVAL '8 hours'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'chloe' AND g.name = 'Casino Mathématique (R1.06)' AND s.invite_code = 'CASINO6';
+
+-- Scores pour Jeu de Plongée (R5.A.06)
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 480, 260, TRUE, NOW() - INTERVAL '18 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'alice' AND g.name = 'Jeu de Plongée (R5.A.06)' AND s.invite_code = 'DIVE01';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 360, 310, TRUE, NOW() - INTERVAL '14 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'bob' AND g.name = 'Jeu de Plongée (R5.A.06)' AND s.invite_code = 'DIVE02';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 190, 310, FALSE, NOW() - INTERVAL '14 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'chloe' AND g.name = 'Jeu de Plongée (R5.A.06)' AND s.invite_code = 'DIVE02';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 40, 42, FALSE, NOW() - INTERVAL '6 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'damien' AND g.name = 'Jeu de Plongée (R5.A.06)' AND s.invite_code = 'DIVE03';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 120, 180, FALSE, NOW() - INTERVAL '3 days'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'bob' AND g.name = 'Jeu de Plongée (R5.A.06)' AND s.invite_code = 'DIVE04';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 520, 240, TRUE, NOW() - INTERVAL '1 day'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'alice' AND g.name = 'Jeu de Plongée (R5.A.06)' AND s.invite_code = 'DIVE05';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 280, 240, TRUE, NOW() - INTERVAL '1 day'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'damien' AND g.name = 'Jeu de Plongée (R5.A.06)' AND s.invite_code = 'DIVE05';
+
+INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
+SELECT u.user_id, g.game_id, s.session_id, 20, 35, FALSE, NOW() - INTERVAL '12 hours'
+FROM users u CROSS JOIN games g CROSS JOIN sessions s WHERE u.pseudo = 'chloe' AND g.name = 'Jeu de Plongée (R5.A.06)' AND s.invite_code = 'DIVE06';
+
 -- -------------------------------------------------------------
 -- 10. Succès (achievements) — globaux ET liés à un jeu
 -- -------------------------------------------------------------
@@ -302,6 +597,39 @@ SELECT 'Chasseur de canards', 'Trouver 12 canards', g.game_id,
 FROM games g CROSS JOIN users admin
 WHERE g.name = 'Duck Hunt' AND admin.pseudo = 'prof';
 
+INSERT INTO achievements (
+    name, description, game_id, unlock_condition, icon_url,
+    created_at, updated_at, created_by, last_modified_by
+)
+SELECT 'Plongeur des Abysses', 'Explorer les profondeurs marines et remonter vivant', g.game_id,
+       '{"type":"score","min_score":300}'::JSONB,
+       '/assets/icons/medal.png', NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ,
+       admin.user_id, admin.user_id
+FROM games g CROSS JOIN users admin
+WHERE g.name = 'Jeu de Plongée (R5.A.06)' AND admin.pseudo = 'prof';
+
+INSERT INTO achievements (
+    name, description, game_id, unlock_condition, icon_url,
+    created_at, updated_at, created_by, last_modified_by
+)
+SELECT 'Flamheur Fou', 'Remporter plus de 1000 pièces au Casino Mathématique', g.game_id,
+       '{"type":"score","min_score":1000}'::JSONB,
+       '/assets/icons/coin_stack.png', NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ,
+       admin.user_id, admin.user_id
+FROM games g CROSS JOIN users admin
+WHERE g.name = 'Casino Mathématique (R1.06)' AND admin.pseudo = 'prof';
+
+INSERT INTO achievements (
+    name, description, game_id, unlock_condition, icon_url,
+    created_at, updated_at, created_by, last_modified_by
+)
+SELECT 'Initié d''EvilJV', 'Valider avec succès le tutoriel d''Evil MescoursJV', g.game_id,
+       '{"type":"tutorial_completed","value":true}'::JSONB,
+       '/assets/icons/book.png', NOW() - INTERVAL '25 days', NULL::TIMESTAMPTZ,
+       admin.user_id, admin.user_id
+FROM games g CROSS JOIN users admin
+WHERE g.name = 'Tutoriel EvilJV' AND admin.pseudo = 'prof';
+
 -- -------------------------------------------------------------
 -- 11. Succès débloqués (users_achievements)
 -- -------------------------------------------------------------
@@ -316,9 +644,29 @@ FROM users u CROSS JOIN achievements a
 WHERE u.pseudo = 'alice' AND a.name = 'Chasseur de canards';
 
 INSERT INTO users_achievements (user_id, achievement_id, unlocked_at)
+SELECT u.user_id, a.achievement_id, NOW() - INTERVAL '18 days'
+FROM users u CROSS JOIN achievements a
+WHERE u.pseudo = 'alice' AND a.name = 'Plongeur des Abysses';
+
+INSERT INTO users_achievements (user_id, achievement_id, unlocked_at)
+SELECT u.user_id, a.achievement_id, NOW() - INTERVAL '15 days'
+FROM users u CROSS JOIN achievements a
+WHERE u.pseudo = 'alice' AND a.name = 'Flamheur Fou';
+
+INSERT INTO users_achievements (user_id, achievement_id, unlocked_at)
+SELECT u.user_id, a.achievement_id, NOW() - INTERVAL '28 days'
+FROM users u CROSS JOIN achievements a
+WHERE u.pseudo = 'alice' AND a.name = 'Initié d''EvilJV';
+
+INSERT INTO users_achievements (user_id, achievement_id, unlocked_at)
 SELECT u.user_id, a.achievement_id, NOW() - INTERVAL '5 days'
 FROM users u CROSS JOIN achievements a
 WHERE u.pseudo = 'bob' AND a.name = 'Première victoire';
+
+INSERT INTO users_achievements (user_id, achievement_id, unlocked_at)
+SELECT u.user_id, a.achievement_id, NOW() - INTERVAL '24 days'
+FROM users u CROSS JOIN achievements a
+WHERE u.pseudo = 'bob' AND a.name = 'Initié d''EvilJV';
 -- Chloé et Damien n'ont pas encore débloqué de succès.
 
 -- -------------------------------------------------------------
