@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useEconomyStore } from "../game/casino/economyStore.js";
-import { BET_AMOUNT, SYMBOLS, calculerGains, tirerRouleaux } from "../game/casino/logic.js";
+import {
+  BET_AMOUNT,
+  SYMBOLS,
+  calculerGains,
+  tirerRouleaux,
+} from "../game/casino/logic.js";
 import Leaderboard from "../components/Leaderboard.jsx";
 import slotSheet from "../assets/slot.png";
 import "./CasinoGame.css";
@@ -71,7 +76,9 @@ export default function CasinoGame() {
   const { coins, paidSpins, freeSpins, resetEconomy } = useEconomyStore();
   const [reels, setReels] = useState(["watermelon", "seven", "seven"]);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [message, setMessage] = useState("Choisis ton tour et tente le jackpot !");
+  const [message, setMessage] = useState(
+    "Choisis ton tour et tente le jackpot !",
+  );
   const spinLock = useRef(false);
   const animationRef = useRef(null);
   const stopTimersRef = useRef([]);
@@ -89,7 +96,9 @@ export default function CasinoGame() {
 
     const economy = useEconomyStore.getState();
     if (economy.freeSpins <= 0 && economy.coins < BET_AMOUNT) {
-      setMessage("Plus assez de coins. Reviens après avoir renfloué ta banque.");
+      setMessage(
+        "Plus assez de coins. Reviens après avoir renfloué ta banque.",
+      );
       return;
     }
 
@@ -106,7 +115,12 @@ export default function CasinoGame() {
 
     const result = tirerRouleaux();
     const stopped = [false, false, false];
-    setReels(Array.from({ length: 3 }, () => SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]));
+    setReels(
+      Array.from(
+        { length: 3 },
+        () => SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+      ),
+    );
     animationRef.current = window.setInterval(() => {
       setReels((current) =>
         current.map((symbol, index) =>
@@ -154,8 +168,17 @@ export default function CasinoGame() {
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 p-4 text-white sm:p-6">
+      <audio
+        className="casino-intro-audio"
+        src="/assets/casino/soundtracks/casino%20machine.mp3"
+        autoPlay
+        loop
+        aria-label="Musique de la machine à sous"
+      />
       <header className="rounded-xl border border-rose-900/70 bg-gradient-to-r from-gray-950 via-rose-950 to-gray-950 p-5 text-center shadow-xl">
-        <p className="mb-1 text-xs font-bold uppercase tracking-[0.35em] text-amber-300">EvilJV arcade</p>
+        <p className="mb-1 text-xs font-bold uppercase tracking-[0.35em] text-amber-300">
+          EvilJV arcade
+        </p>
         <h1 className="text-3xl font-black sm:text-4xl">Casino des probas</h1>
       </header>
 
@@ -164,16 +187,30 @@ export default function CasinoGame() {
           <h2 className="mb-4 border-b border-gray-700 pb-3 text-center text-xl font-black text-amber-200 sm:text-2xl">
             Tableau des gains
           </h2>
-          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">Trois symboles identiques</h3>
+          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+            Trois symboles identiques
+          </h3>
           <ul className="mb-6 space-y-2">
             {THREE_SYMBOL_PRIZES.map(({ symbol, prize }) => (
-              <PrizeLine key={`triple-${symbol}`} symbol={symbol} count={3} prize={prize} />
+              <PrizeLine
+                key={`triple-${symbol}`}
+                symbol={symbol}
+                count={3}
+                prize={prize}
+              />
             ))}
           </ul>
-          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">Deux symboles identiques</h3>
+          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+            Deux symboles identiques
+          </h3>
           <ul className="space-y-2">
             {TWO_SYMBOL_PRIZES.map(({ symbol, prize }) => (
-              <PrizeLine key={`double-${symbol}`} symbol={symbol} count={2} prize={prize} />
+              <PrizeLine
+                key={`double-${symbol}`}
+                symbol={symbol}
+                count={2}
+                prize={prize}
+              />
             ))}
           </ul>
           <p className="mt-5 border-t border-gray-800 pt-3 text-center text-xs text-gray-500">
@@ -194,9 +231,7 @@ export default function CasinoGame() {
             </div>
           </div>
 
-          <div
-            className="flex w-full justify-center overflow-hidden rounded-lg border border-gray-700 px-2 py-3 sm:py-5"
-          >
+          <div className="flex w-full justify-center overflow-hidden rounded-lg border border-gray-700 px-2 py-3 sm:py-5">
             <div className="slot-machine" aria-label="Machine à sous">
               <svg
                 className="slot-machine-art"
@@ -208,18 +243,26 @@ export default function CasinoGame() {
                 <image href={slotSheet} x="0" y="0" width="256" height="256" />
               </svg>
               <div className="slot-price-sign">{BET_AMOUNT} coins par tour</div>
-              <div className="slot-bank-display" aria-live="polite">${coins}</div>
+              <div className="slot-bank-display" aria-live="polite">
+                ${coins}
+              </div>
               <div className="slot-reel-window" aria-label="Résultat du lancer">
                 {reels.map((symbol, index) => (
                   <div className="slot-reel" key={index}>
                     <div className="slot-reel-cell">
-                      <SlotSymbol symbol={REEL_NEIGHBORS[symbol][0]} spinning={isSpinning} />
+                      <SlotSymbol
+                        symbol={REEL_NEIGHBORS[symbol][0]}
+                        spinning={isSpinning}
+                      />
                     </div>
                     <div className="slot-reel-cell is-result">
                       <SlotSymbol symbol={symbol} spinning={isSpinning} />
                     </div>
                     <div className="slot-reel-cell">
-                      <SlotSymbol symbol={REEL_NEIGHBORS[symbol][1]} spinning={isSpinning} />
+                      <SlotSymbol
+                        symbol={REEL_NEIGHBORS[symbol][1]}
+                        spinning={isSpinning}
+                      />
                     </div>
                   </div>
                 ))}
@@ -229,14 +272,24 @@ export default function CasinoGame() {
                 className="slot-spin-button"
                 onClick={spin}
                 disabled={isSpinning || cannotAfford}
-                aria-label={isSpinning ? "Les rouleaux tournent" : `Lancer pour ${BET_AMOUNT} coins`}
+                aria-label={
+                  isSpinning
+                    ? "Les rouleaux tournent"
+                    : `Lancer pour ${BET_AMOUNT} coins`
+                }
               >
                 {isSpinning ? "TOURNE…" : freeSpins > 0 ? "GRATUIT" : "LANCER"}
               </button>
             </div>
           </div>
 
-          <p className="slot-result-message mt-3" role="status" aria-live="polite">{message}</p>
+          <p
+            className="slot-result-message mt-3"
+            role="status"
+            aria-live="polite"
+          >
+            {message}
+          </p>
           <button
             type="button"
             onClick={startNewGame}
@@ -247,13 +300,6 @@ export default function CasinoGame() {
           </button>
         </section>
       </div>
-
-      <section className="pb-6 pt-2">
-        <h2 className="mb-5 text-center text-2xl font-black text-amber-200 sm:text-3xl">Meilleurs joueurs</h2>
-        <div className="mx-auto max-w-3xl">
-          <Leaderboard gameId="casino" />
-        </div>
-      </section>
     </main>
   );
 }
