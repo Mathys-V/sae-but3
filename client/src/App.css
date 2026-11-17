@@ -433,21 +433,33 @@ summary:focus-visible {
   display: flex;
   gap: 24px;
 }
-.evil-transformation body {
+html.evil-transformation,
+html.evil-transformation body {
+  min-height: 100vh;
   background:
     linear-gradient(#09080c99, #09080c99),
-    url("./assets/fire.gif") center / cover fixed;
+    url("./assets/fire.gif") center / cover fixed !important;
+  background-color: #0d080c !important;
   color: #eee8ee;
   transition:
     background-color 700ms ease,
     color 700ms ease;
 }
 .evil-transformation .site-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: transparent;
   color: #eee8ee;
   transition:
     background-color 700ms ease,
     color 700ms ease;
+}
+.evil-transformation #accueil {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .evil-transformation .site-header {
   background: #100d12;
@@ -499,6 +511,10 @@ summary:focus-visible {
 }
 .evil-transformation .evil-auth-panel {
   border-top: 0;
+  background: #17111a !important;
+  border: 1px solid #54202a !important;
+  box-shadow: 0 0 25px rgba(220, 48, 59, 0.25) !important;
+  border-radius: 8px;
 }
 .evil-auth-panel > h2,
 .evil-auth-panel > .pmcjv-login-form,
@@ -663,17 +679,19 @@ summary:focus-visible {
   box-shadow: 0 0 12px rgba(79, 104, 163, 0.4);
 }
 .evil-auth-error {
-  background: rgba(117, 26, 39, 0.35);
-  border: 1px solid #e04450;
-  color: #ff9da6;
-  padding: 10px 12px;
+  background: rgba(117, 26, 39, 0.65) !important;
+  border: 1px solid #ff4d5a !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 10px 14px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.4;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 0 12px rgba(255, 77, 90, 0.25);
 }
 .evil-auth-success {
   background: rgba(26, 117, 50, 0.35);
