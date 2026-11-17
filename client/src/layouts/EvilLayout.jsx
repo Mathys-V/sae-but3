@@ -1,12 +1,17 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import rouletteBackground from "../assets/backgrounds/roulettebg.png";
 import flamingoBackground from "../assets/backgrounds/flamingobg.png";
+import tableBackground from "../assets/backgrounds/tablebg.png";
 
 function EvilLayout() {
   const location = useLocation();
   const isDiving = location.pathname.includes("/plongee");
   const isCasino = ["/casino", "/machine", "/blackjack"].includes(location.pathname);
-  const pageBackground = location.pathname === "/casino" ? flamingoBackground : rouletteBackground;
+  const pageBackground = location.pathname === "/casino"
+    ? flamingoBackground
+    : location.pathname === "/blackjack"
+      ? tableBackground
+      : rouletteBackground;
   const casinoIntroBackground = location.pathname === "/casino";
 
   return (

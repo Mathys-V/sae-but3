@@ -1,0 +1,19 @@
+.blackjack-page{display:flex;width:100%;max-width:1000px;flex-direction:column;align-items:center;gap:16px;margin:0 auto;padding:28px 18px 42px;color:#fff4d5;text-align:center}
+.blackjack-audio{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
+.blackjack-page h1{margin:0;color:#ffe58f;font-size:clamp(38px,7vw,64px);font-weight:900;letter-spacing:.08em;text-shadow:0 4px #7d2438,0 0 20px #ffd26066}
+.blackjack-kicker{margin:0;color:#f8c66a;font-size:12px;font-weight:800;letter-spacing:.3em}
+.blackjack-rules{max-width:760px;margin:0;color:#f2e3c2;font-size:14px;line-height:1.6}
+.blackjack-table{width:100%;padding:24px clamp(14px,5vw,54px);border:8px ridge #bc8b42;border-radius:46% / 16%;background:radial-gradient(ellipse at center,#16824d,#075634 66%,#073b2d);box-shadow:0 14px 35px #0009,inset 0 0 0 3px #ffffff18}
+.blackjack-seat h2{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0;color:#fff0c8;font-size:14px;letter-spacing:.15em}
+.blackjack-seat h2 span{display:grid;min-width:34px;height:34px;place-items:center;border:1px solid #f4d47a;border-radius:50%;color:#ffdf80;font-size:15px}
+.blackjack-hand{display:flex;min-height:112px;align-items:center;justify-content:center;gap:8px;padding:8px;overflow-x:auto}
+.blackjack-card{display:flex;width:68px;height:98px;flex:0 0 auto;flex-direction:column;align-items:center;justify-content:center;border:2px solid #f8e9c7;border-radius:7px;background:#fff9e9;color:#171321;font:700 25px Georgia,serif;box-shadow:2px 4px 8px #0008}
+.blackjack-card small{font-size:25px}.blackjack-card.is-red{color:#c42652}.blackjack-card.is-hidden{border-color:#f4d47a;background:repeating-linear-gradient(45deg,#4d1f3c 0 7px,#772b47 7px 14px);color:#ffe28d}
+.blackjack-table-mark{margin:0;color:#ffdc85;font-size:26px;text-shadow:0 0 12px #ffc453}
+.blackjack-status{min-height:28px;margin:0;color:#ffe28d;font-size:18px;font-weight:800}
+.blackjack-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px}
+.blackjack-controls button,.blackjack-controls a,.blackjack-balance,.blackjack-bet{min-height:44px;padding:10px 15px;border:1px solid #d6a94f;border-radius:4px;background:#27141d;color:#fff0cf;font:700 14px "Trebuchet MS",sans-serif;text-decoration:none}
+.blackjack-controls button{cursor:pointer}.blackjack-controls button:hover:not(:disabled),.blackjack-controls a:hover{background:#4b202b;color:white}.blackjack-controls button:disabled{cursor:not-allowed;opacity:.45}
+.blackjack-balance,.blackjack-bet{display:flex;align-items:center;gap:8px}.blackjack-balance b{color:#ffdf78}.blackjack-bet input{width:78px;padding:4px;border:1px solid #7c6840;border-radius:3px;background:#100e12;color:white;font:inherit}
+.blackjack-empty{margin:0;color:#ffb0a5;font-weight:700}.blackjack-empty p{margin:0 0 8px}.blackjack-empty button{padding:9px 14px;border:1px solid #d6a94f;border-radius:4px;background:#27141d;color:#fff0cf;font-weight:700;cursor:pointer}
+@media(max-width:600px){.blackjack-page{padding:22px 10px 32px}.blackjack-rules{font-size:12px}.blackjack-table{border-width:5px;border-radius:34px;padding:16px 8px}.blackjack-hand{min-height:98px;gap:5px}.blackjack-card{width:54px;height:80px;font-size:21px}.blackjack-card small{font-size:21px}.blackjack-controls{gap:7px}.blackjack-controls button,.blackjack-controls a,.blackjack-balance,.blackjack-bet{padding:9px 11px;font-size:12px}}
