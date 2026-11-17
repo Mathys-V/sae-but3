@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import rouletteBackground from "../assets/ressourcebg/roulettebg.png";
+import rouletteBackground from "../assets/backgrounds/roulettebg.png";
 
 function EvilLayout() {
   const location = useLocation();
@@ -9,12 +9,16 @@ function EvilLayout() {
   return (
     <div
       className={`min-h-screen ${isCasino ? "" : "bg-gray-900"} text-gray-100 font-sans flex flex-col`}
-      style={isCasino ? {
-        backgroundImage: `url("${rouletteBackground}")`,
-        backgroundPosition: "center top",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-      } : undefined}
+      style={
+        isCasino
+          ? {
+              backgroundImage: `url("${rouletteBackground}")`,
+              backgroundPosition: "center top",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+            }
+          : undefined
+      }
     >
       {/* Barre de navigation Evil */}
       <header className="bg-gray-950 border-b border-red-900 p-4 flex items-center justify-between sticky top-0 z-50">
@@ -53,7 +57,9 @@ function EvilLayout() {
       </header>
 
       {/* Contenu dynamique des pages (Pleine largeur sans marge pour le jeu de plongée) */}
-      <div className={`flex-1 w-full ${isDiving ? "p-0 overflow-hidden flex flex-col min-h-0" : "max-w-7xl mx-auto p-6"}`}>
+      <div
+        className={`flex-1 w-full ${isDiving ? "p-0 overflow-hidden flex flex-col min-h-0" : "max-w-7xl mx-auto p-6"}`}
+      >
         <Outlet />
       </div>
 
