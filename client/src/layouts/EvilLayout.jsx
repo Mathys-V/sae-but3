@@ -1,25 +1,16 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
 import rouletteBackground from "../assets/backgrounds/roulettebg.png";
+import flamingoBackground from "../assets/backgrounds/flamingobg.png";
 
 function EvilLayout() {
   const location = useLocation();
   const isDiving = location.pathname.includes("/plongee");
-  const isCasino = location.pathname.includes("/casino");
+  const isCasino = ["/casino", "/machine", "/blackjack"].includes(location.pathname);
+  const pageBackground = location.pathname === "/casino" ? flamingoBackground : rouletteBackground;
+  const casinoIntroBackground = location.pathname === "/casino";
 
   return (
-    <div
-      className={`min-h-screen ${isCasino ? "" : "bg-gray-900"} text-gray-100 font-sans flex flex-col`}
-      style={
-        isCasino
-          ? {
-              backgroundImage: `url("${rouletteBackground}")`,
-              backgroundPosition: "center top",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-            }
-          : undefined
-      }
-    >
+    <div className={`min-h-screen ${isCasino ? "" : "bg-gray-900"} casino-layout text-gray-100 font-sans flex flex-col`}>
       {/* Barre de navigation Evil */}
       <header className="bg-gray-950 border-b border-red-900 p-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-6">
@@ -58,13 +49,21 @@ function EvilLayout() {
 
       {/* Contenu dynamique des pages (Pleine largeur sans marge pour le jeu de plongée) */}
       <div
-        className={`flex-1 w-full ${isDiving ? "p-0 overflow-hidden flex flex-col min-h-0" : "max-w-7xl mx-auto p-6"}`}
+        className={`flex-1 w-full ${isDiving ? "p-0 overflow-hidden flex flex-col min-h-0" : isCasino ? "casino-page-stage" : "max-w-7xl mx-auto p-6"}`}
+        style={isCasino ? {
+          backgroundImage: casinoIntroBackground
+            ? `linear-gradient(rgb(0 0 0 / 42%), rgb(0 0 0 / 42%)), url("${pageBackground}")`
+            : `url("${pageBackground}")`,
+          backgroundPosition: "center top",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+        } : undefined}
       >
-        <Outlet />
+        {isCasino ? <div className="max-w-7xl mx-auto p-6"><Outlet /></div> : <Outlet />}
       </div>
 
       {/* Footer fixe visible sur toutes les pages */}
-      <footer className="bg-gray-900 text-center p-3 text-xs text-gray-500 border-t border-gray-800 shrink-0">
+      <footer className={`${location.pathname === "/casino" ? "casino-intro-footer" : ""} bg-gray-900 text-center p-3 text-xs text-gray-500 border-t border-gray-800 shrink-0`}>
         Projet étudiant SAE - Ceci n'est pas une plateforme officielle
       </footer>
     </div>

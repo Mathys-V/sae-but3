@@ -17,7 +17,7 @@ export const ressourcesBUT = {
       id: "R1.06",
       nom: "Mathématiques discrètes",
       sem: 1,
-      path: "/evil/jeux/casino",
+      path: "/casino",
       bgImage: "/assets/casino/casinobg.jpg",
       tag: "Casino des probas",
     },

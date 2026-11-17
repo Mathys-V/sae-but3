@@ -1,0 +1,34 @@
+.casino-intro{position:relative;z-index:1;isolation:isolate;display:flex;min-height:min(760px,calc(100vh - 150px));align-items:center;justify-content:flex-end;overflow:visible;margin:-24px;padding:76px clamp(28px,8vw,120px) 62px 28px;background:transparent;color:#fff5df;font-family:"Trebuchet MS",Arial,sans-serif}
+.casino-intro-audio{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
+.casino-intro-content{position:relative;z-index:2;width:min(780px,70%);text-align:center}
+.casino-kicker{margin:0 0 10px;color:#ffd779;font-size:clamp(16px,1.5vw,22px);font-weight:800;letter-spacing:.25em;text-shadow:0 2px 8px #000}
+.casino-intro-content h1{margin:0 0 34px;color:#fff1c5;font-size:clamp(64px,8vw,112px);font-weight:900;letter-spacing:.04em;line-height:.95;text-shadow:4px 5px 0 #a52b37,0 0 24px #ffb83d88}
+.casino-intro-content h1 span{color:#ff656b}
+.casino-prompt{margin:0 auto 18px;color:#fff0d0;font-size:clamp(16px,1.5vw,21px);font-weight:800;letter-spacing:.18em;text-shadow:0 2px 8px #000}
+.casino-games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.casino-game-link{position:relative;isolation:isolate;display:flex;min-height:230px;flex-direction:column;align-items:flex-start;justify-content:space-between;overflow:hidden;padding:24px;border:2px solid #e4b957;border-radius:3px;background:#18120d;color:#fff5df;text-align:left;text-decoration:none;box-shadow:0 10px 28px #0009;transition:transform .2s,border-color .2s,box-shadow .2s}
+.casino-game-link::before,.casino-game-link::after{position:absolute;z-index:-1;inset:0;content:"";pointer-events:none}
+.casino-game-link::before{background-image:var(--game-image);background-position:center;background-size:cover;filter:brightness(.68);transform:scale(1);transition:filter .28s,transform .38s}
+.casino-game-link::after{background:linear-gradient(0deg,#09070de8,#09070d16 78%)}
+.casino-game-link:hover{transform:translateY(-5px);border-color:#fff0a1;box-shadow:0 16px 38px #000b,0 0 24px #ffc54d77;color:#fff}
+.casino-game-link:hover::before{filter:brightness(1.08);transform:scale(1.12)}
+.casino-blackjack-link{align-items:flex-end;text-align:right}
+.casino-blackjack-link .casino-game-arrow{right:auto;left:20px}
+.casino-game-icon{color:#ffe27b;font-family:Arial,sans-serif;font-size:clamp(42px,5vw,64px);font-weight:900;letter-spacing:-.09em;text-shadow:0 3px 12px #000,0 0 14px #ffba32}
+.cards-icon{color:#ff7880;letter-spacing:-.13em}
+.casino-game-copy b,.casino-game-copy small{display:block;text-shadow:0 2px 6px #000}
+.casino-game-copy b{font-size:clamp(17px,1.7vw,23px);font-weight:900;letter-spacing:.1em}
+.casino-game-copy small{margin-top:6px;color:#fff0db;font-size:15px;font-weight:600}
+.casino-game-arrow{position:absolute;right:20px;top:15px;color:#ffe18a;font:30px Arial,sans-serif;text-shadow:0 2px 6px #000}
+.vegas-panel{position:absolute;z-index:1;bottom:-100px;left:-20%;width:min(48vw,560px);height:auto;image-rendering:pixelated;filter:drop-shadow(0 0 10px #ff9b24) drop-shadow(0 0 24px #ed4a42);animation:vegas-blink 1.1s steps(2,end) infinite alternate}
+.casino-atmosphere{position:absolute;z-index:0;inset:0;overflow:hidden;pointer-events:none}.casino-atmosphere span{position:absolute;color:#ffd366;text-shadow:0 0 12px #ffb534;animation:casino-drift 5s ease-in-out infinite}.casino-atmosphere span:nth-child(1){left:12%;top:22%;font-size:20px}.casino-atmosphere span:nth-child(2){right:13%;top:20%;font-size:28px;animation-delay:-1s}.casino-atmosphere span:nth-child(3){right:8%;bottom:23%;font-size:19px;animation-delay:-2s}.casino-atmosphere span:nth-child(4){left:43%;top:13%;font-size:24px;animation-delay:-3s}.casino-atmosphere span:nth-child(5){left:8%;bottom:22%;font-size:15px;animation-delay:-2.5s}
+@keyframes vegas-blink{from{filter:brightness(.28) saturate(.65) drop-shadow(0 0 2px #6e2622)}to{filter:brightness(1.35) saturate(1.25) drop-shadow(0 0 12px #ff9b24) drop-shadow(0 0 28px #ed4a42)}}@keyframes casino-drift{50%{transform:translateY(-12px) rotate(12deg);opacity:.55}}
+@media(max-width:900px){.casino-intro{justify-content:center;padding-right:24px;padding-left:24px}.casino-intro-content{width:min(760px,100%)}.vegas-panel{width:min(44vw,430px);left:-18%;bottom:-86px;opacity:.82}.casino-game-link{min-height:190px}}
+@media(max-width:650px){.casino-intro{min-height:calc(100vh - 126px);margin:-16px;padding:70px 16px 100px;justify-content:flex-start}.casino-intro-content{width:100%}.casino-intro-content h1{font-size:clamp(48px,12vw,72px);margin-bottom:26px}.casino-games{gap:10px}.casino-game-link{min-height:155px;padding:14px}.casino-game-copy b{font-size:14px;letter-spacing:.04em}.casino-game-copy small{font-size:12px}.casino-game-icon{font-size:38px}.vegas-panel{bottom:-62px;left:-24%;width:min(68vw,360px);opacity:.95}}
+@media(max-width:420px){.casino-games{grid-template-columns:1fr}.casino-game-link{min-height:112px;flex-direction:row;align-items:center;justify-content:flex-start;gap:16px}.casino-game-arrow{top:50%;transform:translateY(-50%)}.casino-blackjack-link{flex-direction:row-reverse;align-items:center;justify-content:flex-start;text-align:right}.casino-blackjack-link .casino-game-arrow{right:auto;left:14px}}
+@media(prefers-reduced-motion:reduce){.vegas-panel,.casino-atmosphere span{animation:none}.vegas-panel{filter:brightness(1.2) drop-shadow(0 0 18px #ff9b24)}}
+.casino-intro-footer{position:fixed;z-index:50;right:0;bottom:0;left:0}
+body:has(.casino-layout){background-color:#111827}
+.casino-layout{height:100vh;height:100dvh;min-height:100dvh;overflow-x:hidden}
+.casino-page-stage{padding-bottom:48px}
+html:has(.casino-layout),body:has(.casino-layout),#root:has(.casino-layout){height:100%;min-height:100%;background-color:#111827;overflow-x:hidden}
