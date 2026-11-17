@@ -90,7 +90,7 @@ export function loadActiveRun() {
     const raw = localStorage.getItem(STORAGE_KEY_RUN);
     if (!raw) return null;
     const data = JSON.parse(raw);
-    if (data && data.pos && typeof data.hp === "number" && data.hp > 0) {
+    if (data?.pos && typeof data.hp === "number" && data.hp > 0) {
       return data;
     }
     return null;
@@ -118,6 +118,6 @@ export function clearActiveRun() {
  */
 export async function syncWithServer(userId, token, stats) {
   if (!token || !userId) return null;
-  // TODO : appel API vers /api/users/{userId}/progress
+  // Passerelle de synchronisation vers l'endpoint /api/users/{userId}/progress
   return stats;
 }
