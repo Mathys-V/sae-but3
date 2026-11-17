@@ -6,7 +6,6 @@ import {
   calculerGains,
   tirerRouleaux,
 } from "../game/casino/logic.js";
-import Leaderboard from "../components/Leaderboard.jsx";
 import slotSheet from "../assets/slot.png";
 import "./CasinoGame.css";
 
