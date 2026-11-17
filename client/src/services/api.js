@@ -159,3 +159,54 @@ export const changeUserRole = async (token, userId, role) => {
     return { success: false, error: "Impossible de joindre le serveur." };
   }
 };
+
+// Administration : vue d'ensemble des statistiques & KPIs de rétention
+export const fetchAdminOverviewStats = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/admin/stats/overview`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      return { success: false, error: data.detail || "Erreur stats overview" };
+    }
+    return { success: true, data };
+  } catch (error) {
+    console.error("Erreur fetchAdminOverviewStats :", error);
+    return { success: false, error: "Impossible de joindre le serveur." };
+  }
+};
+
+// Administration : analyse de la rétention et des abandons par jeu
+export const fetchAdminGameStats = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/admin/stats/games`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      return { success: false, error: data.detail || "Erreur stats games" };
+    }
+    return { success: true, data };
+  } catch (error) {
+    console.error("Erreur fetchAdminGameStats :", error);
+    return { success: false, error: "Impossible de joindre le serveur." };
+  }
+};
+
+// Administration : activité horaire et répartition des abandons
+export const fetchAdminRetentionStats = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/admin/stats/retention`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      return { success: false, error: data.detail || "Erreur stats retention" };
+    }
+    return { success: true, data };
+  } catch (error) {
+    console.error("Erreur fetchAdminRetentionStats :", error);
+    return { success: false, error: "Impossible de joindre le serveur." };
+  }
+};

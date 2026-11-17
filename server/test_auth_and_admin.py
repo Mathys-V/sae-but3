@@ -16,7 +16,14 @@ import database
 import security
 from database import Base
 from models.user import User, UserSetting
-from routers.admin import change_user_role, list_users, toggle_ban_user
+from routers.admin import (
+    change_user_role,
+    get_games_stats,
+    get_overview_stats,
+    get_retention_stats,
+    list_users,
+    toggle_ban_user,
+)
 from routers.auth import login, register
 from schemas.user import BanUserRequest, ChangeRoleRequest, UserLogin, UserRegister
 
@@ -145,6 +152,21 @@ def run_tests():
     )
     assert role_res.role == "admin"
     print(f"Alice promue : {role_res.message}")
+
+    print("\n--- 7. TEST STATISTIQUES & RÉTENTION (ANALYTICS) ---")
+    overview = get_overview_stats(db=db, current_admin=prof_user)
+    print(f"Stats Overview : Total Users={overview.total_users}, Abandon={overview.global_abandon_rate}%")
+    assert overview.total_users == 2
+
+    games_st = get_games_stats(db=db, current_admin=prof_user)
+    print(f"Stats Games : {len(games_st)} jeux analysés")
+    assert len(games_st) > 0
+
+    retention_st = get_retention_stats(db=db, current_admin=prof_user)
+    print(
+        f"Stats Rétention : {len(retention_st.hourly_activity)}h, Temps={retention_st.total_time_played_hours}h"
+    )
+    assert len(retention_st.hourly_activity) == 24
 
     db.close()
 
