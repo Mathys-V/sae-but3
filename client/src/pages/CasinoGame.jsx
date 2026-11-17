@@ -3,18 +3,58 @@ import { useEffect, useRef } from "react";
 import { useEconomyStore } from "../game/casino/economyStore";
 import Leaderboard from "../components/Leaderboard.jsx";
 import { initCasinoGame } from "../game/casino/init";
+import { recordGameSession } from "../services/api.js";
+import { useAuthStore } from "../store/authStore.js";
 
 export default function CasinoGame() {
   const canvasRef = useRef(null);
+  const startTimeRef = useRef(null);
+  const savedRef = useRef(false);
   const { coins, paidSpins, freeSpins, resetEconomy } = useEconomyStore();
+  const { token } = useAuthStore();
 
   useEffect(() => {
     if (!canvasRef.current) return;
+    startTimeRef.current = Date.now();
+    savedRef.current = false;
+
     // On lance le jeu et on récupère l'instance Kaplay
     const k = initCasinoGame(canvasRef.current);
-    // Nettoyage quand on quitte la page
-    return () => k.quit();
-  }, []);
+
+    // Nettoyage quand on quitte la page : si le joueur part sans encaisser, c'est compté comme un abandon
+    return () => {
+      k.quit();
+      if (!savedRef.current) {
+        const start = startTimeRef.current || Date.now();
+        const elapsed = Math.max(1, Math.floor((Date.now() - start) / 1000));
+        recordGameSession(token, {
+          game: "casino",
+          score: coins,
+          timeSeconds: elapsed,
+          completed: false,
+          status: "abandoned",
+        });
+      }
+    };
+  }, [token, coins]);
+
+  const handleCashout = async () => {
+    savedRef.current = true;
+    const start = startTimeRef.current || Date.now();
+    const elapsed = Math.max(1, Math.floor((Date.now() - start) / 1000));
+    const finalScore = paidSpins * 50 + coins;
+
+    await recordGameSession(token, {
+      game: "casino",
+      score: finalScore,
+      timeSeconds: elapsed,
+      completed: true,
+      status: "finished",
+    });
+
+    alert(`Partie terminée avec succès ! Votre score réel de ${finalScore} pts a été enregistré en base de données.`);
+    resetEconomy();
+  };
 
   return (
     <div className="flex flex-col items-center justify-center p-4 max-w-7xl mx-auto">
@@ -81,10 +121,7 @@ export default function CasinoGame() {
             </div>
             
             <button 
-              onClick={() => {
-                alert(`Partie terminée ! Ton score de ${paidSpins} sera envoyé au Leaderboard.`);
-                resetEconomy();
-              }}
+              onClick={handleCashout}
               className="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-lg font-bold transition-colors shadow-lg"
             >
               Encaisser & Quitter

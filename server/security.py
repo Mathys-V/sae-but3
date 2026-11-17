@@ -100,3 +100,23 @@ def require_admin(current_user: User = Depends(get_current_user)) -> User:
             detail="Accès réservé aux administrateurs."
         )
     return current_user
+
+
+def get_optional_current_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(security_bearer),
+    db: Session = Depends(get_db)
+) -> User | None:
+    """Dépendance optionnelle : renvoie l'utilisateur s'il est authentifié par token, sinon None."""
+    if not credentials or not credentials.credentials:
+        return None
+    payload = decode_access_token(credentials.credentials)
+    if not payload or "sub" not in payload:
+        return None
+    try:
+        user_id = int(payload["sub"])
+    except (ValueError, TypeError):
+        return None
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if not user or user.banned_flag:
+        return None
+    return user

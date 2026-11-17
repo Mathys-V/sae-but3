@@ -631,14 +631,18 @@ function EvilAdminPanel() {
                         </span>
                         <span
                           className={`text-[10px] px-2 py-0.5 rounded font-bold ${
-                            game.health_status === "healthy"
+                            game.total_played === 0
+                              ? "bg-gray-800 text-gray-400 border border-gray-700"
+                              : game.health_status === "healthy"
                               ? "bg-green-950 text-green-300 border border-green-800"
                               : game.health_status === "warning"
                               ? "bg-yellow-950 text-yellow-300 border border-yellow-800"
                               : "bg-red-950 text-red-300 border border-red-800"
                           }`}
                         >
-                          {game.health_status === "healthy"
+                          {game.total_played === 0
+                            ? "⚪ En attente de parties"
+                            : game.health_status === "healthy"
                             ? "🟢 Rétention Optimale"
                             : game.health_status === "warning"
                             ? "🟡 Frustration Modérée"
@@ -650,14 +654,16 @@ function EvilAdminPanel() {
                       <div className="text-xs text-gray-400">Taux d'abandon</div>
                       <div
                         className={`text-xl font-black ${
-                          game.abandon_rate < 25
+                          game.total_played === 0
+                            ? "text-gray-500"
+                            : game.abandon_rate < 25
                             ? "text-green-400"
                             : game.abandon_rate < 40
                             ? "text-yellow-400"
                             : "text-red-400"
                         }`}
                       >
-                        {game.abandon_rate}%
+                        {game.total_played > 0 ? `${game.abandon_rate}%` : "--"}
                       </div>
                     </div>
                   </div>
@@ -668,21 +674,27 @@ function EvilAdminPanel() {
                       <span>Complétées : {game.completed}</span>
                       <span>Abandons : {game.abandoned}</span>
                     </div>
-                    <div className="h-2 w-full bg-red-950/80 rounded-full overflow-hidden flex">
-                      <div
-                        className="bg-green-500 h-full transition-all"
-                        style={{
-                          width: `${Math.max(
-                            5,
-                            100 - game.abandon_rate,
-                          )}%`,
-                        }}
-                      />
-                      <div
-                        className="bg-red-600 h-full transition-all"
-                        style={{ width: `${game.abandon_rate}%` }}
-                      />
-                    </div>
+                    {game.total_played > 0 ? (
+                      <div className="h-2 w-full bg-red-950/80 rounded-full overflow-hidden flex">
+                        <div
+                          className="bg-green-500 h-full transition-all"
+                          style={{
+                            width: `${Math.max(
+                              5,
+                              100 - game.abandon_rate,
+                            )}%`,
+                          }}
+                        />
+                        <div
+                          className="bg-red-600 h-full transition-all"
+                          style={{ width: `${game.abandon_rate}%` }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden flex items-center justify-center">
+                        <div className="text-[9px] text-gray-500">Aucune donnée</div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Chiffres secondaires */}
@@ -690,19 +702,19 @@ function EvilAdminPanel() {
                     <div>
                       <div className="text-gray-500 text-[10px]">Durée moy.</div>
                       <div className="font-semibold text-gray-200">
-                        {game.avg_time_seconds}s
+                        {game.total_played > 0 ? `${game.avg_time_seconds}s` : "--"}
                       </div>
                     </div>
                     <div>
                       <div className="text-gray-500 text-[10px]">Score moy.</div>
                       <div className="font-semibold text-gray-200">
-                        {game.avg_score} pts
+                        {game.total_played > 0 ? `${game.avg_score} pts` : "--"}
                       </div>
                     </div>
                     <div>
                       <div className="text-gray-500 text-[10px]">Record</div>
                       <div className="font-semibold text-yellow-400">
-                        {game.high_score} pts
+                        {game.total_played > 0 ? `${game.high_score} pts` : "--"}
                       </div>
                     </div>
                   </div>

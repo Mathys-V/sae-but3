@@ -3,6 +3,8 @@ import { initDivingGame } from "../game/plongee/core/init.js";
 import DivingShopModal from "../components/DivingShopModal.jsx";
 import DivingIntroModal from "../components/DivingIntroModal.jsx";
 import { stats } from "../game/plongee/entities/stats.js";
+import { recordGameSession } from "../services/api.js";
+import { useAuthStore } from "../store/authStore.js";
 import {
   PixelCoralTopLeft,
   PixelStarfishTopRight,
@@ -52,6 +54,8 @@ function DivingGame({
   isMultiplayer = false,
   enableMockTeammate = false,
 } = {}) {
+  const { token } = useAuthStore();
+  const sessionRecordedRef = useRef(false);
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const [canvasSessionKey] = useState(() => Date.now());
@@ -111,8 +115,17 @@ function DivingGame({
       if (document.fullscreenElement) {
         document.exitFullscreen().catch(() => {});
       }
+      if (!sessionRecordedRef.current && (stats.gameTimer > 5 || stats.coins > 0)) {
+        recordGameSession(token, {
+          game: "plongee",
+          score: (stats.coins || 0) * 5,
+          timeSeconds: Math.floor(stats.gameTimer || 10),
+          completed: false,
+          status: "abandoned",
+        });
+      }
     };
-  }, []);
+  }, [token]);
 
   /**
    * Bascule entre le mode fenêtré standard et le mode plein écran natif de l'API Browser.
@@ -155,7 +168,17 @@ function DivingGame({
     const handleOpenShop = () => setIsShopOpen(true);
     const handleInventoryUpdate = () => setInventoryTick((t) => t + 1);
     const handleVictory = (e) => {
-      setVictoryData(e.detail || { time: stats.gameTimer });
+      sessionRecordedRef.current = true;
+      const timeVal = Math.floor(e.detail?.time || stats.gameTimer || 60);
+      const scoreVal = (stats.coins || 0) * 10 + 350;
+      setVictoryData(e.detail || { time: timeVal });
+      recordGameSession(token, {
+        game: "plongee",
+        score: scoreVal,
+        timeSeconds: timeVal,
+        completed: true,
+        status: "finished",
+      });
     };
 
     /**
@@ -190,7 +213,7 @@ function DivingGame({
       window.removeEventListener("plongee-victory", handleVictory);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isIntroOpen]);
+  }, [isIntroOpen, token]);
 
   // Statistiques en temps réel pour l'étagère de butin du meuble d'arcade
   const bagCount = (stats.inventory || []).reduce(

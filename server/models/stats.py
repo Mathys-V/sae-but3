@@ -61,3 +61,16 @@ class Score(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     game = relationship("Game")
+
+
+class UserModule(Base):
+    __tablename__ = "users_modules"
+
+    user_module_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    module_id = Column(Integer, nullable=False)
+    status = Column(String(20), nullable=False, default="in_progress")
+    attempts = Column(Integer, nullable=False, default=0)
+    best_score = Column(Integer, nullable=True)
+    best_time = Column(Integer, nullable=True)
+    date_completion = Column(DateTime(timezone=True), nullable=True)

@@ -15,6 +15,7 @@ from sqlalchemy.orm import sessionmaker
 import database
 import security
 from database import Base
+from models.stats import Game
 from models.user import User, UserSetting
 from routers.admin import (
     change_user_role,
@@ -25,6 +26,9 @@ from routers.admin import (
     toggle_ban_user,
 )
 from routers.auth import login, register
+from routers.gameplay import record_game_session
+from routers.leaderboard import get_leaderboard
+from schemas.gameplay import RecordGameSessionRequest
 from schemas.user import BanUserRequest, ChangeRoleRequest, UserLogin, UserRegister
 
 # Configurer SQLite en mémoire pour les tests
@@ -167,6 +171,67 @@ def run_tests():
         f"Stats Rétention : {len(retention_st.hourly_activity)}h, Temps={retention_st.total_time_played_hours}h"
     )
     assert len(retention_st.hourly_activity) == 24
+
+    print("\n--- 8. TEST ENREGISTREMENT DE SESSION RÉELLE & LEADERBOARD ---")
+    game_plongee = Game(
+        module_id=1,
+        name="Jeu de Plongée (R5.A.06)",
+        difficulty="hard",
+        multiplayer_flag=True,
+    )
+    db.add(game_plongee)
+    db.commit()
+
+    # Alice joue et gagne
+    rec1 = record_game_session(
+        req=RecordGameSessionRequest(
+            game_name="plongee",
+            score=350,
+            time_seconds=180,
+            completed=True,
+        ),
+        db=db,
+        current_user=alice_user,
+    )
+    assert rec1.success
+    assert rec1.score == 350
+    assert rec1.winner_flag is True
+    print(f"Session réelle 1 enregistrée : {rec1.game_name}, score={rec1.score}, joueur={rec1.user_pseudo}")
+
+    # Un invité joue et ragequit (<60s)
+    rec2 = record_game_session(
+        req=RecordGameSessionRequest(
+            game_name="plongee",
+            score=50,
+            time_seconds=40,
+            completed=False,
+            status="abandoned",
+        ),
+        db=db,
+        current_user=None,
+    )
+    assert rec2.success
+    assert rec2.winner_flag is False
+    print(f"Session réelle 2 (invité abandon) : score={rec2.score}, joueur={rec2.user_pseudo}")
+
+    # Leaderboard réel
+    lb = get_leaderboard("plongee", db=db)
+    print(f"Leaderboard réel : {len(lb.scores)} entrées")
+    assert len(lb.scores) == 2
+    assert lb.scores[0].pseudo == "alice"
+    assert lb.scores[0].score == 350
+
+    # Vérification que get_games_stats reflète les vraies parties
+    games_after = get_games_stats(db=db, current_admin=prof_user)
+    plongee_stat = next(g for g in games_after if "Plongée" in g.game_name)
+    print(
+        f"Stats jeu réelles : Jouées={plongee_stat.total_played}, "
+        f"Finies={plongee_stat.completed}, Abandons={plongee_stat.abandoned} ({plongee_stat.abandon_rate}%)"
+    )
+    assert plongee_stat.total_played == 2
+    assert plongee_stat.completed == 1
+    assert plongee_stat.abandoned == 1
+    assert plongee_stat.abandon_rate == 50.0
 
     db.close()
 

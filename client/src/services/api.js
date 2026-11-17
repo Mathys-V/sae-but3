@@ -210,3 +210,35 @@ export const fetchAdminRetentionStats = async (token) => {
     return { success: false, error: "Impossible de joindre le serveur." };
   }
 };
+
+// Gameplay : enregistre une session et un score réels en base de données
+export const recordGameSession = async (
+  token,
+  { game, score = 0, timeSeconds = 0, completed = true, status = "finished" } = {},
+) => {
+  try {
+    const headers = { "Content-Type": "application/json" };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await fetch(`${API_URL}/games/record-session`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        game_name: game,
+        score,
+        time_seconds: timeSeconds,
+        completed,
+        status,
+      }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      return { success: false, error: data.detail || "Erreur enregistrement partie" };
+    }
+    return { success: true, data };
+  } catch (error) {
+    console.warn("Erreur réseau enregistrement session jeu :", error);
+    return { success: false, error: "Impossible de joindre le serveur." };
+  }
+};
