@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { stats } from "../game/plongee/entities/stats.js";
+import { saveProgression } from "../game/plongee/core/statsStorage.js";
 
 /**
  * Définition et comportement des améliorations disponibles dans la boutique du Pêcheur.
@@ -113,6 +114,7 @@ function DivingShopModal({ isOpen, onClose }) {
     const gained = totalBarrelValue;
     stats.coins = (stats.coins || 0) + gained;
     stats.barrelInventory = [];
+    saveProgression(stats);
     refresh();
     setSrMessage(
       `Vente réussie : ${gained} pièces d'or ajoutées. Solde actuel : ${stats.coins} or.`,
@@ -136,6 +138,7 @@ function DivingShopModal({ isOpen, onClose }) {
 
     stats.coins -= cost;
     const feedback = def.apply(currentUpgrades);
+    saveProgression(stats);
     refresh();
     setSrMessage(feedback);
     window.dispatchEvent(new CustomEvent("plongee-play-sound", { detail: "sfx-gold" }));

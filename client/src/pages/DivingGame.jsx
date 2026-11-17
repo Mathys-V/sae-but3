@@ -34,13 +34,27 @@ function formatTime(seconds) {
 /**
  * Composant principal de la page du Jeu de Plongée (DivingGame).
  * Gère l'intégration de la borne d'arcade rétro, du canvas Kaplay, des modales
- * (Boutique, Guide des règles, Victoire) et des raccourcis clavier globaux.
+ * (Boutique, Guide des règles, Victoire), des raccourcis clavier globaux
+ * et de la synchronisation multijoueur.
  *
+ * @param {object} [props={}] - Propriétés de configuration optionnelles.
+ * @param {object|null} [props.socket=null] - Instance Socket.IO partagée.
+ * @param {string|null} [props.sessionId=null] - Identifiant du salon multijoueur.
+ * @param {Array<object>} [props.playerList=[]] - Liste des autres joueurs connectés.
+ * @param {boolean} [props.isMultiplayer=false] - Indique si la session est multijoueur.
+ * @param {boolean} [props.enableMockTeammate=false] - Active un coéquipier simulé en local.
  * @returns {JSX.Element} Vue complète du jeu de plongée.
  */
-function DivingGame() {
+function DivingGame({
+  socket = null,
+  sessionId = null,
+  playerList = [],
+  isMultiplayer = false,
+  enableMockTeammate = false,
+} = {}) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const [canvasSessionKey] = useState(() => Date.now());
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [inventoryTick, setInventoryTick] = useState(0);
@@ -59,12 +73,43 @@ function DivingGame() {
     canvasRef.current?.focus();
   };
 
-  // Initialisation du moteur Kaplay sur le canvas au montage du composant
+  const optionsRef = useRef({
+    socket,
+    sessionId,
+    initialPlayers: playerList,
+    isMultiplayer,
+    mock: enableMockTeammate,
+  });
+
+  // Maintient la référence des options réseau sans provoquer de redémarrage du moteur Kaplay
   useEffect(() => {
-    const quitGame = initDivingGame(canvasRef.current);
+    optionsRef.current = {
+      socket,
+      sessionId,
+      initialPlayers: playerList,
+      isMultiplayer,
+      mock: enableMockTeammate,
+    };
+  }, [socket, sessionId, playerList, isMultiplayer, enableMockTeammate]);
+
+  // Initialisation du moteur Kaplay sur le canvas strictement au montage du composant
+  useEffect(() => {
+    let quitGame = null;
+    try {
+      quitGame = initDivingGame(canvasRef.current, optionsRef.current);
+    } catch (err) {
+      console.error("Erreur initialisation plongee :", err);
+    }
     return () => {
       if (typeof quitGame === "function") {
-        quitGame();
+        try {
+          quitGame();
+        } catch (err) {
+          console.warn("Erreur quitGame plongee :", err);
+        }
+      }
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
       }
     };
   }, []);
@@ -273,6 +318,7 @@ function DivingGame() {
           {/* L'ÉCRAN DE JEU ET LE CANVAS KAPLAY */}
           <div className="arcade-screen-viewport">
             <canvas
+              key={canvasSessionKey}
               ref={canvasRef}
               tabIndex={0}
               aria-label="Jeu de plongée sous-marine MesCoursJV. Contrôles : ZQSD ou Flèches pour nager, Clic gauche pour attaquer au harpon, E pour interagir sur la barque, B pour la boutique."
