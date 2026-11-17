@@ -1,3 +1,12 @@
+.casino-slot-page {
+  background-image:
+    linear-gradient(rgb(8 8 14 / 62%), rgb(8 8 14 / 76%)),
+    url("/assets/casino/casinobg.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .slot-machine {
   position: relative;
   width: min(100%, 460px);

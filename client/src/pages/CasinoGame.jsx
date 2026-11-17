@@ -175,12 +175,6 @@ export default function CasinoGame() {
         loop
         aria-label="Musique de la machine à sous"
       />
-      <header className="rounded-xl border border-rose-900/70 bg-gradient-to-r from-gray-950 via-rose-950 to-gray-950 p-5 text-center shadow-xl">
-        <p className="mb-1 text-xs font-bold uppercase tracking-[0.35em] text-amber-300">
-          EvilJV arcade
-        </p>
-        <h1 className="text-3xl font-black sm:text-4xl">Casino des probas</h1>
-      </header>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(260px,0.8fr)_minmax(360px,1.2fr)]">
         <section className="order-2 rounded-xl border-2 border-gray-700 bg-gray-900 p-4 shadow-xl lg:order-1 sm:p-6">
@@ -231,7 +225,7 @@ export default function CasinoGame() {
             </div>
           </div>
 
-          <div className="flex w-full justify-center overflow-hidden rounded-lg border border-gray-700 px-2 py-3 sm:py-5">
+          <div className="casino-slot-page flex w-full justify-center overflow-hidden rounded-lg border border-gray-700 px-2 py-3 sm:py-5">
             <div className="slot-machine" aria-label="Machine à sous">
               <svg
                 className="slot-machine-art"
