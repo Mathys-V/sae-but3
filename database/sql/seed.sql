@@ -7,13 +7,14 @@
 -- -------------------------------------------------------------
 -- 1. Joueurs (users)
 -- -------------------------------------------------------------
+-- Mot de passe démo 'admin123' pour prof, 'alice123' pour alice, 'azerty123' pour les autres
 INSERT INTO users (pseudo, email, password_hash, role, banned_flag, created_at, updated_at, last_login) VALUES
-    ('alice',  'alice@etu.univ.fr',  'HASH_DEMO_ALICE',   'player', FALSE, NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day',  NOW() - INTERVAL '2 hours'),
-    ('bob',    'bob@etu.univ.fr',    'HASH_DEMO_BOB',     'player', FALSE, NOW() - INTERVAL '25 days', NOW() - INTERVAL '2 days', NOW() - INTERVAL '3 days'),
-    ('chloe',  'chloe@etu.univ.fr',  'HASH_DEMO_CHLOE',   'player', FALSE, NOW() - INTERVAL '10 days', NULL,                    NOW() - INTERVAL '1 hour'),
-    ('damien', 'damien@etu.univ.fr', 'HASH_DEMO_DAMIEN',  'player', FALSE, NOW() - INTERVAL '8 days',  NULL,                    NOW() - INTERVAL '6 hours'),
-    ('prof',   'prof@univ.fr',       'HASH_DEMO_PROF',    'admin',  FALSE, NOW() - INTERVAL '60 days', NOW() - INTERVAL '3 days', NOW() - INTERVAL '30 min'),
-    ('troll',  'troll@etu.univ.fr',  'HASH_DEMO_TROLL',   'player', TRUE,  NOW() - INTERVAL '10 days', NULL,                    NULL);
+    ('alice',  'alice@etu.univ.fr',  '$2b$12$UfEU./V5KtQX0Z4Q8qEQJOZXEjR1Jw/jIC4W/7FORfzAwaKOn7L3q',   'player', FALSE, NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day',  NOW() - INTERVAL '2 hours'),
+    ('bob',    'bob@etu.univ.fr',    '$2b$12$7VSB6tSK0aRU.Q4BV28CIeZ9dl1vIhNQIPKZtWs4sKIjuBX8Opeuu',   'player', FALSE, NOW() - INTERVAL '25 days', NOW() - INTERVAL '2 days', NOW() - INTERVAL '3 days'),
+    ('chloe',  'chloe@etu.univ.fr',  '$2b$12$7VSB6tSK0aRU.Q4BV28CIeZ9dl1vIhNQIPKZtWs4sKIjuBX8Opeuu',   'player', FALSE, NOW() - INTERVAL '10 days', NULL,                    NOW() - INTERVAL '1 hour'),
+    ('damien', 'damien@etu.univ.fr', '$2b$12$7VSB6tSK0aRU.Q4BV28CIeZ9dl1vIhNQIPKZtWs4sKIjuBX8Opeuu',  'player', FALSE, NOW() - INTERVAL '8 days',  NULL,                    NOW() - INTERVAL '6 hours'),
+    ('prof',   'prof@univ.fr',       '$2b$12$UfEU./V5KtQX0Z4Q8qEQJOZXEjR1Jw/jIC4W/7FORfzAwaKOn7L3q',   'admin',  FALSE, NOW() - INTERVAL '60 days', NOW() - INTERVAL '3 days', NOW() - INTERVAL '30 min'),
+    ('troll',  'troll@etu.univ.fr',  '$2b$12$7VSB6tSK0aRU.Q4BV28CIeZ9dl1vIhNQIPKZtWs4sKIjuBX8Opeuu',   'player', TRUE,  NOW() - INTERVAL '10 days', NULL,                    NULL);
 
 -- -------------------------------------------------------------
 -- 2. Préférences (user_settings) — création lazy : 2 joueurs sur 6
