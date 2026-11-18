@@ -14,6 +14,81 @@ from security import get_optional_current_user
 router = APIRouter(prefix="/api/games", tags=["Gameplay & Sessions"])
 
 
+def _find_game(db: Session, target: str) -> Game | None:
+    game = db.query(Game).filter(Game.name.ilike(f"%{target}%")).first()
+    if game:
+        return game
+    lowered = target.lower()
+    if "plong" in lowered:
+        return db.query(Game).filter(Game.name.ilike("%Plongée%")).first()
+    if "casino" in lowered or "manchot" in lowered:
+        return db.query(Game).filter(Game.name.ilike("%Casino%")).first()
+    if "tuto" in lowered:
+        return db.query(Game).filter(Game.name.ilike("%Tutoriel%")).first()
+    return None
+
+
+def _resolve_player_account(db: Session, current_user: User | None) -> User:
+    if current_user:
+        return current_user
+    guest_user = db.query(User).filter(User.pseudo == "invite_guest").first()
+    if not guest_user:
+        salt = uuid.uuid4().hex
+        guest_user = User(
+            pseudo="invite_guest",
+            email="invite@evil.local",
+            password_hash=f"$2b$12${salt}",
+            role="player",
+            banned_flag=False,
+        )
+        db.add(guest_user)
+        db.commit()
+        db.refresh(guest_user)
+    return guest_user
+
+
+def _sync_user_module_progress(
+    db: Session,
+    player: User,
+    game: Game,
+    req: RecordGameSessionRequest,
+    duration_sec: int,
+    now: datetime,
+) -> None:
+    if player.pseudo == "invite_guest":
+        return
+    progress = (
+        db.query(UserModule)
+        .filter(
+            UserModule.user_id == player.user_id,
+            UserModule.module_id == game.module_id,
+        )
+        .first()
+    )
+    if not progress:
+        progress = UserModule(
+            user_id=player.user_id,
+            module_id=game.module_id,
+            status="completed" if req.completed else "in_progress",
+            attempts=1,
+            best_score=req.score,
+            best_time=duration_sec if req.completed else None,
+            date_completion=now if req.completed else None,
+        )
+        db.add(progress)
+        return
+
+    progress.attempts += 1
+    if req.score > (progress.best_score or 0):
+        progress.best_score = req.score
+    if req.completed:
+        if progress.best_time is None or duration_sec < progress.best_time:
+            progress.best_time = duration_sec
+        progress.status = "completed"
+        if not progress.date_completion:
+            progress.date_completion = now
+
+
 @router.post("/record-session", response_model=RecordGameSessionResponse, status_code=status.HTTP_201_CREATED)
 def record_game_session(
     req: RecordGameSessionRequest,
@@ -26,41 +101,15 @@ def record_game_session(
     """
     # 1. Résolution du jeu en base
     target = req.game_name.strip()
-    game = db.query(Game).filter(Game.name.ilike(f"%{target}%")).first()
-
-    if not game:
-        # Correspondances courantes
-        if "plong" in target.lower():
-            game = db.query(Game).filter(Game.name.ilike("%Plongée%")).first()
-        elif "casino" in target.lower() or "manchot" in target.lower():
-            game = db.query(Game).filter(Game.name.ilike("%Casino%")).first()
-        elif "tuto" in target.lower():
-            game = db.query(Game).filter(Game.name.ilike("%Tutoriel%")).first()
-
+    game = _find_game(db, target)
     if not game:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Jeu '{req.game_name}' introuvable dans le catalogue.",
         )
 
-    # 2. Résolution du joueur (compte réel ou compte invité technique)
-    if current_user:
-        player = current_user
-    else:
-        # Joueur invité sans compte
-        guest_user = db.query(User).filter(User.pseudo == "invite_guest").first()
-        if not guest_user:
-            guest_user = User(
-                pseudo="invite_guest",
-                email="invite@evil.local",
-                password_hash="$2b$12$eXAMPLeHaSHFoRInViTeGuEstAccOuntOnLy",
-                role="player",
-                banned_flag=False,
-            )
-            db.add(guest_user)
-            db.commit()
-            db.refresh(guest_user)
-        player = guest_user
+    # 2. Résolution du joueur
+    player = _resolve_player_account(db, current_user)
 
     # 3. Création de la session réelle
     now = datetime.now(timezone.utc)
@@ -68,7 +117,6 @@ def record_game_session(
     session_start = now - timedelta(seconds=duration_sec)
     code = f"RUN{uuid.uuid4().hex[:6].upper()}"
 
-    # Si la partie a été abandonnée, le statut reste in_progress
     session_status = "finished" if req.completed and req.status == "finished" else "in_progress"
     ended_at = now if req.completed else None
 
@@ -108,37 +156,8 @@ def record_game_session(
     )
     db.add(score_entry)
 
-    # 6. Mise à jour de la progression du module pour les joueurs enregistrés
-    if player.pseudo != "invite_guest":
-        progress = (
-            db.query(UserModule)
-            .filter(
-                UserModule.user_id == player.user_id,
-                UserModule.module_id == game.module_id,
-            )
-            .first()
-        )
-        if not progress:
-            progress = UserModule(
-                user_id=player.user_id,
-                module_id=game.module_id,
-                status="completed" if req.completed else "in_progress",
-                attempts=1,
-                best_score=req.score,
-                best_time=duration_sec if req.completed else None,
-                date_completion=now if req.completed else None,
-            )
-            db.add(progress)
-        else:
-            progress.attempts += 1
-            if req.score > (progress.best_score or 0):
-                progress.best_score = req.score
-            if req.completed:
-                if progress.best_time is None or duration_sec < progress.best_time:
-                    progress.best_time = duration_sec
-                progress.status = "completed"
-                if not progress.date_completion:
-                    progress.date_completion = now
+    # 6. Progression module
+    _sync_user_module_progress(db, player, game, req, duration_sec, now)
 
     db.commit()
     db.refresh(session_game)

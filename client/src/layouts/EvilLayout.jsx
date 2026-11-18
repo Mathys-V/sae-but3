@@ -5,6 +5,40 @@ import rouletteBackground from "../assets/backgrounds/roulettebg.png";
 import flamingoBackground from "../assets/backgrounds/flamingobg.png";
 import tableBackground from "../assets/backgrounds/tablebg.png";
 
+function getPageBackground(pathname) {
+  if (pathname === "/casino") return flamingoBackground;
+  if (pathname === "/blackjack") return tableBackground;
+  return rouletteBackground;
+}
+
+function UserProfileBadge({ user, isGuest, role, avatar }) {
+  if (!user) return null;
+  return (
+    <div className="pixel-profile-frame hidden sm:flex">
+      <img
+        src={`/assets/ui/Barre-de-Navigation/Icones_profil/${avatar || "Icon1"}.png`}
+        alt="Avatar du joueur"
+        className="w-7 h-7 pixelated border border-gray-700 bg-gray-950 shadow"
+      />
+      <div className="flex flex-col leading-tight pr-1">
+        <span className="font-vcr text-sm font-bold text-gray-100 tracking-wide">
+          {user}
+        </span>
+        {isGuest && (
+          <span className="text-[10px] text-gray-400 font-sans">
+            Invité
+          </span>
+        )}
+        {role === "admin" && (
+          <span className="text-[10px] text-red-400 font-sans font-bold">
+            Admin
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function EvilLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -18,14 +52,7 @@ function EvilLayout() {
   };
 
   const isCasino = ["/casino", "/machine", "/blackjack"].includes(location.pathname);
-  
-  // Évite les ternaires imbriquées pour la clarté et SonarCloud
-  let pageBackground = rouletteBackground;
-  if (location.pathname === "/casino") {
-    pageBackground = flamingoBackground;
-  } else if (location.pathname === "/blackjack") {
-    pageBackground = tableBackground;
-  }
+  const pageBackground = getPageBackground(location.pathname);
   const casinoIntroBackground = location.pathname === "/casino";
 
   return (
@@ -120,30 +147,12 @@ function EvilLayout() {
         {/* Profil, Paramètres & Déconnexion tout à droite */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Cadre Profil Utilisateur Pixel Art avec Avatar */}
-          {user && (
-            <div className="pixel-profile-frame hidden sm:flex">
-              <img
-                src={`/assets/ui/Barre-de-Navigation/Icones_profil/${avatar || "Icon1"}.png`}
-                alt="Avatar du joueur"
-                className="w-7 h-7 pixelated border border-gray-700 bg-gray-950 shadow"
-              />
-              <div className="flex flex-col leading-tight pr-1">
-                <span className="font-vcr text-sm font-bold text-gray-100 tracking-wide">
-                  {user}
-                </span>
-                {isGuest && (
-                  <span className="text-[10px] text-gray-400 font-sans">
-                    Invité
-                  </span>
-                )}
-                {role === "admin" && (
-                  <span className="text-[10px] text-red-400 font-sans font-bold">
-                    Admin
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
+          <UserProfileBadge
+            user={user}
+            isGuest={isGuest}
+            role={role}
+            avatar={avatar}
+          />
 
           {/* Bouton Paramètres / Options */}
           <Link

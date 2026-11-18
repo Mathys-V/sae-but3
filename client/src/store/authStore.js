@@ -106,12 +106,12 @@ export const useAuthStore = create((set) => ({
   // Connexion en tant qu'invité (sans compte en base)
   loginAsGuest: (customPseudo = null) => {
     let guestId;
-    if (typeof window !== "undefined" && window.crypto?.getRandomValues) {
+    try {
       const randomBuf = new Uint32Array(1);
-      window.crypto.getRandomValues(randomBuf);
+      crypto.getRandomValues(randomBuf);
       guestId = 1000 + (randomBuf[0] % 9000);
-    } else {
-      guestId = 1000 + Math.floor(Math.random() * 9000);
+    } catch {
+      guestId = 1000 + (Date.now() % 9000);
     }
     const guestPseudo = customPseudo?.trim() || `Invité_${guestId}`;
     const newState = {

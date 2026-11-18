@@ -178,6 +178,163 @@ function secureRandom() {
   return value[0] / 0x100000000;
 }
 
+function validateRegisterInputs(pseudo, email, password, confirmPassword) {
+  if (!pseudo.trim() || !email.trim() || !password) {
+    return "Tous les champs sont requis pour l'inscription.";
+  }
+  if (password.length < 6) {
+    return "Le mot de passe doit comporter au moins 6 caractères.";
+  }
+  if (password !== confirmPassword) {
+    return "Les mots de passe saisis ne correspondent pas.";
+  }
+  return null;
+}
+
+function EvilLoginForm({
+  evilIdentifier,
+  setEvilIdentifier,
+  evilPassword,
+  setEvilPassword,
+  showEvilPassword,
+  setShowEvilPassword,
+  isAuthSubmitting,
+  onSubmit,
+}) {
+  return (
+    <form className="evil-login-form" onSubmit={onSubmit}>
+      <label htmlFor="evil-identifier">Identifiant (Pseudo ou Email) *</label>
+      <input
+        id="evil-identifier"
+        type="text"
+        autoComplete="username"
+        placeholder="ex: alice ou alice@etu.univ.fr"
+        value={evilIdentifier}
+        onChange={(event) => setEvilIdentifier(event.target.value)}
+        required
+      />
+      <label htmlFor="evil-password">Mot de passe *</label>
+      <div className="evil-password-field">
+        <input
+          id="evil-password"
+          type={showEvilPassword ? "text" : "password"}
+          autoComplete="current-password"
+          placeholder="Votre mot de passe"
+          value={evilPassword}
+          onChange={(event) => setEvilPassword(event.target.value)}
+          required
+        />
+        <button
+          type="button"
+          className="evil-password-toggle"
+          aria-label={
+            showEvilPassword
+              ? "Masquer le mot de passe"
+              : "Afficher le mot de passe"
+          }
+          aria-pressed={showEvilPassword}
+          onClick={() => setShowEvilPassword((visible) => !visible)}
+        >
+          <span className="material-symbols-outlined" aria-hidden="true">
+            {showEvilPassword ? "visibility_off" : "visibility"}
+          </span>
+        </button>
+      </div>
+      <button
+        className="evil-submit-button"
+        type="submit"
+        disabled={isAuthSubmitting}
+      >
+        {isAuthSubmitting ? "CONNEXION EN COURS..." : "SE CONNECTER"}
+      </button>
+    </form>
+  );
+}
+
+function EvilRegisterForm({
+  regPseudo,
+  setRegPseudo,
+  regEmail,
+  setRegEmail,
+  regPassword,
+  setRegPassword,
+  regConfirmPassword,
+  setRegConfirmPassword,
+  showRegPassword,
+  setShowRegPassword,
+  isAuthSubmitting,
+  onSubmit,
+}) {
+  return (
+    <form className="evil-login-form" onSubmit={onSubmit}>
+      <label htmlFor="reg-pseudo">Pseudo du joueur * (3 à 50 car.)</label>
+      <input
+        id="reg-pseudo"
+        type="text"
+        autoComplete="username"
+        placeholder="ex: DarkPlayer99"
+        value={regPseudo}
+        onChange={(event) => setRegPseudo(event.target.value)}
+        required
+      />
+      <label htmlFor="reg-email">Adresse Email *</label>
+      <input
+        id="reg-email"
+        type="email"
+        autoComplete="email"
+        placeholder="ex: joueur@etu.univ.fr"
+        value={regEmail}
+        onChange={(event) => setRegEmail(event.target.value)}
+        required
+      />
+      <label htmlFor="reg-password">Mot de passe * (min 6 car.)</label>
+      <div className="evil-password-field">
+        <input
+          id="reg-password"
+          type={showRegPassword ? "text" : "password"}
+          autoComplete="new-password"
+          placeholder="Minimum 6 caractères"
+          value={regPassword}
+          onChange={(event) => setRegPassword(event.target.value)}
+          required
+        />
+        <button
+          type="button"
+          className="evil-password-toggle"
+          aria-label={
+            showRegPassword
+              ? "Masquer le mot de passe"
+              : "Afficher le mot de passe"
+          }
+          aria-pressed={showRegPassword}
+          onClick={() => setShowRegPassword((visible) => !visible)}
+        >
+          <span className="material-symbols-outlined" aria-hidden="true">
+            {showRegPassword ? "visibility_off" : "visibility"}
+          </span>
+        </button>
+      </div>
+      <label htmlFor="reg-confirm-password">Confirmer le mot de passe *</label>
+      <input
+        id="reg-confirm-password"
+        type={showRegPassword ? "text" : "password"}
+        autoComplete="new-password"
+        placeholder="Répétez votre mot de passe"
+        value={regConfirmPassword}
+        onChange={(event) => setRegConfirmPassword(event.target.value)}
+        required
+      />
+      <button
+        className="evil-submit-button"
+        type="submit"
+        disabled={isAuthSubmitting}
+      >
+        {isAuthSubmitting ? "CRÉATION EN COURS..." : "CRÉER MON COMPTE"}
+      </button>
+    </form>
+  );
+}
+
 function ConnexionMCJV() {
   const navigate = useNavigate();
   const { login, loginAsGuest } = useAuthStore();
@@ -227,16 +384,9 @@ function ConnexionMCJV() {
     event.preventDefault();
     setAuthError("");
     setAuthSuccess("");
-    if (!regPseudo.trim() || !regEmail.trim() || !regPassword) {
-      setAuthError("Tous les champs sont requis pour l'inscription.");
-      return;
-    }
-    if (regPassword.length < 6) {
-      setAuthError("Le mot de passe doit comporter au moins 6 caractères.");
-      return;
-    }
-    if (regPassword !== regConfirmPassword) {
-      setAuthError("Les mots de passe saisis ne correspondent pas.");
+    const validationError = validateRegisterInputs(regPseudo, regEmail, regPassword, regConfirmPassword);
+    if (validationError) {
+      setAuthError(validationError);
       return;
     }
     setIsAuthSubmitting(true);
@@ -448,122 +598,34 @@ function ConnexionMCJV() {
 
               {/* Formulaire de Connexion */}
               {authMode === "login" && (
-                <form className="evil-login-form" onSubmit={handleEvilLogin}>
-                  <label htmlFor="evil-identifier">Identifiant (Pseudo ou Email) *</label>
-                  <input
-                    id="evil-identifier"
-                    type="text"
-                    autoComplete="username"
-                    placeholder="ex: alice ou alice@etu.univ.fr"
-                    value={evilIdentifier}
-                    onChange={(event) => setEvilIdentifier(event.target.value)}
-                    required
-                  />
-                  <label htmlFor="evil-password">Mot de passe *</label>
-                  <div className="evil-password-field">
-                    <input
-                      id="evil-password"
-                      type={showEvilPassword ? "text" : "password"}
-                      autoComplete="current-password"
-                      placeholder="Votre mot de passe"
-                      value={evilPassword}
-                      onChange={(event) => setEvilPassword(event.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="evil-password-toggle"
-                      aria-label={
-                        showEvilPassword
-                          ? "Masquer le mot de passe"
-                          : "Afficher le mot de passe"
-                      }
-                      aria-pressed={showEvilPassword}
-                      onClick={() => setShowEvilPassword((visible) => !visible)}
-                    >
-                      <span className="material-symbols-outlined" aria-hidden="true">
-                        {showEvilPassword ? "visibility_off" : "visibility"}
-                      </span>
-                    </button>
-                  </div>
-                  <button
-                    className="evil-submit-button"
-                    type="submit"
-                    disabled={isAuthSubmitting}
-                  >
-                    {isAuthSubmitting ? "CONNEXION EN COURS..." : "SE CONNECTER"}
-                  </button>
-                </form>
+                <EvilLoginForm
+                  evilIdentifier={evilIdentifier}
+                  setEvilIdentifier={setEvilIdentifier}
+                  evilPassword={evilPassword}
+                  setEvilPassword={setEvilPassword}
+                  showEvilPassword={showEvilPassword}
+                  setShowEvilPassword={setShowEvilPassword}
+                  isAuthSubmitting={isAuthSubmitting}
+                  onSubmit={handleEvilLogin}
+                />
               )}
 
               {/* Formulaire d'Inscription */}
               {authMode === "register" && (
-                <form className="evil-login-form" onSubmit={handleEvilRegister}>
-                  <label htmlFor="reg-pseudo">Pseudo du joueur * (3 à 50 car.)</label>
-                  <input
-                    id="reg-pseudo"
-                    type="text"
-                    autoComplete="username"
-                    placeholder="ex: DarkPlayer99"
-                    value={regPseudo}
-                    onChange={(event) => setRegPseudo(event.target.value)}
-                    required
-                  />
-                  <label htmlFor="reg-email">Adresse Email *</label>
-                  <input
-                    id="reg-email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="ex: joueur@etu.univ.fr"
-                    value={regEmail}
-                    onChange={(event) => setRegEmail(event.target.value)}
-                    required
-                  />
-                  <label htmlFor="reg-password">Mot de passe * (min 6 car.)</label>
-                  <div className="evil-password-field">
-                    <input
-                      id="reg-password"
-                      type={showRegPassword ? "text" : "password"}
-                      autoComplete="new-password"
-                      placeholder="Minimum 6 caractères"
-                      value={regPassword}
-                      onChange={(event) => setRegPassword(event.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="evil-password-toggle"
-                      aria-label={
-                        showRegPassword
-                          ? "Masquer le mot de passe"
-                          : "Afficher le mot de passe"
-                      }
-                      aria-pressed={showRegPassword}
-                      onClick={() => setShowRegPassword((visible) => !visible)}
-                    >
-                      <span className="material-symbols-outlined" aria-hidden="true">
-                        {showRegPassword ? "visibility_off" : "visibility"}
-                      </span>
-                    </button>
-                  </div>
-                  <label htmlFor="reg-confirm-password">Confirmer le mot de passe *</label>
-                  <input
-                    id="reg-confirm-password"
-                    type={showRegPassword ? "text" : "password"}
-                    autoComplete="new-password"
-                    placeholder="Répétez votre mot de passe"
-                    value={regConfirmPassword}
-                    onChange={(event) => setRegConfirmPassword(event.target.value)}
-                    required
-                  />
-                  <button
-                    className="evil-submit-button"
-                    type="submit"
-                    disabled={isAuthSubmitting}
-                  >
-                    {isAuthSubmitting ? "CRÉATION EN COURS..." : "CRÉER MON COMPTE"}
-                  </button>
-                </form>
+                <EvilRegisterForm
+                  regPseudo={regPseudo}
+                  setRegPseudo={setRegPseudo}
+                  regEmail={regEmail}
+                  setRegEmail={setRegEmail}
+                  regPassword={regPassword}
+                  setRegPassword={setRegPassword}
+                  regConfirmPassword={regConfirmPassword}
+                  setRegConfirmPassword={setRegConfirmPassword}
+                  showRegPassword={showRegPassword}
+                  setShowRegPassword={setShowRegPassword}
+                  isAuthSubmitting={isAuthSubmitting}
+                  onSubmit={handleEvilRegister}
+                />
               )}
 
               {/* Option Mode Invité */}

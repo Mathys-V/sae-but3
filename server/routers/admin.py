@@ -202,6 +202,78 @@ def get_overview_stats(
     )
 
 
+def _calculate_health_status(rate: float) -> str:
+    if rate < 25.0:
+        return "healthy"
+    if rate < 40.0:
+        return "warning"
+    return "critical"
+
+
+def _build_default_game_stats() -> list[AdminGameStats]:
+    default_catalog = [
+        ("Jeu de Plongée (R5.A.06)", "hard", 42, 28, 14, 210, 480, 240),
+        ("Casino / Bandit Manchot (R1.06)", "easy", 68, 55, 13, 95, 1200, 350),
+        ("Quiz Variables (BUT 1)", "easy", 35, 30, 5, 120, 150, 110),
+        ("Duck Hunt (BUT 1)", "medium", 29, 21, 8, 180, 400, 280),
+    ]
+    result = []
+    for idx, (name, diff, total, comp, aban, avg_t, hi, avg_sc) in enumerate(
+        default_catalog, start=1
+    ):
+        rate = round((aban / total * 100), 1)
+        result.append(
+            AdminGameStats(
+                game_id=idx,
+                game_name=name,
+                difficulty=diff,
+                total_played=total,
+                completed=comp,
+                abandoned=aban,
+                abandon_rate=rate,
+                avg_time_seconds=avg_t,
+                high_score=hi,
+                avg_score=avg_sc,
+                health_status=_calculate_health_status(rate),
+            )
+        )
+    return result
+
+
+def _compile_single_game_stat(g: Game, db: Session) -> AdminGameStats:
+    scores = db.query(Score).filter(Score.game_id == g.game_id).all()
+    sessions = (
+        db.query(SessionGame)
+        .filter(SessionGame.current_game_id == g.game_id)
+        .all()
+    )
+
+    total_played = max(len(sessions), len(scores))
+    completed = len([s for s in sessions if s.status == "finished"]) or len(
+        [sc for sc in scores if sc.winner_flag]
+    )
+    abandoned = max(0, total_played - completed)
+    rate = round((abandoned / total_played * 100), 1) if total_played > 0 else 0.0
+
+    avg_time = int(sum(sc.time for sc in scores) / len(scores)) if scores else 0
+    high_score = max((sc.score for sc in scores), default=0)
+    avg_score = int(sum(sc.score for sc in scores) / len(scores)) if scores else 0
+
+    return AdminGameStats(
+        game_id=g.game_id,
+        game_name=g.name,
+        difficulty=g.difficulty,
+        total_played=total_played,
+        completed=completed,
+        abandoned=abandoned,
+        abandon_rate=rate,
+        avg_time_seconds=avg_time,
+        high_score=high_score,
+        avg_score=avg_score,
+        health_status=_calculate_health_status(rate),
+    )
+
+
 @router.get("/stats/games", response_model=list[AdminGameStats])
 def get_games_stats(
     db: Session = Depends(get_db),
@@ -209,89 +281,9 @@ def get_games_stats(
 ):
     """Analyse de la rétention et des taux d'abandon par mini-jeu pour identifier les points de friction."""
     games = db.query(Game).all()
-    result = []
-
-    # Jeux par défaut s'il n'y en a pas encore en base
     if not games:
-        # Données de synthèse basées sur l'architecture du projet
-        default_catalog = [
-            ("Jeu de Plongée (R5.A.06)", "hard", 42, 28, 14, 210, 480, 240),
-            ("Casino / Bandit Manchot (R1.06)", "easy", 68, 55, 13, 95, 1200, 350),
-            ("Quiz Variables (BUT 1)", "easy", 35, 30, 5, 120, 150, 110),
-            ("Duck Hunt (BUT 1)", "medium", 29, 21, 8, 180, 400, 280),
-        ]
-        for idx, (name, diff, total, comp, aban, avg_t, hi, avg_sc) in enumerate(
-            default_catalog, start=1
-        ):
-            rate = round((aban / total * 100), 1)
-            status_health = (
-                "healthy" if rate < 25 else "warning" if rate < 40 else "critical"
-            )
-            result.append(
-                AdminGameStats(
-                    game_id=idx,
-                    game_name=name,
-                    difficulty=diff,
-                    total_played=total,
-                    completed=comp,
-                    abandoned=aban,
-                    abandon_rate=rate,
-                    avg_time_seconds=avg_t,
-                    high_score=hi,
-                    avg_score=avg_sc,
-                    health_status=status_health,
-                )
-            )
-        return result
-
-    for g in games:
-        scores = db.query(Score).filter(Score.game_id == g.game_id).all()
-        sessions = (
-            db.query(SessionGame)
-            .filter(SessionGame.current_game_id == g.game_id)
-            .all()
-        )
-
-        total_played = max(len(sessions), len(scores))
-        completed = len([s for s in sessions if s.status == "finished"]) or len(
-            [sc for sc in scores if sc.winner_flag]
-        )
-        abandoned = max(0, total_played - completed)
-        rate = (
-            round((abandoned / total_played * 100), 1)
-            if total_played > 0
-            else 0.0
-        )
-
-        avg_time = (
-            int(sum(sc.time for sc in scores) / len(scores)) if scores else 0
-        )
-        high_score = max((sc.score for sc in scores), default=0)
-        avg_score = (
-            int(sum(sc.score for sc in scores) / len(scores)) if scores else 0
-        )
-
-        health = (
-            "healthy" if rate < 25.0 else "warning" if rate < 40.0 else "critical"
-        )
-
-        result.append(
-            AdminGameStats(
-                game_id=g.game_id,
-                game_name=g.name,
-                difficulty=g.difficulty,
-                total_played=total_played,
-                completed=completed,
-                abandoned=abandoned,
-                abandon_rate=rate,
-                avg_time_seconds=avg_time,
-                high_score=high_score,
-                avg_score=avg_score,
-                health_status=health,
-            )
-        )
-
-    return result
+        return _build_default_game_stats()
+    return [_compile_single_game_stat(g, db) for g in games]
 
 
 @router.get("/stats/retention", response_model=AdminRetentionStats)
