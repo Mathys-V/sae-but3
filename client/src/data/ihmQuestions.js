@@ -10,6 +10,8 @@ export const IHM_QUESTIONS = [
     category: "responsive",
     categoryLabel: "Responsive Design",
     title: "Grille de cartes produits sur smartphone",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Vue Mobile (375 px)",
     instruction: "Quelle intégration permet un affichage propre sans débordement sur écran mobile (375px) ?",
     correctOption: "A",
     explanation:
@@ -44,6 +46,8 @@ export const IHM_QUESTIONS = [
     category: "responsive",
     categoryLabel: "Responsive Design",
     title: "Barre de navigation principale",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Vue Mobile (375 px)",
     instruction: "Quelle barre de navigation gère convenablement la réduction de largeur d'écran ?",
     correctOption: "B",
     explanation:
@@ -70,6 +74,8 @@ export const IHM_QUESTIONS = [
     category: "responsive",
     categoryLabel: "Responsive Design",
     title: "Boutons d'action sur carte profil",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Vue Mobile (375 px)",
     instruction: "Quel conteneur d'actions s'adapte sans casser la mise en page sur petit écran ?",
     correctOption: "A",
     explanation:
@@ -96,6 +102,8 @@ export const IHM_QUESTIONS = [
     category: "responsive",
     categoryLabel: "Responsive Design",
     title: "Tableau de notes et évaluations",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Vue Mobile (375 px)",
     instruction: "Quel tableau d'évaluation reste consultable sans détruire le conteneur sur mobile ?",
     correctOption: "A",
     explanation:
@@ -130,6 +138,8 @@ export const IHM_QUESTIONS = [
     category: "responsive",
     categoryLabel: "Responsive Design",
     title: "Bannière d'en-tête (Hero section)",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Vue Mobile (375 px)",
     instruction: "Quelle bannière hiérarchise correctement le titre et l'image d'illustration sur mobile ?",
     correctOption: "B",
     explanation:
@@ -162,6 +172,8 @@ export const IHM_QUESTIONS = [
     category: "accessibility",
     categoryLabel: "Accessibilité & WCAG",
     title: "Contraste du texte sur fond clair",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Vue Ordinateur (Desktop)",
     instruction: "Quelle carte respecte le ratio de contraste minimal WCAG AA (4.5:1 pour le texte courant) ?",
     correctOption: "A",
     explanation:
@@ -190,6 +202,8 @@ export const IHM_QUESTIONS = [
     category: "accessibility",
     categoryLabel: "Accessibilité & WCAG",
     title: "Indicateur d'état et focus au clavier",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Vue Ordinateur (Desktop)",
     instruction: "Quel bouton signale convenablement la sélection active pour les utilisateurs naviguant au clavier ?",
     correctOption: "B",
     explanation:
@@ -216,6 +230,8 @@ export const IHM_QUESTIONS = [
     category: "accessibility",
     categoryLabel: "Accessibilité & WCAG",
     title: "Alerte de statut (Accessible aux daltoniens)",
+    targetViewport: "tablet",
+    viewportLabel: "💻 Vue Tablette (768 px)",
     instruction: "Quelle bannière de notification transmet l'information sans reposer uniquement sur la couleur ?",
     correctOption: "A",
     explanation:
@@ -244,6 +260,8 @@ export const IHM_QUESTIONS = [
     category: "accessibility",
     categoryLabel: "Accessibilité & WCAG",
     title: "Image informative et texte alternatif",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Vue Ordinateur (Desktop)",
     instruction: "Quelle fiche descriptive fournit une alternative textuelle accessible aux lecteurs d'écran ?",
     correctOption: "B",
     explanation:
@@ -270,6 +288,8 @@ export const IHM_QUESTIONS = [
     category: "accessibility",
     categoryLabel: "Accessibilité & WCAG",
     title: "Liens d'action et libellés explicites",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Vue Ordinateur (Desktop)",
     instruction: "Quel bloc de ressources propose des liens compréhensibles hors contexte ?",
     correctOption: "A",
     explanation:
@@ -303,6 +323,8 @@ export const IHM_QUESTIONS = [
     category: "forms",
     categoryLabel: "Formulaires Web",
     title: "Affichage des messages d'erreur de saisie",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Vue Mobile (375 px)",
     instruction: "Quel formulaire guide le mieux l'utilisateur en cas d'erreur de validation ?",
     correctOption: "B",
     explanation:
@@ -332,6 +354,8 @@ export const IHM_QUESTIONS = [
     category: "forms",
     categoryLabel: "Formulaires Web",
     title: "Labels de champs vs Placeholders uniques",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Vue Mobile (375 px)",
     instruction: "Quelle intégration garantit que l'utilisateur sait toujours ce qu'il remplit ?",
     correctOption: "A",
     explanation:
@@ -360,6 +384,8 @@ export const IHM_QUESTIONS = [
     category: "forms",
     categoryLabel: "Formulaires Web",
     title: "Types d'input HTML5 sur appareil mobile",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Vue Mobile (375 px)",
     instruction: "Quel champ de saisie déclenche automatiquement le pavé numérique virtuel sur smartphone ?",
     correctOption: "A",
     explanation:
@@ -390,6 +416,8 @@ export const IHM_QUESTIONS = [
     category: "forms",
     categoryLabel: "Formulaires Web",
     title: "Indication des champs obligatoires",
+    targetViewport: "tablet",
+    viewportLabel: "💻 Vue Tablette (768 px)",
     instruction: "Quelle convention informe sans ambiguïté sur le caractère requis d'un champ ?",
     correctOption: "B",
     explanation:
@@ -417,6 +445,8 @@ export const IHM_QUESTIONS = [
     category: "forms",
     categoryLabel: "Formulaires Web",
     title: "Bouton de soumission en cours de chargement",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Vue Ordinateur (Desktop)",
     instruction: "Quelle interface protège contre les doubles soumissions intempestives ?",
     correctOption: "A",
     explanation:
@@ -449,6 +479,8 @@ export const IHM_QUESTIONS = [
     category: "ergonomics",
     categoryLabel: "Ergonomie & Loi de Fitts",
     title: "Taille minimale de la zone de clic tactile",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Vue Mobile (375 px)",
     instruction: "Quel bouton d'action respecte la norme recommandée de 44x44px sur écran tactile ?",
     correctOption: "B",
     explanation:
@@ -477,6 +509,8 @@ export const IHM_QUESTIONS = [
     category: "ergonomics",
     categoryLabel: "Ergonomie & Loi de Fitts",
     title: "Espacement entre actions destructrices et positives",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Vue Mobile (375 px)",
     instruction: "Quelle disposition prévient le déclenchement accidentel d'une action irréversible ?",
     correctOption: "A",
     explanation:
@@ -505,6 +539,8 @@ export const IHM_QUESTIONS = [
     category: "ergonomics",
     categoryLabel: "Ergonomie & Loi de Fitts",
     title: "Longueur de ligne et lisibilité typographique",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Vue Ordinateur (Desktop)",
     instruction: "Quelle mise en page de paragraphe garantit une lecture reposante et fluide ?",
     correctOption: "B",
     explanation:
@@ -533,6 +569,8 @@ export const IHM_QUESTIONS = [
     category: "ergonomics",
     categoryLabel: "Ergonomie & Loi de Fitts",
     title: "Hiérarchie visuelle d'une carte d'article",
+    targetViewport: "tablet",
+    viewportLabel: "💻 Vue Tablette (768 px)",
     instruction: "Quelle carte guide naturellement l'œil du titre vers l'action principale ?",
     correctOption: "A",
     explanation:
@@ -563,6 +601,8 @@ export const IHM_QUESTIONS = [
     category: "ergonomics",
     categoryLabel: "Ergonomie & Loi de Fitts",
     title: "Alignement des prix et colonnes numériques",
+    targetViewport: "tablet",
+    viewportLabel: "💻 Vue Tablette (768 px)",
     instruction: "Quel tableau facilite la comparaison visuelle rapide de valeurs numériques ?",
     correctOption: "B",
     explanation:

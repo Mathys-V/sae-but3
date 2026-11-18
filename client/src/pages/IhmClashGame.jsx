@@ -34,6 +34,8 @@ export default function IhmClashGame() {
     resetGame,
   } = useIhmStore();
 
+  // États du cycle de jeu : "briefing" (écran d'accueil) | "playing" (en cours) | "results" (fin solo)
+  const [gameState, setGameState] = useState("briefing");
   const [gameMode, setGameMode] = useState("solo"); // "solo" | "multi"
   const [inMultiBattle, setInMultiBattle] = useState(false);
   const [multiPlayers, setMultiPlayers] = useState([]);
@@ -47,13 +49,16 @@ export default function IhmClashGame() {
   // Titre du document
   useEffect(() => {
     document.title = "EvilJV | Duel d'IHM (BUT 2 S3)";
-    startSoloGame();
-    sessionStartTimeRef.current = Date.now();
-  }, [startSoloGame]);
+  }, []);
 
-  // Gestion du chronomètre par manche
+  // Gestion du chronomètre par manche (actif uniquement quand gameState === "playing")
   useEffect(() => {
-    if (selectedOption !== null || isGameOver || (gameMode === "multi" && !inMultiBattle)) {
+    if (
+      gameState !== "playing" ||
+      selectedOption !== null ||
+      isGameOver ||
+      (gameMode === "multi" && !inMultiBattle)
+    ) {
       if (timerRef.current) clearInterval(timerRef.current);
       return;
     }
@@ -75,7 +80,7 @@ export default function IhmClashGame() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [currentRoundIndex, selectedOption, isGameOver, inMultiBattle, gameMode, submitAnswer]);
+  }, [gameState, currentRoundIndex, selectedOption, isGameOver, inMultiBattle, gameMode, submitAnswer]);
 
   // Enregistrement de la télémétrie en fin de partie solo
   useEffect(() => {
@@ -95,17 +100,26 @@ export default function IhmClashGame() {
   const currentQ = questions[currentRoundIndex] || questions[0];
   const timerRatio = Math.max(0, timeRemainingMs / TIMER_TOTAL_MS);
 
-  // Choix du joueur
+  // Démarrage de la partie Solo depuis l'écran de briefing
+  const handleStartSolo = () => {
+    startSoloGame();
+    sessionStartTimeRef.current = Date.now();
+    setGameState("playing");
+  };
+
+  // Choix d'une interface par le joueur
   const handleSelectOption = (opt) => {
     if (selectedOption !== null) return;
     submitAnswer(opt, timeRemainingMs);
   };
 
-  // Démarrage de la battle multijoueur (4 joueurs max)
+  // Démarrage de la battle multijoueur (2 à 4 joueurs max)
   const handleStartMultiBattle = (players) => {
     setMultiPlayers(players);
     setInMultiBattle(true);
     startSoloGame();
+    sessionStartTimeRef.current = Date.now();
+    setGameState("playing");
   };
 
   // Fin de la battle multijoueur : calcul du classement final des 4 joueurs
@@ -113,7 +127,6 @@ export default function IhmClashGame() {
     const totalTimeMs = Date.now() - sessionStartTimeRef.current;
     const myAvgTime = Math.round(totalTimeMs / 10);
 
-    // Simulation des résultats pour les 3 autres camarades
     const simulatedScores = multiPlayers.map((p) => {
       if (p.isMe) {
         return {
@@ -124,8 +137,7 @@ export default function IhmClashGame() {
           isMe: true,
         };
       }
-      // Scores réalistes basés sur les 10 manches
-      const randomScore = Math.floor(600 + Math.random() * 500);
+      const randomScore = Math.floor(650 + Math.random() * 450);
       const randomTime = Math.floor(1800 + Math.random() * 1200);
       return {
         pseudo: p.pseudo,
@@ -136,7 +148,6 @@ export default function IhmClashGame() {
       };
     });
 
-    // Tri par score décroissant, puis par temps de réaction croissant (départage au millième)
     simulatedScores.sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       return a.avgTimeMs - b.avgTimeMs;
@@ -171,11 +182,20 @@ export default function IhmClashGame() {
         <div className="flex items-center justify-between gap-4">
           <button
             type="button"
-            onClick={() => navigate("/evil/jeux")}
+            onClick={() => {
+              if (gameState === "playing") {
+                if (window.confirm("Voulez-vous quitter l'audit en cours et revenir au menu ?")) {
+                  setGameState("briefing");
+                  resetGame();
+                }
+              } else {
+                navigate("/evil/jeux");
+              }
+            }}
             className="pixel-btn"
-            title="Revenir au catalogue des jeux"
+            title="Revenir au menu précédent"
           >
-            <span>← RETOUR AUX JEUX</span>
+            <span>← {gameState === "playing" ? "QUITTER L'AUDIT" : "RETOUR AUX JEUX"}</span>
           </button>
 
           <div className="pixel-pill" title="Pièces démoniaques récoltées">
@@ -198,45 +218,116 @@ export default function IhmClashGame() {
           </p>
         </div>
 
-        {/* Sélecteur de Mode (Solo vs Multijoueur 4 Joueurs) */}
-        {!inMultiBattle && !isGameOver && (
-          <div className="flex justify-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setGameMode("solo");
-                resetGame();
-              }}
-              className={`pixel-tab ${gameMode === "solo" ? "active" : ""}`}
-            >
-              <span>👤</span>
-              <span>MODE SOLO (20 ROUNDS)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setGameMode("multi");
-                resetGame();
-              }}
-              className={`pixel-tab ${gameMode === "multi" ? "active" : ""}`}
-            >
-              <span>👥</span>
-              <span>MULTIJOUEUR (2 À 4 JOUEURS MAX)</span>
-            </button>
+        {/* ========================================================
+            1. ÉCRAN INTERMÉDIAIRE : SALLE DE BRIEFING (START SCREEN)
+            ======================================================== */}
+        {gameState === "briefing" && (
+          <div className="space-y-6 animate-fade-in max-w-3xl mx-auto">
+            {/* Carte de Présentation & Règles du Jeu */}
+            <div className="pixel-panel p-6 space-y-5 border-2 border-amber-600/80">
+              <div className="text-center space-y-1 border-b border-gray-800 pb-4">
+                <span className="text-3xl">🏛️</span>
+                <h2 className="text-xl font-bold text-amber-400 uppercase tracking-wider">
+                  SALLE DE BRIEFING DE L'ARCHITECTE
+                </h2>
+                <p className="text-xs text-gray-300">
+                  Préparez-vous à auditer les créations web du Semestre 3 (R3.01)
+                </p>
+              </div>
+
+              {/* Les 4 Piliers du Gameplay */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 bg-gray-950/80 border border-gray-800 space-y-1">
+                  <div className="font-bold text-amber-300 flex items-center gap-1.5">
+                    <span>📐</span>
+                    <span>1 FORMAT IMPOSÉ PAR MANCHE</span>
+                  </div>
+                  <p className="text-gray-400 leading-relaxed">
+                    Chaque manche impose son format (Mobile, Tablette ou Desktop). La différence ergonomique est à observer directement dans ce contexte !
+                  </p>
+                </div>
+
+                <div className="p-3 bg-gray-950/80 border border-gray-800 space-y-1">
+                  <div className="font-bold text-emerald-400 flex items-center gap-1.5">
+                    <span>⏱️</span>
+                    <span>15 SECONDES & BONUS VITESSE</span>
+                  </div>
+                  <p className="text-gray-400 leading-relaxed">
+                    Vous avez 15 secondes par manche. Plus vite vous débusquez le piège, plus vous remportez de points bonus !
+                  </p>
+                </div>
+
+                <div className="p-3 bg-gray-950/80 border border-gray-800 space-y-1">
+                  <div className="font-bold text-rose-400 flex items-center gap-1.5">
+                    <span>🔥</span>
+                    <span>COMBOS DE SÉRIES (STREAK)</span>
+                  </div>
+                  <p className="text-gray-400 leading-relaxed">
+                    Enchaînez les bonnes réponses consécutives pour débloquer +25 points supplémentaires par manche d'affilée.
+                  </p>
+                </div>
+
+                <div className="p-3 bg-gray-950/80 border border-gray-800 space-y-1">
+                  <div className="font-bold text-yellow-300 flex items-center gap-1.5">
+                    <span>💰</span>
+                    <span>GAINS DE COINS RÉELS</span>
+                  </div>
+                  <p className="text-gray-400 leading-relaxed">
+                    Remportez des Coins Evil proportionnels à votre score pour débloquer de nouveaux avatars dans la boutique !
+                  </p>
+                </div>
+              </div>
+
+              {/* Sélecteur d'Onglets Solo / Multi */}
+              <div className="pt-2 border-t border-gray-800">
+                <div className="flex justify-center gap-2 mb-4">
+                  <button
+                    type="button"
+                    onClick={() => setGameMode("solo")}
+                    className={`pixel-tab ${gameMode === "solo" ? "active" : ""}`}
+                  >
+                    <span>👤</span>
+                    <span>MODE SOLO (20 MANCHES)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setGameMode("multi")}
+                    className={`pixel-tab ${gameMode === "multi" ? "active" : ""}`}
+                  >
+                    <span>👥</span>
+                    <span>MULTIJOUEUR (2 À 4 JOUEURS)</span>
+                  </button>
+                </div>
+
+                {/* Action Mode Solo */}
+                {gameMode === "solo" && (
+                  <div className="text-center space-y-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={handleStartSolo}
+                      className="pixel-btn w-full !py-3.5 !bg-red-700 hover:!bg-red-600 !text-white text-base shadow-[0_0_15px_rgba(220,38,38,0.5)]"
+                    >
+                      ⚔️ COMMENCER L'AUDIT SOLO (20 MANCHES)
+                    </button>
+                    <p className="text-[11px] text-gray-400">
+                      Le chronomètre démarrera dès le clic. Les manches s'enchaîneront avec un retour pédagogique à chaque vote.
+                    </p>
+                  </div>
+                )}
+
+                {/* Action Mode Multijoueur */}
+                {gameMode === "multi" && (
+                  <IhmMultiLobby onStartBattle={handleStartMultiBattle} />
+                )}
+              </div>
+            </div>
           </div>
         )}
 
         {/* ========================================================
-            MODE MULTIJOUEUR : LOBBY SALON
+            2. SCÈNE DE JEU EN COURS (MANCHES SOLO OU MULTI BATTLE)
             ======================================================== */}
-        {gameMode === "multi" && !inMultiBattle && !multiRankings && (
-          <IhmMultiLobby onStartBattle={handleStartMultiBattle} />
-        )}
-
-        {/* ========================================================
-            SCÈNE DE JEU EN COURS (SOLO OU BATTLE MULTI)
-            ======================================================== */}
-        {((gameMode === "solo" && !isGameOver) || (gameMode === "multi" && inMultiBattle)) && (
+        {gameState === "playing" && !isGameOver && (
           <div className="space-y-4 animate-fade-in">
             {/* Tableau de Bord Pixel Art (HUD Arcade) */}
             <div className="pixel-panel p-4 flex flex-wrap items-center justify-between gap-4">
@@ -289,8 +380,8 @@ export default function IhmClashGame() {
               </h2>
             </div>
 
-            {/* Simulateur de Viewport avec les deux interfaces concurrentes */}
-            <IhmViewportSimulator>
+            {/* Simulateur avec Format d'Écran Imposé pour cette manche */}
+            <IhmViewportSimulator targetViewport={currentQ.targetViewport || "mobile"}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <IhmCardViewer
                   variant={currentQ.variantA}
@@ -366,9 +457,9 @@ export default function IhmClashGame() {
         )}
 
         {/* ========================================================
-            ÉCRAN DE FIN DE PARTIE SOLO (RÉCAPITULATIF & GAINS)
+            3. ÉCRAN DE FIN DE PARTIE SOLO (RÉCAPITULATIF & GAINS)
             ======================================================== */}
-        {gameMode === "solo" && isGameOver && (
+        {gameState === "playing" && isGameOver && (
           <div className="pixel-panel p-8 max-w-xl mx-auto text-center space-y-6 border-4 border-amber-600 shadow-[0_0_30px_rgba(217,119,6,0.5)] animate-fade-in">
             <span className="text-4xl">👑</span>
             <div>
@@ -412,10 +503,13 @@ export default function IhmClashGame() {
             <div className="flex gap-3 pt-2">
               <button
                 type="button"
-                onClick={resetGame}
+                onClick={() => {
+                  resetGame();
+                  setGameState("briefing");
+                }}
                 className="pixel-btn w-full !bg-red-700 hover:!bg-red-600 !text-white"
               >
-                REJOUER LE DEVOIR
+                RETOURNER AU BRIEFING
               </button>
               <button
                 type="button"
@@ -435,6 +529,7 @@ export default function IhmClashGame() {
             onPlayAgain={() => {
               setMultiRankings(null);
               setInMultiBattle(false);
+              setGameState("briefing");
               resetGame();
             }}
             onBackToGames={() => navigate("/evil/jeux")}
