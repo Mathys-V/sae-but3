@@ -16,13 +16,17 @@ CREATE TABLE games (
         CHECK (difficulty IN ('easy', 'medium', 'hard')),
     config JSONB,
     multiplayer_flag BOOLEAN NOT NULL DEFAULT FALSE,
-    min_players SMALLINT NOT NULL DEFAULT 1,
-    max_players SMALLINT NOT NULL DEFAULT 1,
+    min_players SMALLINT NOT NULL DEFAULT 1
+        CHECK (min_players BETWEEN 1 AND 4),
+    max_players SMALLINT NOT NULL DEFAULT 1
+        CHECK (max_players BETWEEN 1 AND 4),
     active_flag BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ,
     created_by INTEGER
         REFERENCES users(user_id) ON DELETE SET NULL,
     last_modified_by INTEGER
-        REFERENCES users(user_id) ON DELETE SET NULL
+        REFERENCES users(user_id) ON DELETE SET NULL,
+    CHECK (min_players <= max_players)
+
 );

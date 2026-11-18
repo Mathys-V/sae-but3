@@ -23,6 +23,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
 
 try:
     import psycopg2
@@ -95,7 +96,13 @@ def main() -> int:
 
     scripts = collect_scripts(args.with_seed)
 
-    print(f"Cible        : {url}")
+    parsed_url = urlsplit(url)
+
+    print(
+        f"Cible        : {parsed_url.hostname}:"
+        f"{parsed_url.port or 5432}/"
+        f"{parsed_url.path.lstrip('/')}"
+    )
     print(f"Scripts      : {len(scripts)}")
     for s in scripts:
         print(f"  - {s.name}")
