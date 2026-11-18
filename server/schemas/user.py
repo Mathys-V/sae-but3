@@ -3,6 +3,9 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, field_validator
 
+EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.[a-zA-Z0-9]{2,}$")
+PSEUDO_REGEX = re.compile(r"^[a-zA-Z0-9_\-\.]{3,50}$")
+
 
 class UserRegister(BaseModel):
     pseudo: str = Field(..., min_length=3, max_length=50, description="Le pseudo choisi par le joueur")
@@ -13,7 +16,7 @@ class UserRegister(BaseModel):
     @classmethod
     def validate_email(cls, v: str) -> str:
         clean = v.strip().lower()
-        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", clean):
+        if not EMAIL_REGEX.match(clean):
             raise ValueError("Format d'adresse email invalide")
         return clean
 
@@ -21,7 +24,7 @@ class UserRegister(BaseModel):
     @classmethod
     def validate_pseudo(cls, v: str) -> str:
         clean = v.strip()
-        if not re.match(r"^[a-zA-Z0-9_\-\.]{3,50}$", clean):
+        if not PSEUDO_REGEX.match(clean):
             raise ValueError("Le pseudo ne peut contenir que des lettres, chiffres, tirets et underscores")
         return clean
 

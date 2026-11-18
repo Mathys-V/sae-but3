@@ -3,6 +3,10 @@ from sqlalchemy.orm import relationship
 
 from database import Base
 
+USERS_USER_ID = "users.user_id"
+SESSIONS_SESSION_ID = "sessions.session_id"
+GAMES_GAME_ID = "games.game_id"
+
 
 class Game(Base):
     __tablename__ = "games"
@@ -21,9 +25,9 @@ class SessionGame(Base):
     __tablename__ = "sessions"
 
     session_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    host_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    host_id = Column(Integer, ForeignKey(USERS_USER_ID, ondelete="CASCADE"), nullable=False)
     status = Column(String(20), nullable=False, default="waiting")  # 'waiting', 'in_progress', 'finished'
-    current_game_id = Column(Integer, ForeignKey("games.game_id", ondelete="SET NULL"), nullable=True)
+    current_game_id = Column(Integer, ForeignKey(GAMES_GAME_ID, ondelete="SET NULL"), nullable=True)
     invite_code = Column(String(25), nullable=False, unique=True)
     max_players = Column(SmallInteger, nullable=False, default=1)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
@@ -37,8 +41,8 @@ class SessionUser(Base):
     __tablename__ = "sessions_users"
 
     session_user_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    session_id = Column(Integer, ForeignKey("sessions.session_id", ondelete="CASCADE"), nullable=False)
-    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
+    session_id = Column(Integer, ForeignKey(SESSIONS_SESSION_ID, ondelete="CASCADE"), nullable=False)
+    user_id = Column(Integer, ForeignKey(USERS_USER_ID, ondelete="CASCADE"), nullable=False)
     role = Column(String(20), nullable=False, default="player")
     ready_flag = Column(Boolean, nullable=False, default=False)
     connected_flag = Column(Boolean, nullable=False, default=True)
@@ -52,9 +56,9 @@ class Score(Base):
     __tablename__ = "scores"
 
     score_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
-    game_id = Column(Integer, ForeignKey("games.game_id", ondelete="CASCADE"), nullable=False)
-    session_id = Column(Integer, ForeignKey("sessions.session_id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(Integer, ForeignKey(USERS_USER_ID, ondelete="CASCADE"), nullable=False)
+    game_id = Column(Integer, ForeignKey(GAMES_GAME_ID, ondelete="CASCADE"), nullable=False)
+    session_id = Column(Integer, ForeignKey(SESSIONS_SESSION_ID, ondelete="CASCADE"), nullable=False)
     score = Column(Integer, nullable=False, default=0)
     time = Column(Integer, nullable=False, default=0)  # durée en secondes
     winner_flag = Column(Boolean, nullable=False, default=False)

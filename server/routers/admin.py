@@ -303,7 +303,7 @@ def get_retention_stats(
     sessions = db.query(SessionGame).all()
 
     # Histogramme horaire (24 heures)
-    hour_counts = {h: 0 for h in range(24)}
+    hour_counts = dict.fromkeys(range(24), 0)
     for s in sessions:
         if s.created_at:
             h = s.created_at.hour

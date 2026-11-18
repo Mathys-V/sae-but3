@@ -99,7 +99,7 @@ export default function CasinoGame() {
         const elapsed = Math.max(1, Math.floor((Date.now() - start) / 1000));
         const currentEconomy = useEconomyStore.getState();
         const score = currentEconomy.paidSpins * 50 + currentEconomy.coins;
-        recordGameSession(token, {
+        void recordGameSession(token, {
           game: "casino",
           score,
           timeSeconds: elapsed,

@@ -104,7 +104,7 @@ function EvilAdminPanel() {
       }
     }
 
-    fetchInitialData();
+    void fetchInitialData();
     return () => {
       isCancelled = true;
     };

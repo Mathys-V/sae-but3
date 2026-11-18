@@ -438,8 +438,8 @@ html.evil-transformation body {
   min-height: 100vh;
   background:
     linear-gradient(#09080c99, #09080c99),
-    url("./assets/fire.gif") center / cover fixed !important;
-  background-color: #0d080c !important;
+    url("./assets/fire.gif") center / cover fixed;
+  background-color: #0d080c;
   color: #eee8ee;
   transition:
     background-color 700ms ease,
@@ -511,9 +511,9 @@ html.evil-transformation body {
 }
 .evil-transformation .evil-auth-panel {
   border-top: 0;
-  background: #17111a !important;
-  border: 1px solid #54202a !important;
-  box-shadow: 0 0 25px rgba(220, 48, 59, 0.25) !important;
+  background: #17111a;
+  border: 1px solid #54202a;
+  box-shadow: 0 0 25px rgba(220, 48, 59, 0.25);
   border-radius: 8px;
 }
 .evil-auth-panel > h2,
@@ -626,7 +626,7 @@ html.evil-transformation body {
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 180ms ease;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
 }
 .evil-auth-tab-btn:hover {
   background: #331f28;
@@ -670,7 +670,7 @@ html.evil-transformation body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 180ms ease;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 .evil-guest-button:hover {
   background: #252d42;
@@ -679,9 +679,9 @@ html.evil-transformation body {
   box-shadow: 0 0 12px rgba(79, 104, 163, 0.4);
 }
 .evil-auth-error {
-  background: rgba(117, 26, 39, 0.65) !important;
-  border: 1px solid #ff4d5a !important;
-  color: #ffffff !important;
+  background: rgba(117, 26, 39, 0.65);
+  border: 1px solid #ff4d5a;
+  color: #ffffff;
   font-weight: 600;
   padding: 10px 14px;
   border-radius: 6px;

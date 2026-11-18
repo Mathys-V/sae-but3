@@ -116,7 +116,7 @@ function DivingGame({
         document.exitFullscreen().catch(() => {});
       }
       if (!sessionRecordedRef.current && (stats.gameTimer > 5 || stats.coins > 0)) {
-        recordGameSession(token, {
+        void recordGameSession(token, {
           game: "plongee",
           score: (stats.coins || 0) * 5,
           timeSeconds: Math.floor(stats.gameTimer || 10),
@@ -172,7 +172,7 @@ function DivingGame({
       const timeVal = Math.floor(e.detail?.time || stats.gameTimer || 60);
       const scoreVal = (stats.coins || 0) * 10 + 350;
       setVictoryData(e.detail || { time: timeVal });
-      recordGameSession(token, {
+      void recordGameSession(token, {
         game: "plongee",
         score: scoreVal,
         timeSeconds: timeVal,

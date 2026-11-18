@@ -4,6 +4,37 @@ import { useAuthStore } from "../store/authStore";
 import { useEconomyStore } from "../game/casino/economyStore";
 
 const AVATAR_COST = 50;
+
+function AvatarActionButton({ isCurrent, isUnlocked, iconId, onSelect, onBuy, cost }) {
+  if (isCurrent) {
+    return (
+      <span className="mt-1.5 text-[9px] bg-red-700 text-white px-2 py-0.5 font-bold shadow">
+        ACTIF
+      </span>
+    );
+  }
+  if (isUnlocked) {
+    return (
+      <button
+        type="button"
+        onClick={() => onSelect(iconId)}
+        className="pixel-btn !px-1.5 !py-0.5 !text-[9px] mt-1.5 w-full"
+      >
+        ÉQUIPER
+      </button>
+    );
+  }
+  return (
+    <button
+      type="button"
+      onClick={() => onBuy(iconId)}
+      className="pixel-btn !px-1 !py-0.5 !text-[9px] !bg-amber-950 hover:!bg-amber-900 !text-amber-200 mt-1.5 w-full"
+      title={`Acheter pour ${cost} Coins`}
+    >
+      🔒 {cost}
+    </button>
+  );
+}
 const ALL_AVATARS = Array.from({ length: 48 }, (_, i) => `Icon${i + 1}`);
 
 function EvilSettings() {
@@ -220,28 +251,14 @@ function EvilSettings() {
                         {iconId.replace("Icon", "#")}
                       </span>
 
-                      {isCurrent ? (
-                        <span className="mt-1.5 text-[9px] bg-red-700 text-white px-2 py-0.5 font-bold shadow">
-                          ACTIF
-                        </span>
-                      ) : isUnlocked ? (
-                        <button
-                          type="button"
-                          onClick={() => handleSelectAvatar(iconId)}
-                          className="pixel-btn !px-1.5 !py-0.5 !text-[9px] mt-1.5 w-full"
-                        >
-                          ÉQUIPER
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => handleBuyAvatar(iconId)}
-                          className="pixel-btn !px-1 !py-0.5 !text-[9px] !bg-amber-950 hover:!bg-amber-900 !text-amber-200 mt-1.5 w-full"
-                          title={`Acheter pour ${AVATAR_COST} Coins`}
-                        >
-                          🔒 {AVATAR_COST}
-                        </button>
-                      )}
+                      <AvatarActionButton
+                        isCurrent={isCurrent}
+                        isUnlocked={isUnlocked}
+                        iconId={iconId}
+                        onSelect={handleSelectAvatar}
+                        onBuy={handleBuyAvatar}
+                        cost={AVATAR_COST}
+                      />
                     </div>
                   );
                 })}

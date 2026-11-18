@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime, timedelta, timezone
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -16,8 +17,8 @@ router = APIRouter(prefix="/api/games", tags=["Gameplay & Sessions"])
 @router.post("/record-session", response_model=RecordGameSessionResponse, status_code=status.HTTP_201_CREATED)
 def record_game_session(
     req: RecordGameSessionRequest,
-    db: Session = Depends(get_db),
-    current_user: User | None = Depends(get_optional_current_user),
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User | None, Depends(get_optional_current_user)] = None,
 ):
     """
     Enregistre une session et un score réels lors d'une partie jouée sur le site.

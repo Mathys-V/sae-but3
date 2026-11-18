@@ -440,10 +440,10 @@ function ConnexionMCJV() {
                 </div>
               )}
               {authSuccess && (
-                <div className="evil-auth-success" role="status">
+                <output className="evil-auth-success">
                   <span>✅</span>
                   <span>{authSuccess}</span>
-                </div>
+                </output>
               )}
 
               {/* Formulaire de Connexion */}

@@ -87,7 +87,7 @@ function MiniGameTuto() {
       if (!completedRef.current) {
         const start = startTimeRef.current || Date.now();
         const elapsed = Math.max(1, Math.floor((Date.now() - start) / 1000));
-        recordGameSession(token, {
+        void recordGameSession(token, {
           game: "tutoriel",
           score: 25,
           timeSeconds: elapsed,
@@ -102,7 +102,7 @@ function MiniGameTuto() {
     completedRef.current = true;
     const start = startTimeRef.current || Date.now();
     const elapsed = Math.max(1, Math.floor((Date.now() - start) / 1000));
-    recordGameSession(token, {
+    void recordGameSession(token, {
       game: "tutoriel",
       score: 100,
       timeSeconds: elapsed,

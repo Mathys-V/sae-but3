@@ -262,7 +262,7 @@
     0 0 0 2px #000000;
   cursor: pointer;
   user-select: none;
-  transition: all 0.08s ease;
+  transition: background-color 0.08s ease, color 0.08s ease, transform 0.08s ease;
   image-rendering: pixelated;
 }
 
@@ -301,7 +301,7 @@
     0 3px 0 2px #000000;
   cursor: pointer;
   user-select: none;
-  transition: all 0.08s ease;
+  transition: background-color 0.08s ease, color 0.08s ease, transform 0.08s ease;
   image-rendering: pixelated;
 }
 
@@ -348,4 +348,15 @@
     inset -2px -2px 0 0 #7f1d1d,
     0 0 0 2px #000000,
     0 0 8px rgba(239, 68, 68, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

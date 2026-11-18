@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -10,7 +12,7 @@ router = APIRouter(prefix="/api/leaderboard", tags=["Scores"])
 
 
 @router.get("/{game_id}", response_model=LeaderboardResponse)
-def get_leaderboard(game_id: str, db: Session = Depends(get_db)):
+def get_leaderboard(game_id: str, db: Annotated[Session, Depends(get_db)]):
     """Renvoie les meilleurs scores réels enregistrés en base pour un jeu donné."""
     # Résolution du jeu
     if game_id.isdigit():
