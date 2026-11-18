@@ -1,42 +1,114 @@
-// client/src/pages/CasinoGame.jsx
-import { useEffect, useRef } from "react";
-import { useEconomyStore } from "../game/casino/economyStore";
-import Leaderboard from "../components/Leaderboard.jsx";
-import { initCasinoGame } from "../game/casino/init";
+import { useEffect, useRef, useState } from "react";
+import { useEconomyStore } from "../game/casino/economyStore.js";
+import {
+  BET_AMOUNT,
+  SYMBOLS,
+  calculerGains,
+  tirerRouleaux,
+} from "../game/casino/logic.js";
+import slotSheet from "../assets/slot.png";
+import "./CasinoGame.css";
 import { recordGameSession } from "../services/api.js";
 import { useAuthStore } from "../store/authStore.js";
 
+const SYMBOL_SPRITES = {
+  seven: { x: 3, y: 3, label: "7" },
+  bell: { x: 1, y: 64, label: "cloche" },
+  cherries: { x: 1, y: 98, label: "cerises" },
+  grapes: { x: 1, y: 130, label: "raisins" },
+  watermelon: { x: 1, y: 195, label: "pastèque" },
+};
+
+const REEL_NEIGHBORS = {
+  seven: ["watermelon", "grapes"],
+  bell: ["grapes", "watermelon"],
+  watermelon: ["bell", "seven"],
+  cherries: ["watermelon", "bell"],
+  grapes: ["cherries", "seven"],
+};
+
+const THREE_SYMBOL_PRIZES = [
+  { symbol: "seven", prize: 100 },
+  { symbol: "bell", prize: 50 },
+  { symbol: "watermelon", prize: 25 },
+  { symbol: "cherries", prize: 15 },
+  { symbol: "grapes", prize: 10 },
+];
+
+const TWO_SYMBOL_PRIZES = [
+  { symbol: "seven", prize: 20 },
+  { symbol: "bell", prize: 10 },
+  { symbol: "watermelon", prize: 5 },
+  { symbol: "cherries", prize: 4 },
+  { symbol: "grapes", prize: 4 },
+];
+
+function SlotSymbol({ symbol, spinning = false, small = false }) {
+  const sprite = SYMBOL_SPRITES[symbol] ?? SYMBOL_SPRITES.seven;
+  const spriteScale = small ? 0.8 : 1.5;
+  return (
+    <span
+      className={`slot-symbol${spinning ? " is-spinning" : ""}${small ? " small" : ""}`}
+      style={{
+        "--slot-sheet": `url("${slotSheet}")`,
+        backgroundPosition: `${-sprite.x * spriteScale + (small ? 2 : 4)}px ${-sprite.y * spriteScale + (small ? 1 : 2)}px`,
+      }}
+      role="img"
+      aria-label={sprite.label}
+    />
+  );
+}
+
+function PrizeLine({ symbol, count, prize }) {
+  return (
+    <li className="flex items-center justify-between gap-2 rounded bg-gray-800 px-2 py-1.5">
+      <span className="flex items-center gap-1.5 text-gray-200">
+        {Array.from({ length: count }, (_, index) => (
+          <SlotSymbol key={`${symbol}-${index}`} symbol={symbol} small />
+        ))}
+        <span className="text-sm">{count === 3 ? "× 3" : "× 2"}</span>
+      </span>
+      <span className="shrink-0 font-bold text-amber-300">{prize} coins</span>
+    </li>
+  );
+}
+
 export default function CasinoGame() {
-  const canvasRef = useRef(null);
-  const startTimeRef = useRef(null);
-  const savedRef = useRef(false);
   const { coins, paidSpins, freeSpins, resetEconomy } = useEconomyStore();
   const { token } = useAuthStore();
+  const [reels, setReels] = useState(["watermelon", "seven", "seven"]);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [message, setMessage] = useState(
+    "Choisis ton tour et tente le jackpot !",
+  );
+  const spinLock = useRef(false);
+  const animationRef = useRef(null);
+  const stopTimersRef = useRef([]);
+  const startTimeRef = useRef(null);
+  const savedRef = useRef(false);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    document.title = "EvilJV | Casino";
     startTimeRef.current = Date.now();
     savedRef.current = false;
-
-    // On lance le jeu et on récupère l'instance Kaplay
-    const k = initCasinoGame(canvasRef.current);
-
-    // Nettoyage quand on quitte la page : si le joueur part sans encaisser, c'est compté comme un abandon
     return () => {
-      k.quit();
+      window.clearInterval(animationRef.current);
+      stopTimersRef.current.forEach(window.clearTimeout);
       if (!savedRef.current) {
         const start = startTimeRef.current || Date.now();
         const elapsed = Math.max(1, Math.floor((Date.now() - start) / 1000));
+        const currentEconomy = useEconomyStore.getState();
+        const score = currentEconomy.paidSpins * 50 + currentEconomy.coins;
         recordGameSession(token, {
           game: "casino",
-          score: coins,
+          score,
           timeSeconds: elapsed,
           completed: false,
           status: "abandoned",
         });
       }
     };
-  }, [token, coins]);
+  }, [token]);
 
   const handleCashout = async () => {
     savedRef.current = true;
@@ -52,94 +124,221 @@ export default function CasinoGame() {
       status: "finished",
     });
 
-    alert(`Partie terminée avec succès ! Votre score réel de ${finalScore} pts a été enregistré en base de données.`);
+    alert(`Partie enregistrée avec succès ! Score : ${finalScore} pts.`);
     resetEconomy();
   };
 
-  return (
-    <div className="flex flex-col items-center justify-center p-4 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row gap-8 w-full">
-        {/* COLONNE GAUCHE : TABLEAU DES GAINS */}
-        <div className="w-full md:w-1/3 bg-gray-900 border-2 border-gray-700 rounded-xl p-6 shadow-lg h-fit">
-          <h2 className="text-2xl font-bold text-white mb-6 text-center border-b border-gray-700 pb-4">
-            🏆 Tableau des gains
-          </h2>
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-gray-400 font-bold mb-3 uppercase text-sm">Aligner 3 symboles</h3>
-              <ul className="space-y-2 text-lg font-medium">
-                <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
-                  <span className="tracking-[0.5em]">7️⃣7️⃣7️⃣</span> <span className="text-yellow-400 font-bold">100 🪙</span>
-                </li>
-                <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
-                  <span className="tracking-[0.5em]">🔔🔔🔔</span> <span className="text-yellow-400 font-bold">50 🪙</span>
-                </li>
-                <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
-                  <span className="tracking-[0.5em]">🍉🍉🍉</span> <span className="text-yellow-400 font-bold">25 🪙</span>
-                </li>
-                <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
-                  <span className="tracking-[0.5em]">🍒🍒🍒</span> <span className="text-yellow-400 font-bold">15 🪙</span>
-                </li>
-                <li className="flex justify-between items-center bg-gray-800 p-2 rounded">
-                  <span className="tracking-[0.5em]">☕☕☕</span> <span className="text-yellow-400 font-bold">10 🪙</span>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-gray-400 font-bold mb-3 uppercase text-sm">Obtenir 2 symboles</h3>
-              <ul className="space-y-2 text-md font-medium text-gray-300">
-                <li className="flex justify-between items-center border-b border-gray-800 pb-1">
-                  <span>Deux 7️⃣</span> <span className="text-yellow-500">20 🪙</span>
-                </li>
-                <li className="flex justify-between items-center border-b border-gray-800 pb-1">
-                  <span>Deux 🔔</span> <span className="text-yellow-500">10 🪙</span>
-                </li>
-                <li className="flex justify-between items-center border-b border-gray-800 pb-1">
-                  <span>Deux 🍉</span> <span className="text-yellow-500">5 🪙</span>
-                </li>
-                <li className="flex justify-between items-center border-b border-gray-800 pb-1">
-                  <span>Deux 🍒 ou ☕</span> <span className="text-yellow-500">4 🪙</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
+  function spin() {
+    if (spinLock.current) return;
 
-        {/* COLONNE DROITE : LE JEU */}
-        <div className="w-full md:w-2/3 flex flex-col">
-          <div className="w-full flex flex-wrap justify-between items-center gap-4 mb-6">
-            <div className="flex gap-4 flex-wrap">
-              <div className="text-lg text-white font-bold bg-gray-800 px-4 py-2 rounded-lg border border-gray-700">
-                Banque: {coins} 🪙
-              </div>
-              <div className="text-lg text-white font-bold bg-gray-800 px-4 py-2 rounded-lg border border-gray-700">
-                Lancers gratuits: {freeSpins} 🎁
-              </div>
-              <div className="text-lg text-white font-bold bg-gray-800 px-4 py-2 rounded-lg border border-gray-700 text-red-400">
-                Score: {paidSpins} 🔥
-              </div>
+    const economy = useEconomyStore.getState();
+    if (economy.freeSpins <= 0 && economy.coins < BET_AMOUNT) {
+      setMessage(
+        "Plus assez de coins. Reviens après avoir renfloué ta banque.",
+      );
+      return;
+    }
+
+    spinLock.current = true;
+    setIsSpinning(true);
+    setMessage("Les rouleaux tournent…");
+    stopTimersRef.current = [];
+
+    if (economy.freeSpins > 0) {
+      economy.useFreeSpin();
+    } else {
+      economy.deductBet(BET_AMOUNT);
+    }
+
+    const result = tirerRouleaux();
+    const stopped = [false, false, false];
+    setReels(
+      Array.from(
+        { length: 3 },
+        () => SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+      ),
+    );
+    animationRef.current = window.setInterval(() => {
+      setReels((current) =>
+        current.map((symbol, index) =>
+          stopped[index]
+            ? symbol
+            : SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+        ),
+      );
+    }, 90);
+
+    [850, 1450, 2050].forEach((delay, index) => {
+      const timer = window.setTimeout(() => {
+        stopped[index] = true;
+        setReels((current) =>
+          current.map((symbol, reelIndex) =>
+            reelIndex === index ? result[index] : symbol,
+          ),
+        );
+
+        if (index === 2) {
+          window.clearInterval(animationRef.current);
+          const winnings = calculerGains(result);
+          if (winnings > 0) {
+            useEconomyStore.getState().addWinnings(winnings);
+            setMessage(`Gagné ! +${winnings} coins`);
+          } else {
+            setMessage("Perdu… retente ta chance !");
+          }
+          setIsSpinning(false);
+          spinLock.current = false;
+        }
+      }, delay);
+      stopTimersRef.current.push(timer);
+    });
+  }
+
+  function startNewGame() {
+    if (spinLock.current) return;
+    resetEconomy();
+    setReels(["watermelon", "seven", "seven"]);
+    setMessage("Nouvelle partie : 10 tours gratuits !");
+  }
+
+  const cannotAfford = freeSpins <= 0 && coins < BET_AMOUNT;
+
+  return (
+    <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 p-4 text-white sm:p-6">
+      <audio
+        className="casino-intro-audio"
+        src="/assets/casino/soundtracks/casino%20machine.mp3"
+        autoPlay
+        loop
+        aria-label="Musique de la machine à sous"
+      />
+
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(260px,0.8fr)_minmax(360px,1.2fr)]">
+        <section className="order-2 rounded-xl border-2 border-gray-700 bg-gray-900 p-4 shadow-xl lg:order-1 sm:p-6">
+          <h2 className="mb-4 border-b border-gray-700 pb-3 text-center text-xl font-black text-amber-200 sm:text-2xl">
+            Tableau des gains
+          </h2>
+          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+            Trois symboles identiques
+          </h3>
+          <ul className="mb-6 space-y-2">
+            {THREE_SYMBOL_PRIZES.map(({ symbol, prize }) => (
+              <PrizeLine
+                key={`triple-${symbol}`}
+                symbol={symbol}
+                count={3}
+                prize={prize}
+              />
+            ))}
+          </ul>
+          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+            Deux symboles identiques
+          </h3>
+          <ul className="space-y-2">
+            {TWO_SYMBOL_PRIZES.map(({ symbol, prize }) => (
+              <PrizeLine
+                key={`double-${symbol}`}
+                symbol={symbol}
+                count={2}
+                prize={prize}
+              />
+            ))}
+          </ul>
+          <p className="mt-5 border-t border-gray-800 pt-3 text-center text-xs text-gray-500">
+            Chaque tour coûte {BET_AMOUNT} coins après les tours gratuits.
+          </p>
+        </section>
+
+        <section className="order-1 flex flex-col items-center rounded-xl border border-gray-700 bg-gray-950 p-4 shadow-2xl lg:order-2 sm:p-6">
+          <div className="mb-4 flex w-full flex-wrap items-center justify-center gap-2 sm:gap-3">
+            <div className="rounded-lg border border-amber-700/70 bg-gray-900 px-3 py-2 text-sm font-bold sm:text-base">
+              Banque <span className="text-amber-300">${coins}</span>
             </div>
-            
+            <div className="rounded-lg border border-emerald-800 bg-gray-900 px-3 py-2 text-sm font-bold sm:text-base">
+              Gratuits <span className="text-emerald-300">{freeSpins}</span>
+            </div>
+            <div className="rounded-lg border border-rose-900 bg-gray-900 px-3 py-2 text-sm font-bold sm:text-base">
+              Score <span className="text-rose-300">{paidSpins}</span>
+            </div>
             <button 
+              type="button"
               onClick={handleCashout}
-              className="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-lg font-bold transition-colors shadow-lg"
+              className="bg-red-700 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shadow-lg"
+              title="Enregistrer la partie"
             >
-              Encaisser & Quitter
+              💾 Encaisser
             </button>
           </div>
-          
-          <div className="w-full aspect-[4/3] rounded-xl shadow-2xl border-4 border-gray-700 overflow-hidden bg-[#191923]">
-            <canvas ref={canvasRef} className="w-full h-full block"></canvas>
-          </div>
-        </div>
-      </div>
 
-      <div className="w-full mt-12">
-        <h2 className="text-3xl font-bold text-center text-white mb-6">🔥 TOP 5 DES MEILLEURS JOUEURS 🔥</h2>
-        <div className="max-w-3xl mx-auto">
-          <Leaderboard gameId="casino" />
-        </div>
+          <div className="casino-slot-page flex w-full justify-center overflow-hidden rounded-lg border border-gray-700 px-2 py-3 sm:py-5">
+            <div className="slot-machine" aria-label="Machine à sous">
+              <svg
+                className="slot-machine-art"
+                viewBox="60 26 136 216"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <image href={slotSheet} x="0" y="0" width="256" height="256" />
+              </svg>
+              <div className="slot-price-sign">{BET_AMOUNT} coins par tour</div>
+              <div className="slot-bank-display" aria-live="polite">
+                ${coins}
+              </div>
+              <div className="slot-reel-window" aria-label="Résultat du lancer">
+                {reels.map((symbol, index) => (
+                  <div className="slot-reel" key={index}>
+                    <div className="slot-reel-cell">
+                      <SlotSymbol
+                        symbol={REEL_NEIGHBORS[symbol][0]}
+                        spinning={isSpinning}
+                      />
+                    </div>
+                    <div className="slot-reel-cell is-result">
+                      <SlotSymbol symbol={symbol} spinning={isSpinning} />
+                    </div>
+                    <div className="slot-reel-cell">
+                      <SlotSymbol
+                        symbol={REEL_NEIGHBORS[symbol][1]}
+                        spinning={isSpinning}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="slot-spin-button"
+                onClick={spin}
+                disabled={isSpinning || cannotAfford}
+                aria-label={
+                  isSpinning
+                    ? "Les rouleaux tournent"
+                    : `Lancer pour ${BET_AMOUNT} coins`
+                }
+              >
+                {isSpinning ? "TOURNE…" : freeSpins > 0 ? "GRATUIT" : "LANCER"}
+              </button>
+            </div>
+          </div>
+
+          <p
+            className="slot-result-message mt-3"
+            role="status"
+            aria-live="polite"
+          >
+            {message}
+          </p>
+          <button
+            type="button"
+            onClick={startNewGame}
+            disabled={isSpinning}
+            className="mt-2 rounded-lg border border-rose-800 bg-rose-950 px-4 py-2 text-sm font-bold text-rose-100 transition hover:bg-rose-900 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Nouvelle partie
+          </button>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
