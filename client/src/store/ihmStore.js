@@ -15,15 +15,14 @@ export const useIhmStore = create((set, get) => ({
   maxStreak: 0,
   history: [],
   selectedOption: null, // "A" | "B" | null
-  roundFeedback: null, // { isCorrect: boolean, pointsEarned: number, timeBonus: number } | null
+  roundFeedback: null,
   isGameOver: false,
   coinsEarned: 0,
-  viewportMode: "desktop", // "mobile" | "tablet" | "desktop"
+  viewportMode: "desktop",
 
   setViewportMode: (mode) => set({ viewportMode: mode }),
 
   startSoloGame: () => {
-    // Mélange optionnel des questions ou utilisation ordonnée
     set({
       currentRoundIndex: 0,
       score: 0,
@@ -75,8 +74,16 @@ export const useIhmStore = create((set, get) => ({
       {
         round: state.currentRoundIndex + 1,
         questionId: currentQuestion.id,
+        title: currentQuestion.title,
+        categoryLabel: currentQuestion.categoryLabel,
+        targetViewport: currentQuestion.targetViewport,
+        viewportLabel: currentQuestion.viewportLabel,
+        chosenOption,
+        correctOption: currentQuestion.correctOption,
         isCorrect,
         pointsEarned,
+        timeBonus,
+        explanation: currentQuestion.explanation,
       },
     ];
 
@@ -96,7 +103,6 @@ export const useIhmStore = create((set, get) => ({
 
     if (nextIndex >= state.questions.length) {
       // Fin de la partie solo (20 manches)
-      // Gain de pièces : 1 Coin par 30 points
       const coins = Math.max(5, Math.floor(state.score / 30));
       set({
         isGameOver: true,

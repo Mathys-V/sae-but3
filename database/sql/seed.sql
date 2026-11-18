@@ -133,7 +133,7 @@ FROM (VALUES
     ),
     (
         'R3.01 : Développement Web',
-        'L''Œil Critique (R3.01)',
+        'L''Oeil Critique (R3.01)',
         'Comparez 2 interfaces web et identifiez la plus responsive, accessible et ergonomique.',
         '{"topics":["responsive","wcag","forms","ergonomics"],"rounds":20}',
         'medium',

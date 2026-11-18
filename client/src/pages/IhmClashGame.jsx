@@ -34,12 +34,15 @@ export default function IhmClashGame() {
     resetGame,
   } = useIhmStore();
 
-  // États du cycle de jeu : "briefing" (écran d'accueil) | "playing" (en cours) | "results" (fin solo)
+  // États du cycle de jeu : "briefing" (écran d'accueil) | "playing" (en cours)
   const [gameState, setGameState] = useState("briefing");
   const [gameMode, setGameMode] = useState("solo"); // "solo" | "multi"
   const [inMultiBattle, setInMultiBattle] = useState(false);
   const [multiPlayers, setMultiPlayers] = useState([]);
   const [multiRankings, setMultiRankings] = useState(null);
+
+  // Filtre d'analyse pour la revue finale des 20 cas d'audit
+  const [reviewFilter, setReviewFilter] = useState("all"); // "all" | "correct" | "incorrect"
 
   // Chronomètre de manche
   const [timeRemainingMs, setTimeRemainingMs] = useState(TIMER_TOTAL_MS);
@@ -48,7 +51,7 @@ export default function IhmClashGame() {
 
   // Titre du document
   useEffect(() => {
-    document.title = "EvilJV | L'Œil Critique (BUT 2 S3)";
+    document.title = "EvilJV | L'Oeil Critique (BUT 2 S3)";
   }, []);
 
   // Gestion du chronomètre par manche (actif uniquement quand gameState === "playing")
@@ -88,7 +91,7 @@ export default function IhmClashGame() {
       earnCoins(coinsEarned);
       const totalSeconds = Math.max(10, Math.round((Date.now() - sessionStartTimeRef.current) / 1000));
       recordGameSession(token, {
-        game: "L'Œil Critique",
+        game: "L'Oeil Critique",
         score,
         timeSeconds: totalSeconds,
         completed: true,
@@ -164,7 +167,7 @@ export default function IhmClashGame() {
     if (myResult) {
       earnCoins(myResult.coinsWon);
       recordGameSession(token, {
-        game: "L'Œil Critique",
+        game: "L'Oeil Critique",
         score: myResult.score,
         timeSeconds: Math.round(totalTimeMs / 1000),
         completed: true,
@@ -175,8 +178,15 @@ export default function IhmClashGame() {
     setMultiRankings(finalRankings);
   };
 
+  // Filtrage de la revue des 20 questions
+  const filteredHistory = history.filter((item) => {
+    if (reviewFilter === "correct") return item.isCorrect;
+    if (reviewFilter === "incorrect") return !item.isCorrect;
+    return true;
+  });
+
   return (
-    <div className="-m-6 p-4 sm:p-6 min-h-[calc(100vh-64px)] font-vcr">
+    <div className="-m-6 p-4 sm:p-6 min-h-[calc(100vh-64px)] font-sans text-gray-100">
       <main className="max-w-5xl mx-auto space-y-5">
         {/* Barre supérieure : Retour & Solde de Coins */}
         <div className="flex items-center justify-between gap-4">
@@ -192,28 +202,28 @@ export default function IhmClashGame() {
                 navigate("/evil/jeux");
               }
             }}
-            className="pixel-btn"
+            className="pixel-btn !font-sans font-bold"
             title="Revenir au menu précédent"
           >
             <span>← {gameState === "playing" ? "QUITTER L'AUDIT" : "RETOUR AUX JEUX"}</span>
           </button>
 
-          <div className="pixel-pill" title="Pièces démoniaques récoltées">
+          <div className="pixel-pill !font-sans font-bold" title="Pièces démoniaques récoltées">
             <img
               src="/assets/ui/Barre-de-Navigation/sprites/coin-32.png"
               alt="Coins"
               className="w-5 h-5 pixelated animate-pulse"
             />
-            <span>{coins} COINS</span>
+            <span className="font-mono">{coins} COINS</span>
           </div>
         </div>
 
         {/* Bannière de Titre Donjon Pixel Art */}
         <div className="pixel-banner p-4 text-center">
-          <h1 className="text-xl sm:text-2xl font-vcr font-bold text-red-500 tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-            👁️ L'ŒIL CRITIQUE : BUT 2 S3 DÉVELOPPEMENT WEB
+          <h1 className="text-xl sm:text-2xl font-bold text-red-500 tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] font-sans">
+            👁️ L'OEIL CRITIQUE : BUT 2 S3 DÉVELOPPEMENT WEB
           </h1>
-          <p className="text-xs text-gray-300 mt-1 tracking-wide">
+          <p className="text-xs text-gray-300 mt-1 tracking-wide font-sans">
             Évaluez 2 interfaces réelles : identifiez la version la plus responsive, accessible et ergonomique !
           </p>
         </div>
@@ -227,8 +237,8 @@ export default function IhmClashGame() {
             <div className="pixel-panel p-6 space-y-5 border-2 border-amber-600/80">
               <div className="text-center space-y-1 border-b border-gray-800 pb-4">
                 <span className="text-3xl">👁️</span>
-                <h2 className="text-xl font-bold text-amber-400 uppercase tracking-wider">
-                  SALLE DE BRIEFING : L'ŒIL CRITIQUE
+                <h2 className="text-xl font-bold text-amber-400 uppercase tracking-wider font-sans">
+                  SALLE DE BRIEFING : L'OEIL CRITIQUE
                 </h2>
                 <p className="text-xs text-gray-300">
                   Préparez-vous à auditer les créations web du Semestre 3 (R3.01)
@@ -236,43 +246,43 @@ export default function IhmClashGame() {
               </div>
 
               {/* Les 4 Piliers du Gameplay */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3 bg-gray-950/80 border border-gray-800 space-y-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-sans">
+                <div className="p-3.5 bg-gray-950/80 border border-gray-800 rounded space-y-1">
                   <div className="font-bold text-amber-300 flex items-center gap-1.5">
                     <span>📐</span>
                     <span>1 FORMAT IMPOSÉ PAR MANCHE</span>
                   </div>
-                  <p className="text-gray-400 leading-relaxed">
-                    Chaque manche impose son format (Mobile, Tablette ou Desktop). La différence ergonomique est à observer directement dans ce contexte !
+                  <p className="text-gray-300 leading-relaxed text-xs">
+                    Chaque manche impose son format (Mobile 375px, Tablette 768px ou Desktop). La différence ergonomique est à observer directement dans ce contexte !
                   </p>
                 </div>
 
-                <div className="p-3 bg-gray-950/80 border border-gray-800 space-y-1">
+                <div className="p-3.5 bg-gray-950/80 border border-gray-800 rounded space-y-1">
                   <div className="font-bold text-emerald-400 flex items-center gap-1.5">
                     <span>⏱️</span>
                     <span>15 SECONDES & BONUS VITESSE</span>
                   </div>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-gray-300 leading-relaxed text-xs">
                     Vous avez 15 secondes par manche. Plus vite vous débusquez le piège, plus vous remportez de points bonus !
                   </p>
                 </div>
 
-                <div className="p-3 bg-gray-950/80 border border-gray-800 space-y-1">
+                <div className="p-3.5 bg-gray-950/80 border border-gray-800 rounded space-y-1">
                   <div className="font-bold text-rose-400 flex items-center gap-1.5">
                     <span>🔥</span>
                     <span>COMBOS DE SÉRIES (STREAK)</span>
                   </div>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-gray-300 leading-relaxed text-xs">
                     Enchaînez les bonnes réponses consécutives pour débloquer +25 points supplémentaires par manche d'affilée.
                   </p>
                 </div>
 
-                <div className="p-3 bg-gray-950/80 border border-gray-800 space-y-1">
+                <div className="p-3.5 bg-gray-950/80 border border-gray-800 rounded space-y-1">
                   <div className="font-bold text-yellow-300 flex items-center gap-1.5">
                     <span>💰</span>
                     <span>GAINS DE COINS RÉELS</span>
                   </div>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-gray-300 leading-relaxed text-xs">
                     Remportez des Coins Evil proportionnels à votre score pour débloquer de nouveaux avatars dans la boutique !
                   </p>
                 </div>
@@ -284,7 +294,7 @@ export default function IhmClashGame() {
                   <button
                     type="button"
                     onClick={() => setGameMode("solo")}
-                    className={`pixel-tab ${gameMode === "solo" ? "active" : ""}`}
+                    className={`pixel-tab !font-sans font-bold ${gameMode === "solo" ? "active" : ""}`}
                   >
                     <span>👤</span>
                     <span>MODE SOLO (20 MANCHES)</span>
@@ -292,7 +302,7 @@ export default function IhmClashGame() {
                   <button
                     type="button"
                     onClick={() => setGameMode("multi")}
-                    className={`pixel-tab ${gameMode === "multi" ? "active" : ""}`}
+                    className={`pixel-tab !font-sans font-bold ${gameMode === "multi" ? "active" : ""}`}
                   >
                     <span>👥</span>
                     <span>MULTIJOUEUR (2 À 4 JOUEURS)</span>
@@ -305,12 +315,12 @@ export default function IhmClashGame() {
                     <button
                       type="button"
                       onClick={handleStartSolo}
-                      className="pixel-btn w-full !py-3.5 !bg-red-700 hover:!bg-red-600 !text-white text-base shadow-[0_0_15px_rgba(220,38,38,0.5)]"
+                      className="pixel-btn w-full !py-3.5 !bg-red-700 hover:!bg-red-600 !text-white text-base font-bold !font-sans shadow-[0_0_15px_rgba(220,38,38,0.5)]"
                     >
-                      👁️ COMMENCER L'ŒIL CRITIQUE (20 MANCHES)
+                      👁️ COMMENCER L'OEIL CRITIQUE (20 MANCHES)
                     </button>
-                    <p className="text-[11px] text-gray-400">
-                      Le chronomètre démarrera dès le clic. Les manches s'enchaîneront avec un retour pédagogique à chaque vote.
+                    <p className="text-xs text-gray-400 font-sans">
+                      Le chronomètre démarre dès le clic. Les 20 cas s'enchaînent avec une explication détaillée après chaque vote.
                     </p>
                   </div>
                 )}
@@ -328,13 +338,13 @@ export default function IhmClashGame() {
             2. SCÈNE DE JEU EN COURS (MANCHES SOLO OU MULTI BATTLE)
             ======================================================== */}
         {gameState === "playing" && !isGameOver && (
-          <div className="space-y-4 animate-fade-in">
+          <div className="space-y-4 animate-fade-in font-sans">
             {/* Tableau de Bord Pixel Art (HUD Arcade) */}
             <div className="pixel-panel p-4 flex flex-wrap items-center justify-between gap-4">
               {/* Manche en cours */}
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400 uppercase">MANCHE :</span>
-                <span className="text-base font-bold text-amber-300">
+                <span className="text-xs text-gray-400 uppercase font-mono">MANCHE :</span>
+                <span className="text-base font-bold text-amber-300 font-mono">
                   {currentRoundIndex + 1} / {gameMode === "multi" ? 10 : questions.length}
                 </span>
               </div>
@@ -342,12 +352,12 @@ export default function IhmClashGame() {
               {/* Score et Streak Combo */}
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-gray-400 uppercase">SCORE :</span>
-                  <span className="text-base font-bold text-emerald-400">{score} PTS</span>
+                  <span className="text-xs text-gray-400 uppercase font-mono">SCORE :</span>
+                  <span className="text-base font-bold text-emerald-400 font-mono">{score} PTS</span>
                 </div>
 
                 {streak > 1 && (
-                  <span className="text-xs font-bold text-amber-300 bg-amber-950 px-2 py-0.5 border border-amber-600 animate-pulse">
+                  <span className="text-xs font-bold text-amber-300 bg-amber-950 px-2.5 py-1 rounded border border-amber-600 animate-pulse font-mono">
                     🔥 COMBO x{streak} (+{streak * 25} PTS)
                   </span>
                 )}
@@ -355,11 +365,11 @@ export default function IhmClashGame() {
 
               {/* Jauge du Compte à Rebours (15 secondes) */}
               <div className="w-full sm:w-48 space-y-1">
-                <div className="flex justify-between text-[11px] text-gray-300 font-mono">
+                <div className="flex justify-between text-xs text-gray-300 font-mono">
                   <span>CHRONO :</span>
                   <span className="font-bold text-amber-400">{(timeRemainingMs / 1000).toFixed(1)}s</span>
                 </div>
-                <div className="w-full h-3 bg-gray-900 border border-gray-700 overflow-hidden">
+                <div className="w-full h-3 bg-gray-900 border border-gray-700 rounded overflow-hidden">
                   <div
                     className={`h-full transition-all duration-100 ${
                       timerRatio > 0.5 ? "bg-emerald-500" : timerRatio > 0.25 ? "bg-amber-500" : "bg-red-600"
@@ -370,21 +380,27 @@ export default function IhmClashGame() {
               </div>
             </div>
 
-            {/* Consigne Pédagogique du Round */}
-            <div className="pixel-panel p-4 text-center space-y-1 border-2 border-amber-600/70">
-              <span className="text-[11px] text-amber-400 uppercase tracking-widest font-bold">
-                [{currentQ.categoryLabel}] — {currentQ.title}
-              </span>
-              <h2 className="text-base sm:text-lg font-bold text-gray-100">
-                {currentQ.instruction}
+            {/* Consigne Professionnelle et Neutre du Round */}
+            <div className="pixel-panel p-4 text-center space-y-2 border-2 border-amber-600/70">
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700 uppercase tracking-wider font-mono">
+                  {currentQ.categoryLabel}
+                </span>
+                <span className="text-xs text-gray-300">
+                  Composant : <strong className="text-white">{currentQ.title}</strong>
+                </span>
+              </div>
+              <h2 className="text-base sm:text-lg font-bold text-gray-100 font-sans">
+                Identifiez l'interface présentant la meilleure conception ergonomique et responsive.
               </h2>
             </div>
 
             {/* Simulateur avec Format d'Écran Imposé pour cette manche */}
             <IhmViewportSimulator targetViewport={currentQ.targetViewport || "mobile"}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                 <IhmCardViewer
                   variant={currentQ.variantA}
+                  targetViewport={currentQ.targetViewport || "mobile"}
                   optionLabel="A"
                   onSelect={handleSelectOption}
                   isSelected={selectedOption === "A"}
@@ -394,6 +410,7 @@ export default function IhmClashGame() {
 
                 <IhmCardViewer
                   variant={currentQ.variantB}
+                  targetViewport={currentQ.targetViewport || "mobile"}
                   optionLabel="B"
                   onSelect={handleSelectOption}
                   isSelected={selectedOption === "B"}
@@ -406,21 +423,21 @@ export default function IhmClashGame() {
             {/* Panneau de Révélation et Feedback Pédagogique */}
             {roundFeedback && (
               <div
-                className={`pixel-panel p-5 space-y-3 animate-fade-in border-2 ${
+                className={`pixel-panel p-5 space-y-3 animate-fade-in border-2 rounded ${
                   roundFeedback.isCorrect ? "border-emerald-600 bg-emerald-950/40" : "border-rose-600 bg-rose-950/40"
                 }`}
               >
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-gray-800 pb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{roundFeedback.isCorrect ? "🎉" : "⚠️"}</span>
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-gray-800 pb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{roundFeedback.isCorrect ? "🎉" : "⚠️"}</span>
                     <div>
                       <h3 className={`text-base font-bold ${roundFeedback.isCorrect ? "text-emerald-400" : "text-rose-400"}`}>
                         {roundFeedback.isCorrect
                           ? `EXCELLENT CHOIX ! (+${roundFeedback.pointsEarned} PTS)`
-                          : `PIÈGE ERGONOMIQUE DÉTECTÉ (La bonne réponse était l'interface ${roundFeedback.correctOption})`}
+                          : `PIÈGE ERGONOMIQUE DÉTECTÉ (Bonne réponse : Interface ${roundFeedback.correctOption})`}
                       </h3>
                       {roundFeedback.isCorrect && roundFeedback.timeBonus > 0 && (
-                        <p className="text-[11px] text-amber-300 font-mono">
+                        <p className="text-xs text-amber-300 font-mono mt-0.5">
                           ⚡ Bonus rapidité : +{roundFeedback.timeBonus} pts
                         </p>
                       )}
@@ -437,7 +454,7 @@ export default function IhmClashGame() {
                         nextRound();
                       }
                     }}
-                    className="pixel-btn !bg-red-700 hover:!bg-red-600 !text-white text-sm whitespace-nowrap"
+                    className="pixel-btn !bg-red-700 hover:!bg-red-600 !text-white text-sm font-bold !font-sans whitespace-nowrap"
                   >
                     {currentRoundIndex + 1 >= (gameMode === "multi" ? 10 : questions.length)
                       ? "VOIR LES RÉSULTATS →"
@@ -445,9 +462,9 @@ export default function IhmClashGame() {
                   </button>
                 </div>
 
-                <div className="text-xs text-gray-200 leading-relaxed font-sans bg-gray-950/80 p-3 border border-gray-800">
-                  <strong className="text-amber-400 font-vcr block mb-1">
-                    🔍 ANALYSE ERGONOMIQUE (BUT 2 S3 DÉV WEB) :
+                <div className="text-xs sm:text-sm text-gray-200 leading-relaxed font-sans bg-gray-950/90 p-3.5 border border-gray-800 rounded">
+                  <strong className="text-amber-400 block mb-1 font-bold">
+                    🔍 ANALYSE ERGONOMIQUE OFFICIELLE (BUT 2 S3 DÉV WEB) :
                   </strong>
                   {roundFeedback.explanation}
                 </div>
@@ -460,64 +477,195 @@ export default function IhmClashGame() {
             3. ÉCRAN DE FIN DE PARTIE SOLO (RÉCAPITULATIF & GAINS)
             ======================================================== */}
         {gameState === "playing" && isGameOver && (
-          <div className="pixel-panel p-8 max-w-xl mx-auto text-center space-y-6 border-4 border-amber-600 shadow-[0_0_30px_rgba(217,119,6,0.5)] animate-fade-in">
-            <span className="text-4xl">👑</span>
-            <div>
-              <h2 className="text-2xl font-bold text-amber-400 uppercase tracking-widest">
-                L'ŒIL CRITIQUE TERMINÉ !
-              </h2>
-              <p className="text-xs text-gray-300 mt-1">
-                Félicitations, vous avez complété l'ensemble des 20 cas d'études ergonomiques de S3 !
-              </p>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 p-4 bg-gray-950/80 border border-gray-800">
+          <div className="space-y-6 animate-fade-in font-sans">
+            {/* Carte de Résumé des Performances */}
+            <div className="pixel-panel p-8 max-w-2xl mx-auto text-center space-y-6 border-4 border-amber-600 shadow-[0_0_30px_rgba(217,119,6,0.5)] rounded">
+              <span className="text-4xl">👑</span>
               <div>
-                <span className="text-[10px] text-gray-400 uppercase">SCORE TOTAL</span>
-                <p className="text-xl font-bold text-emerald-400 mt-1">{score} PTS</p>
-              </div>
-              <div>
-                <span className="text-[10px] text-gray-400 uppercase">MEILLEUR COMBO</span>
-                <p className="text-xl font-bold text-amber-300 mt-1">x{maxStreak}</p>
-              </div>
-              <div>
-                <span className="text-[10px] text-gray-400 uppercase">RÉUSSITE</span>
-                <p className="text-xl font-bold text-gray-100 mt-1">
-                  {history.filter((h) => h.isCorrect).length} / {questions.length}
+                <h2 className="text-2xl font-bold text-amber-400 uppercase tracking-widest font-sans">
+                  L'OEIL CRITIQUE TERMINÉ !
+                </h2>
+                <p className="text-xs text-gray-300 mt-1">
+                  Félicitations, vous avez complété l'ensemble des 20 cas d'études ergonomiques de S3 !
                 </p>
               </div>
+
+              <div className="grid grid-cols-3 gap-3 p-4 bg-gray-950/80 border border-gray-800 rounded">
+                <div>
+                  <span className="text-[11px] text-gray-400 uppercase font-mono">SCORE TOTAL</span>
+                  <p className="text-2xl font-bold text-emerald-400 mt-1 font-mono">{score} PTS</p>
+                </div>
+                <div>
+                  <span className="text-[11px] text-gray-400 uppercase font-mono">MEILLEUR COMBO</span>
+                  <p className="text-2xl font-bold text-amber-300 mt-1 font-mono">x{maxStreak}</p>
+                </div>
+                <div>
+                  <span className="text-[11px] text-gray-400 uppercase font-mono">RÉUSSITE</span>
+                  <p className="text-2xl font-bold text-gray-100 mt-1 font-mono">
+                    {history.filter((h) => h.isCorrect).length} / {questions.length}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-amber-950/70 border border-amber-700 rounded flex items-center justify-center gap-2">
+                <span className="text-sm font-bold text-amber-300">RÉCOMPENSE EARNED :</span>
+                <span className="text-base font-bold text-white flex items-center gap-1 font-mono">
+                  +{coinsEarned}
+                  <img
+                    src="/assets/ui/Barre-de-Navigation/sprites/coin-32.png"
+                    alt="Coins"
+                    className="w-4 h-4 pixelated inline"
+                  />
+                </span>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetGame();
+                    setGameState("briefing");
+                  }}
+                  className="pixel-btn w-full !bg-red-700 hover:!bg-red-600 !text-white !font-sans font-bold"
+                >
+                  RETOURNER AU BRIEFING
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/evil/jeux")}
+                  className="pixel-btn w-full !font-sans font-bold"
+                >
+                  CATALOGUE DES JEUX
+                </button>
+              </div>
             </div>
 
-            <div className="p-3 bg-amber-950/70 border border-amber-700 flex items-center justify-center gap-2">
-              <span className="text-sm font-bold text-amber-300">RÉCOMPENSE EARNED :</span>
-              <span className="text-base font-bold text-white flex items-center gap-1">
-                +{coinsEarned}
-                <img
-                  src="/assets/ui/Barre-de-Navigation/sprites/coin-32.png"
-                  alt="Coins"
-                  className="w-4 h-4 pixelated inline"
-                />
-              </span>
-            </div>
+            {/* ========================================================
+                4. REVUE COMPLÈTE DES 20 CAS D'AUDIT (À TÊTE REPOSÉE)
+                ======================================================== */}
+            <div className="pixel-panel p-6 space-y-5 border-2 border-gray-700 rounded text-left">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-amber-400 flex items-center gap-2 font-sans">
+                    <span>📋</span>
+                    <span>REVUE DÉTAILLÉE DES 20 CAS D'AUDIT (BUT 2 S3)</span>
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    Analysez à tête reposée chaque cas d'étude, votre vote et l'explication ergonomique officielle.
+                  </p>
+                </div>
 
-            <div className="flex gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  resetGame();
-                  setGameState("briefing");
-                }}
-                className="pixel-btn w-full !bg-red-700 hover:!bg-red-600 !text-white"
-              >
-                RETOURNER AU BRIEFING
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate("/evil/jeux")}
-                className="pixel-btn w-full"
-              >
-                CATALOGUE DES JEUX
-              </button>
+                {/* Filtres par statut */}
+                <div className="flex items-center gap-1.5 self-start sm:self-auto font-mono text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setReviewFilter("all")}
+                    className={`px-3 py-1.5 rounded border transition-all ${
+                      reviewFilter === "all"
+                        ? "bg-amber-600 text-white border-amber-500 font-bold"
+                        : "bg-gray-900 text-gray-400 border-gray-800 hover:text-white"
+                    }`}
+                  >
+                    Tous ({history.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReviewFilter("correct")}
+                    className={`px-3 py-1.5 rounded border transition-all ${
+                      reviewFilter === "correct"
+                        ? "bg-emerald-700 text-white border-emerald-500 font-bold"
+                        : "bg-gray-900 text-gray-400 border-gray-800 hover:text-white"
+                    }`}
+                  >
+                    ✓ Réussis ({history.filter((h) => h.isCorrect).length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReviewFilter("incorrect")}
+                    className={`px-3 py-1.5 rounded border transition-all ${
+                      reviewFilter === "incorrect"
+                        ? "bg-rose-700 text-white border-rose-500 font-bold"
+                        : "bg-gray-900 text-gray-400 border-gray-800 hover:text-white"
+                    }`}
+                  >
+                    ✗ Pièges ({history.filter((h) => !h.isCorrect).length})
+                  </button>
+                </div>
+              </div>
+
+              {/* Liste des questions auditées */}
+              <div className="space-y-3.5">
+                {filteredHistory.map((item) => (
+                  <div
+                    key={item.round}
+                    className={`p-4 rounded-lg border transition-all space-y-3 ${
+                      item.isCorrect
+                        ? "bg-emerald-950/20 border-emerald-800/80"
+                        : "bg-rose-950/25 border-rose-800/80"
+                    }`}
+                  >
+                    {/* En-tête de la question */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-800/60 pb-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-gray-900 border border-gray-700 text-amber-300">
+                          Manche {item.round} / 20
+                        </span>
+                        <span className="text-xs font-mono px-2 py-0.5 rounded bg-purple-950/70 border border-purple-800 text-purple-300">
+                          {item.viewportLabel || "Standard"}
+                        </span>
+                        <span className="text-xs text-gray-400 font-medium">
+                          [{item.categoryLabel}]
+                        </span>
+                        <h4 className="text-sm font-bold text-white">
+                          {item.title}
+                        </h4>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span
+                          className={`text-xs font-bold px-2.5 py-0.5 rounded font-mono ${
+                            item.isCorrect
+                              ? "bg-emerald-900 text-emerald-300 border border-emerald-700"
+                              : "bg-rose-900 text-rose-300 border border-rose-700"
+                          }`}
+                        >
+                          {item.isCorrect ? `✓ Réussi (+${item.pointsEarned} pts)` : "✗ Piège rencontré"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Comparaison Choix Joueur vs Bonne Réponse */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                      <div
+                        className={`p-2 rounded border ${
+                          item.isCorrect
+                            ? "bg-emerald-950/40 border-emerald-700 text-emerald-200"
+                            : "bg-rose-950/40 border-rose-700 text-rose-200"
+                        }`}
+                      >
+                        Votre choix : <strong className="font-bold">Interface {item.chosenOption}</strong>
+                      </div>
+                      <div className="p-2 rounded border bg-gray-900/80 border-gray-700 text-gray-200">
+                        Bonne réponse : <strong className="font-bold text-amber-300">Interface {item.correctOption}</strong>
+                      </div>
+                    </div>
+
+                    {/* Explication pédagogique */}
+                    <div className="text-xs sm:text-sm text-gray-300 leading-relaxed bg-gray-950/80 p-3 rounded border border-gray-800/80">
+                      <strong className="text-amber-400 block mb-1 font-bold">
+                        💡 Règle ergonomique & cours BUT 2 S3 :
+                      </strong>
+                      {item.explanation}
+                    </div>
+                  </div>
+                ))}
+
+                {filteredHistory.length === 0 && (
+                  <div className="p-6 text-center text-xs text-gray-400 bg-gray-950/40 rounded border border-gray-800">
+                    Aucun cas correspondant à ce filtre.
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
