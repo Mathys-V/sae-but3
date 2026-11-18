@@ -103,7 +103,7 @@ function EvilSettings() {
   };
 
   return (
-    <div className="pixel-page-dungeon -m-6 p-6 min-h-[calc(100vh-64px)] font-vcr">
+    <div className="-m-6 p-6 min-h-[calc(100vh-64px)] font-vcr">
       <main className="max-w-4xl mx-auto space-y-6">
         {/* Barre d'action supérieure */}
         <div className="flex items-center justify-between gap-4">

@@ -39,26 +39,23 @@ function UserProfileBadge({ user, isGuest, role, avatar }) {
   );
 }
 
+const BACKGROUND_BY_ROUTE = {
+  "/evil": "/assets/ui/fonds_site/exterieur_chateau.jpg",
+  "/evil/jeux": "/assets/ui/fonds_site/interieur_chateau.jpg",
+  "/evil/admin": "/assets/ui/fonds_site/salle_trone_chateau_admin.jpg",
+  "/evil/parametres": "/assets/ui/fonds_site/alchimiste_chateau_option.jpg",
+};
+
 function getCastleBackgroundStyle(pathname) {
-  if (pathname === "/evil") {
-    return {
-      backgroundImage: 'linear-gradient(rgba(10, 10, 16, 0.32), rgba(5, 5, 8, 0.42)), url("/assets/ui/accueil/exterieur_chateau.jpg")',
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-      backgroundSize: "cover",
-      backgroundAttachment: "fixed",
-    };
-  }
-  if (pathname === "/evil/jeux") {
-    return {
-      backgroundImage: 'linear-gradient(rgba(10, 10, 16, 0.32), rgba(5, 5, 8, 0.42)), url("/assets/ui/accueil/interieur_chateau.jpg")',
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-      backgroundSize: "cover",
-      backgroundAttachment: "fixed",
-    };
-  }
-  return undefined;
+  const bgImage = BACKGROUND_BY_ROUTE[pathname];
+  if (!bgImage) return undefined;
+  return {
+    backgroundImage: `linear-gradient(rgba(10, 10, 16, 0.30), rgba(5, 5, 8, 0.40)), url("${bgImage}")`,
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    backgroundAttachment: "fixed",
+  };
 }
 
 function EvilLayout() {
