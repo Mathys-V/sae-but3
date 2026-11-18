@@ -8,10 +8,358 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Alagard";
+  src: url("./assets/fonts/alagard.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "VCR_OSD";
+  src: url("./assets/fonts/VCR_OSD_MONO_1.001.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-redden: "Redden", sans-serif;
+  --font-alagard: "Alagard", serif;
+  --font-vcr: "VCR_OSD", monospace;
 }
 
 .font-redden {
   font-family: "Redden", sans-serif;
+}
+
+.font-alagard {
+  font-family: "Alagard", serif;
+}
+
+.font-vcr {
+  font-family: "VCR_OSD", monospace;
+}
+
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* ============================================================
+   DÉCOR DE DONJON PIXEL ART POUR LA BARRE DE NAVIGATION
+   ============================================================ */
+.navbar-dungeon {
+  background-color: #121217;
+  background-image: 
+    linear-gradient(rgba(10, 10, 16, 0.4), rgba(4, 4, 8, 0.8)),
+    url("/assets/ui/Barre-de-Navigation/dungeon-stone.png");
+  background-repeat: repeat;
+  background-size: 64px 32px;
+  image-rendering: pixelated;
+  border-bottom: 3px solid #3b0707;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.9);
+}
+
+.navbar-dungeon::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-image: url("/assets/ui/Barre-de-Navigation/ember-trim.png");
+  background-repeat: repeat-x;
+  background-size: 32px 4px;
+  image-rendering: pixelated;
+  box-shadow: 0 0 10px #ef4444, 0 0 4px #f59e0b;
+  pointer-events: none;
+}
+
+/* ============================================================
+   VÉRITABLES BOUTONS PIXEL ART BISEAUTÉS 3D (STYLE RÉTRO ARCADE)
+   ============================================================ */
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.9rem;
+  font-family: "VCR_OSD", monospace;
+  font-size: 0.95rem; /* ~15.2px lisible */
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  color: #f3f4f6;
+  background-color: #1c1d24;
+  /* Biseau 3D pixel art strict sans aucun flou */
+  box-shadow:
+    inset 2px 2px 0 0 #4b5563,
+    inset -2px -2px 0 0 #090a0f,
+    0 0 0 2px #000000,
+    0 3px 0 2px #000000;
+  border-radius: 0;
+  image-rendering: pixelated;
+  text-shadow: 1px 1px 0 #000000;
+  transition: background-color 0.1s ease, color 0.1s ease;
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.pixel-btn:hover {
+  background-color: #7f1d1d;
+  color: #ffffff;
+  box-shadow:
+    inset 2px 2px 0 0 #f87171,
+    inset -2px -2px 0 0 #3b0707,
+    0 0 0 2px #000000,
+    0 3px 0 2px #000000;
+  text-shadow: 0 0 6px #ef4444, 1px 1px 0 #000000;
+  transform: translateY(-1px);
+}
+
+.pixel-btn:active,
+.pixel-btn.active {
+  background-color: #991b1b;
+  color: #fef2f2;
+  box-shadow:
+    inset 2px 2px 0 0 #3b0707,
+    inset -2px -2px 0 0 #fca5a5,
+    0 0 0 2px #000000,
+    0 1px 0 2px #000000;
+  transform: translateY(2px);
+  text-shadow: 0 0 6px #dc2626, 1px 1px 0 #000000;
+}
+
+/* Bouton Pixel Rouge (Admin / Modération) */
+.pixel-btn-red {
+  background-color: #7f1d1d;
+  color: #ffffff;
+  box-shadow:
+    inset 2px 2px 0 0 #ef4444,
+    inset -2px -2px 0 0 #3b0707,
+    0 0 0 2px #000000,
+    0 3px 0 2px #000000;
+  text-shadow: 0 0 6px #dc2626, 1px 1px 0 #000000;
+}
+
+.pixel-btn-red:hover {
+  background-color: #991b1b;
+  box-shadow:
+    inset 2px 2px 0 0 #f87171,
+    inset -2px -2px 0 0 #3b0707,
+    0 0 0 2px #000000,
+    0 3px 0 2px #000000;
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.pixel-btn-red:active,
+.pixel-btn-red.active {
+  background-color: #b91c1c;
+  transform: translateY(2px);
+  box-shadow:
+    inset 2px 2px 0 0 #3b0707,
+    inset -2px -2px 0 0 #fca5a5,
+    0 0 0 2px #000000,
+    0 1px 0 2px #000000;
+}
+
+/* Badge Coins Pixel Art */
+.pixel-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem;
+  background-color: #1a1608;
+  font-family: "VCR_OSD", monospace;
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #fde047;
+  box-shadow:
+    inset 2px 2px 0 0 #ca8a04,
+    inset -2px -2px 0 0 #000000,
+    0 0 0 2px #000000;
+  text-shadow: 1px 1px 0 #000000;
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+/* Cadre Profil Joueur Pixel Art */
+.pixel-profile-frame {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.65rem;
+  background-color: #121319;
+  box-shadow:
+    inset 2px 2px 0 0 #374151,
+    inset -2px -2px 0 0 #000000,
+    0 0 0 2px #000000;
+  image-rendering: pixelated;
+}
+
+/* ============================================================
+   PANNEAUX, BANNIÈRES ET ONGLETS PIXEL ART (PAGE PARAMÈTRES)
+   ============================================================ */
+
+/* Arrière-plan Donjon pour la page entière avec vignette sombre */
+.pixel-page-dungeon {
+  background-color: #0b0b0f;
+  background-image: 
+    radial-gradient(ellipse at center, rgba(20, 20, 30, 0.5) 0%, rgba(5, 5, 8, 0.95) 100%),
+    url("/assets/ui/Barre-de-Navigation/dungeon-stone.png");
+  background-repeat: repeat;
+  background-size: 64px 32px;
+  image-rendering: pixelated;
+  min-height: 100%;
+}
+
+/* Panneau de Donjon Biseauté 3D */
+.pixel-panel {
+  background-color: #13141c;
+  box-shadow:
+    inset 2px 2px 0 0 #374151,
+    inset -2px -2px 0 0 #06070a,
+    0 0 0 2px #000000,
+    0 4px 0 2px #000000;
+  image-rendering: pixelated;
+}
+
+/* Bannière Enseigne Médiévale Rétro */
+.pixel-banner {
+  background-color: #180c10;
+  background-image:
+    linear-gradient(rgba(10, 5, 8, 0.45), rgba(4, 2, 4, 0.8)),
+    url("/assets/ui/Barre-de-Navigation/dungeon-stone.png");
+  background-repeat: repeat;
+  background-size: 64px 32px;
+  box-shadow:
+    inset 2px 2px 0 0 #dc2626,
+    inset -2px -2px 0 0 #3b0707,
+    0 0 0 2px #000000,
+    0 4px 0 2px #000000;
+  image-rendering: pixelated;
+}
+
+/* Onglets d'Inventaire Rétro */
+.pixel-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  font-family: "VCR_OSD", monospace;
+  font-size: 0.95rem;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  color: #9ca3af;
+  background-color: #1a1c26;
+  box-shadow:
+    inset 2px 2px 0 0 #374151,
+    inset -2px -2px 0 0 #07080c,
+    0 0 0 2px #000000;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.08s ease, color 0.08s ease;
+  image-rendering: pixelated;
+}
+
+.pixel-tab:hover {
+  color: #f3f4f6;
+  background-color: #262936;
+}
+
+.pixel-tab.active {
+  color: #ffffff;
+  background-color: #7f1d1d;
+  box-shadow:
+    inset 2px 2px 0 0 #ef4444,
+    inset -2px -2px 0 0 #3b0707,
+    0 0 0 2px #000000;
+  text-shadow: 0 0 6px #ef4444, 1px 1px 0 #000000;
+  transform: translateY(2px);
+}
+
+/* Touche mécanique rétro (assignation clavier) */
+.pixel-key-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  padding: 0.45rem 1rem;
+  font-family: "VCR_OSD", monospace;
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #f3f4f6;
+  background-color: #272a38;
+  box-shadow:
+    inset 2px 2px 0 0 #4b5563,
+    inset -2px -2px 0 0 #090a0f,
+    0 0 0 2px #000000,
+    0 3px 0 2px #000000;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.08s ease, color 0.08s ease;
+  image-rendering: pixelated;
+}
+
+.pixel-key-btn:hover {
+  background-color: #373b4d;
+}
+
+.pixel-key-btn.listening {
+  background-color: #dc2626;
+  color: #ffffff;
+  box-shadow:
+    inset 2px 2px 0 0 #3b0707,
+    inset -2px -2px 0 0 #fca5a5,
+    0 0 0 2px #000000,
+    0 1px 0 2px #000000;
+  transform: translateY(2px);
+  animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Emplacement d'inventaire pour le catalogue d'avatars */
+.pixel-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background-color: #101117;
+  box-shadow:
+    inset 2px 2px 0 0 #000000,
+    inset -2px -2px 0 0 #272a38,
+    0 0 0 2px #000000;
+  image-rendering: pixelated;
+  transition: background-color 0.08s ease;
+}
+
+.pixel-slot:hover {
+  background-color: #181a24;
+}
+
+.pixel-slot.active {
+  background-color: #3b0707;
+  box-shadow:
+    inset 2px 2px 0 0 #ef4444,
+    inset -2px -2px 0 0 #7f1d1d,
+    0 0 0 2px #000000,
+    0 0 8px rgba(239, 68, 68, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
+  }
+  .pixel-key-btn.listening {
+    animation: none;
+  }
 }

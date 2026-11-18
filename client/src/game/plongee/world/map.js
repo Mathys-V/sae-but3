@@ -22,6 +22,14 @@ export function setupOceanBoundaries(k) {
     k.z(-100),
   ]);
 
+  // Fond oceanique uni d'arriere-plan (securite anti-couture sous-marine z = -100)
+  k.add([
+    k.rect(OCEAN_WIDTH, OCEAN_DEPTH),
+    k.pos(-OCEAN_WIDTH / 2, WATER_LEVEL),
+    k.color(15, 35, 60),
+    k.z(-100),
+  ]);
+
   // --- 2. LES CORAUX ET FONDS MARINS (scale 2x pour un 60 FPS fluide) ---
   k.add([
     k.sprite("bg-zone2", {

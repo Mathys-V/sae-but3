@@ -1,4 +1,6 @@
 import { stats, triggerNotification } from "./stats.js";
+import { broadcastLocalAction, broadcastBarrelSync } from "../core/multiplayer.js";
+import { clearActiveRun, saveProgression } from "../core/statsStorage.js";
 
 /**
  * Instancie et configure l'entité du joueur (plongeur) avec son modèle physique,
@@ -114,6 +116,7 @@ export function setupPlayer(k, startX, startY) {
     }
 
     player.color = k.rgb(255, 80, 80);
+    broadcastLocalAction("hurt", { hp: stats.hp, amount });
     k.wait(0.15, () => {
       player.color = k.rgb(255, 255, 255);
     });
@@ -138,7 +141,10 @@ export function setupPlayer(k, startX, startY) {
     // Réinitialisation survie et perte du butin personnel
     stats.hp = stats.maxHp;
     stats.o2 = stats.maxO2;
+    broadcastLocalAction("death");
     stats.inventory = [];
+    clearActiveRun();
+    saveProgression(stats);
 
     // Téléportation immédiate sur la barque au centre parfait (x = 0, y = -58)
     player.pos = k.vec2(0, -58);
@@ -276,6 +282,37 @@ export function setupPlayer(k, startX, startY) {
     updateMovementAnimation();
   };
 
+  // Fonctions d'assistance pour le combat de mêlée (réduction de la complexité cognitive Sonar S3776)
+  const applyDamageToTarget = (target) => {
+    if (!target.hurt) return;
+    if (target.is("enemy")) {
+      target.hurt(stats.damage || 15);
+    } else if (target.is("npc")) {
+      target.hurt(0);
+    }
+  };
+
+  const destroyEnemyProjectile = (proj) => {
+    if (proj?.exists()) {
+      try {
+        k.play("sfx-hit", { volume: 0.75 });
+      } catch {
+        /* Audio error ignored */
+      }
+      k.destroy(proj);
+    }
+  };
+
+  const hitNearbyTargets = (tags, hitCenter, maxDist, hitCallback) => {
+    for (const tag of tags) {
+      for (const entity of k.get(tag)) {
+        if (entity.pos && hitCenter.dist(entity.pos) <= maxDist) {
+          hitCallback(entity);
+        }
+      }
+    }
+  };
+
   // ÉTAPE 1 : COMBAT DE MÊLÉE (COUP DE HARPON / ESTOC)
   const attack = () => {
     if (isAttacking || isDying) return;
@@ -288,10 +325,8 @@ export function setupPlayer(k, startX, startY) {
     }
 
     const mousePos = k.toWorld ? k.toWorld(k.mousePos()) : k.mousePos();
-    if (mousePos.x < player.pos.x) {
-      setFacing(true);
-    } else if (mousePos.x > player.pos.x) {
-      setFacing(false);
+    if (mousePos.x !== player.pos.x) {
+      setFacing(mousePos.x < player.pos.x);
     }
 
     const isUnderwater = player.pos.y > WATER_LEVEL;
@@ -300,13 +335,13 @@ export function setupPlayer(k, startX, startY) {
       : "diver-attack";
 
     currentAnim = "attack";
+    broadcastLocalAction("attack", { dir: facingLeft ? -1 : 1 });
     player.use(k.sprite(attackSprite));
     player.play("attack");
     player.flipX = facingLeft;
 
     const attackDir = facingLeft ? -1 : 1;
     const hitCenter = k.vec2(player.pos.x + attackDir * 35, player.pos.y);
-
     const hitTargets = new Set();
 
     const harpoonHitbox = k.add([
@@ -326,38 +361,14 @@ export function setupPlayer(k, startX, startY) {
       } catch {
         /* Audio error ignored */
       }
-      if (target.is("enemy") && target.hurt) {
-        target.hurt(stats.damage || 15);
-      } else if (target.is("npc") && target.hurt) {
-        target.hurt(0);
-      }
+      applyDamageToTarget(target);
     };
 
     harpoonHitbox.onCollide("enemy", hitTarget);
     harpoonHitbox.onCollide("npc", hitTarget);
-    harpoonHitbox.onCollide("enemy-projectile", (proj) => {
-      if (proj?.exists()) {
-        try {
-          k.play("sfx-hit", { volume: 0.75 });
-        } catch {
-          /* Audio error ignored */
-        }
-        k.destroy(proj);
-      }
-    });
+    harpoonHitbox.onCollide("enemy-projectile", destroyEnemyProjectile);
 
-    const enemies = k.get("enemy");
-    for (const enemy of enemies) {
-      if (enemy.pos && hitCenter.dist(enemy.pos) <= 35) {
-        hitTarget(enemy);
-      }
-    }
-    const npcs = k.get("npc");
-    for (const npc of npcs) {
-      if (npc.pos && hitCenter.dist(npc.pos) <= 35) {
-        hitTarget(npc);
-      }
-    }
+    hitNearbyTargets(["enemy", "npc"], hitCenter, 35, hitTarget);
 
     k.wait(0.2, () => {
       if (harpoonHitbox.exists()) {
@@ -420,6 +431,7 @@ export function setupPlayer(k, startX, startY) {
 
     triggerNotification(`( + ) ${count} butin(s) depose(s) dans le Tonneau !`, [56, 189, 248], 3.0);
     window.dispatchEvent(new CustomEvent("plongee-inventory-updated"));
+    broadcastBarrelSync(stats.barrelInventory);
   };
 
   // ÉTAPE 3 : INTERACTION AU TONNEAU ET AU MARCHAND (TOUCHE E)
