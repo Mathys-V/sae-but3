@@ -1,6 +1,6 @@
 // client/src/services/api.js
 
-const API_URL = "http://localhost:8000/api"; // L'adresse de ton serveur FastAPI
+const API_URL = "/api"; // L'adresse de ton serveur FastAPI
 
 // Fonction pour récupérer les scores d'un mini-jeu spécifique
 export const fetchLeaderboard = async (gameId) => {
