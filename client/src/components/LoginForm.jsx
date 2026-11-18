@@ -15,12 +15,12 @@ export default function LoginForm() {
     e.preventDefault();
     setError('');
     
-    const data = await loginUser(pseudo, password);
-    if (data) {
-      // Si la connexion réussit (ex: pseudo quelconque et mdp "azerty"), on met à jour Zustand
-      login(data.pseudo, data.access_token);
+    const result = await loginUser(pseudo, password);
+    if (result.success) {
+      // Si la connexion réussit, on met à jour Zustand
+      login(result.data);
     } else {
-      setError("Échec de la connexion. Vérifiez vos identifiants.");
+      setError(result.error || "Échec de la connexion. Vérifiez vos identifiants.");
     }
   };
 

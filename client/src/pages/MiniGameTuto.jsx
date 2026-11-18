@@ -1,12 +1,19 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import kaplay from "kaplay";
+import { recordGameSession } from "../services/api.js";
+import { useAuthStore } from "../store/authStore.js";
 
 function MiniGameTuto() {
   const canvasRef = useRef(null);
+  const startTimeRef = useRef(null);
+  const completedRef = useRef(false);
+  const { token } = useAuthStore();
 
   useEffect(() => {
     document.title = "EvilJV | Tutoriel";
+    startTimeRef.current = Date.now();
+    completedRef.current = false;
 
     const k = kaplay({
       canvas: canvasRef.current,
@@ -76,8 +83,33 @@ function MiniGameTuto() {
 
     return () => {
       k.quit();
+      // Si le joueur quitte sans valider le bouton de fin, on enregistre un abandon réel
+      if (!completedRef.current) {
+        const start = startTimeRef.current || Date.now();
+        const elapsed = Math.max(1, Math.floor((Date.now() - start) / 1000));
+        void recordGameSession(token, {
+          game: "tutoriel",
+          score: 25,
+          timeSeconds: elapsed,
+          completed: false,
+          status: "abandoned",
+        });
+      }
     };
-  }, []);
+  }, [token]);
+
+  const handleFinishTutorial = () => {
+    completedRef.current = true;
+    const start = startTimeRef.current || Date.now();
+    const elapsed = Math.max(1, Math.floor((Date.now() - start) / 1000));
+    void recordGameSession(token, {
+      game: "tutoriel",
+      score: 100,
+      timeSeconds: elapsed,
+      completed: true,
+      status: "finished",
+    });
+  };
 
   return (
     // Remplacement de w-screen/h-screen par w-full pour respecter le Layout parent
@@ -99,12 +131,21 @@ function MiniGameTuto() {
         ></canvas>
       </div>
 
-      <Link
-        to="/evil"
-        className="px-6 py-2 border border-red-700 text-red-500 hover:bg-red-950 transition-colors rounded font-bold"
-      >
-        Quitter le jeu
-      </Link>
+      <div className="flex gap-4">
+        <Link
+          to="/evil"
+          onClick={handleFinishTutorial}
+          className="px-6 py-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold transition-colors rounded shadow-lg"
+        >
+          ✓ Terminer le tutoriel
+        </Link>
+        <Link
+          to="/evil"
+          className="px-6 py-2 border border-red-700 text-red-500 hover:bg-red-950 transition-colors rounded font-bold"
+        >
+          Abandonner
+        </Link>
+      </div>
     </main>
   );
 }

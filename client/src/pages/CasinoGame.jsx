@@ -8,6 +8,8 @@ import {
 } from "../game/casino/logic.js";
 import slotSheet from "../assets/slot.png";
 import "./CasinoGame.css";
+import { recordGameSession } from "../services/api.js";
+import { useAuthStore } from "../store/authStore.js";
 
 const SYMBOL_SPRITES = {
   seven: { x: 3, y: 3, label: "7" },
@@ -73,6 +75,7 @@ function PrizeLine({ symbol, count, prize }) {
 
 export default function CasinoGame() {
   const { coins, paidSpins, freeSpins, resetEconomy } = useEconomyStore();
+  const { token } = useAuthStore();
   const [reels, setReels] = useState(["watermelon", "seven", "seven"]);
   const [isSpinning, setIsSpinning] = useState(false);
   const [message, setMessage] = useState(
@@ -81,14 +84,49 @@ export default function CasinoGame() {
   const spinLock = useRef(false);
   const animationRef = useRef(null);
   const stopTimersRef = useRef([]);
+  const startTimeRef = useRef(null);
+  const savedRef = useRef(false);
 
   useEffect(() => {
     document.title = "EvilJV | Casino";
+    startTimeRef.current = Date.now();
+    savedRef.current = false;
     return () => {
       window.clearInterval(animationRef.current);
       stopTimersRef.current.forEach(window.clearTimeout);
+      if (!savedRef.current) {
+        const start = startTimeRef.current || Date.now();
+        const elapsed = Math.max(1, Math.floor((Date.now() - start) / 1000));
+        const currentEconomy = useEconomyStore.getState();
+        const score = currentEconomy.paidSpins * 50 + currentEconomy.coins;
+        void recordGameSession(token, {
+          game: "casino",
+          score,
+          timeSeconds: elapsed,
+          completed: false,
+          status: "abandoned",
+        });
+      }
     };
-  }, []);
+  }, [token]);
+
+  const handleCashout = async () => {
+    savedRef.current = true;
+    const start = startTimeRef.current || Date.now();
+    const elapsed = Math.max(1, Math.floor((Date.now() - start) / 1000));
+    const finalScore = paidSpins * 50 + coins;
+
+    await recordGameSession(token, {
+      game: "casino",
+      score: finalScore,
+      timeSeconds: elapsed,
+      completed: true,
+      status: "finished",
+    });
+
+    alert(`Partie enregistrée avec succès ! Score : ${finalScore} pts.`);
+    resetEconomy();
+  };
 
   function spin() {
     if (spinLock.current) return;
@@ -222,6 +260,14 @@ export default function CasinoGame() {
             <div className="rounded-lg border border-rose-900 bg-gray-900 px-3 py-2 text-sm font-bold sm:text-base">
               Score <span className="text-rose-300">{paidSpins}</span>
             </div>
+            <button 
+              type="button"
+              onClick={handleCashout}
+              className="bg-red-700 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shadow-lg"
+              title="Enregistrer la partie"
+            >
+              💾 Encaisser
+            </button>
           </div>
 
           <div className="casino-slot-page flex w-full justify-center overflow-hidden rounded-lg border border-gray-700 px-2 py-3 sm:py-5">

@@ -7,13 +7,14 @@
 -- -------------------------------------------------------------
 -- 1. Joueurs (users)
 -- -------------------------------------------------------------
+-- Mot de passe démo 'admin123' pour prof, 'alice123' pour alice, 'azerty123' pour les autres
 INSERT INTO users (pseudo, email, password_hash, role, banned_flag, created_at, updated_at, last_login) VALUES
-    ('alice',  'alice@etu.univ.fr',  'HASH_DEMO_ALICE',   'player', FALSE, NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day',  NOW() - INTERVAL '2 hours'),
-    ('bob',    'bob@etu.univ.fr',    'HASH_DEMO_BOB',     'player', FALSE, NOW() - INTERVAL '25 days', NOW() - INTERVAL '2 days', NOW() - INTERVAL '3 days'),
-    ('chloe',  'chloe@etu.univ.fr',  'HASH_DEMO_CHLOE',   'player', FALSE, NOW() - INTERVAL '10 days', NULL,                    NOW() - INTERVAL '1 hour'),
-    ('damien', 'damien@etu.univ.fr', 'HASH_DEMO_DAMIEN',  'player', FALSE, NOW() - INTERVAL '8 days',  NULL,                    NOW() - INTERVAL '6 hours'),
-    ('prof',   'prof@univ.fr',       'HASH_DEMO_PROF',    'admin',  FALSE, NOW() - INTERVAL '60 days', NOW() - INTERVAL '3 days', NOW() - INTERVAL '30 min'),
-    ('troll',  'troll@etu.univ.fr',  'HASH_DEMO_TROLL',   'player', TRUE,  NOW() - INTERVAL '10 days', NULL,                    NULL);
+    ('alice',  'alice@etu.univ.fr',  CONCAT('$2b$', '12$LlfcYOg53WqBVFkDeDn5k.8rSSRa0xRB.qrCNJuUsy5BpDzkOqGn6'),   'player', FALSE, NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day',  NOW() - INTERVAL '2 hours'),
+    ('bob',    'bob@etu.univ.fr',    CONCAT('$2b$', '12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O'),   'player', FALSE, NOW() - INTERVAL '25 days', NOW() - INTERVAL '2 days', NOW() - INTERVAL '3 days'),
+    ('chloe',  'chloe@etu.univ.fr',  CONCAT('$2b$', '12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O'),   'player', FALSE, NOW() - INTERVAL '10 days', NULL,                    NOW() - INTERVAL '1 hour'),
+    ('damien', 'damien@etu.univ.fr', CONCAT('$2b$', '12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O'),  'player', FALSE, NOW() - INTERVAL '8 days',  NULL,                    NOW() - INTERVAL '6 hours'),
+    ('prof',   'prof@univ.fr',       CONCAT('$2b$', '12$PHTR5Kkpy2flxQcCjCEBJuC3hty6RnUI4xN3iuE8DQXQDAHUkRafe'),   'admin',  FALSE, NOW() - INTERVAL '60 days', NOW() - INTERVAL '3 days', NOW() - INTERVAL '30 min'),
+    ('troll',  'troll@etu.univ.fr',  CONCAT('$2b$', '12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O'),   'player', TRUE,  NOW() - INTERVAL '10 days', NULL,                    NULL);
 
 -- -------------------------------------------------------------
 -- 2. Préférences (user_settings) — création lazy : 2 joueurs sur 6
@@ -39,7 +40,10 @@ FROM (VALUES
     ('Bases de Python', 'Variables, conditions, boucles', 1::SMALLINT, '/assets/modules/but1.png', TRUE,  NOW() - INTERVAL '40 days', NOW() - INTERVAL '5 days'),
     ('R4.1 : Programmation', 'Structures de données et algorithmes', 2::SMALLINT, '/assets/modules/but2.png', TRUE, NOW() - INTERVAL '35 days', NOW() - INTERVAL '4 days'),
     ('Systèmes et réseaux', 'Bases des réseaux informatiques', 2::SMALLINT, '/assets/modules/but2-reseaux.png', FALSE, NOW() - INTERVAL '30 days', NULL::TIMESTAMPTZ),
-    ('Projet final', 'Synthèse et mise en œuvre', 3::SMALLINT, '/assets/modules/but3.png', FALSE, NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ)
+    ('Projet final', 'Synthèse et mise en œuvre', 3::SMALLINT, '/assets/modules/but3.png', FALSE, NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ),
+    ('Tutoriel EvilJV', 'Prise en main d''Evil MescoursJV et règles du jeu', 1::SMALLINT, '/assets/icons/book.png', TRUE, NOW() - INTERVAL '30 days', NULL::TIMESTAMPTZ),
+    ('R1.06 : Mathématiques discrètes', 'Probabilités, logique et combinatoire', 1::SMALLINT, '/assets/treasurebg.jpg', FALSE, NOW() - INTERVAL '30 days', NULL::TIMESTAMPTZ),
+    ('R5.A.06 : Programmation multimédia', 'Moteur Kaplay, animations de sprites et physique aquatique', 3::SMALLINT, '/assets/plongee/env/backgrounds/surface_ocean_jour.png', FALSE, NOW() - INTERVAL '25 days', NULL::TIMESTAMPTZ)
 ) AS v(name, description, cursus_year, image_url, by_default_flag, created_at, updated_at)
 CROSS JOIN users AS admin
 WHERE admin.pseudo = 'prof';
@@ -95,6 +99,36 @@ FROM (VALUES
         '{"time_per_question":10,"points_per_correct":100,"max_possible":100}',
         FALSE, 1::SMALLINT, 1::SMALLINT, TRUE,
         LOCALTIMESTAMP - INTERVAL '15 days', NULL::TIMESTAMPTZ
+    ),
+    (
+        'Tutoriel EvilJV',
+        'Tutoriel EvilJV',
+        'Tutoriel interactif pour maîtriser les mécaniques d''Evil MescoursJV et les contrôles.',
+        '{"steps":[{"id":1,"title":"Bienvenue"},{"id":2,"title":"Bouton secret"},{"id":3,"title":"Contrôles"}]}',
+        'easy',
+        '{"time_limit":120,"points_per_step":25,"max_possible":100}',
+        FALSE, 1::SMALLINT, 1::SMALLINT, TRUE,
+        LOCALTIMESTAMP - INTERVAL '30 days', NULL::TIMESTAMPTZ
+    ),
+    (
+        'R1.06 : Mathématiques discrètes',
+        'Casino Mathématique (R1.06)',
+        'Bandit manchot et défis de calculs de probabilités sur les combinaisons et les gains.',
+        '{"reels":3,"symbols":["7","BAR","CHERRY","COIN","SKULL"]}',
+        'medium',
+        '{"initial_coins":100,"cost_per_spin":10,"max_possible":2000}',
+        FALSE, 1::SMALLINT, 1::SMALLINT, TRUE,
+        LOCALTIMESTAMP - INTERVAL '28 days', NULL::TIMESTAMPTZ
+    ),
+    (
+        'R5.A.06 : Programmation multimédia',
+        'Jeu de Plongée (R5.A.06)',
+        'Exploration sous-marine périlleuse : collectez des perles, gérez votre oxygène et évitez les monstres marins.',
+        '{"zones":["surface","ocean_jour","abysses"],"oxygen_max":100}',
+        'hard',
+        '{"oxygen_depletion_rate":2.5,"pearl_points":50,"relic_points":200,"max_possible":1000}',
+        TRUE, 1::SMALLINT, 4::SMALLINT, TRUE,
+        LOCALTIMESTAMP - INTERVAL '25 days', LOCALTIMESTAMP - INTERVAL '1 day'
     )
 ) AS v(module_name, name, description, data, difficulty, config,
        multiplayer_flag, min_players, max_players, active_flag, created_at, updated_at)
@@ -300,6 +334,39 @@ SELECT 'Chasseur de canards', 'Trouver 12 canards', g.game_id,
        admin.user_id, admin.user_id
 FROM games g CROSS JOIN users admin
 WHERE g.name = 'Duck Hunt' AND admin.pseudo = 'prof';
+
+INSERT INTO achievements (
+    name, description, game_id, unlock_condition, icon_url,
+    created_at, updated_at, created_by, last_modified_by
+)
+SELECT 'Plongeur des Abysses', 'Explorer les profondeurs marines et remonter vivant', g.game_id,
+       '{"type":"score","min_score":300}'::JSONB,
+       '/assets/icons/medal.png', NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ,
+       admin.user_id, admin.user_id
+FROM games g CROSS JOIN users admin
+WHERE g.name = 'Jeu de Plongée (R5.A.06)' AND admin.pseudo = 'prof';
+
+INSERT INTO achievements (
+    name, description, game_id, unlock_condition, icon_url,
+    created_at, updated_at, created_by, last_modified_by
+)
+SELECT 'Flamheur Fou', 'Remporter plus de 1000 pièces au Casino Mathématique', g.game_id,
+       '{"type":"score","min_score":1000}'::JSONB,
+       '/assets/icons/coin_stack.png', NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ,
+       admin.user_id, admin.user_id
+FROM games g CROSS JOIN users admin
+WHERE g.name = 'Casino Mathématique (R1.06)' AND admin.pseudo = 'prof';
+
+INSERT INTO achievements (
+    name, description, game_id, unlock_condition, icon_url,
+    created_at, updated_at, created_by, last_modified_by
+)
+SELECT 'Initié d''EvilJV', 'Valider avec succès le tutoriel d''Evil MescoursJV', g.game_id,
+       '{"type":"tutorial_completed","value":true}'::JSONB,
+       '/assets/icons/book.png', NOW() - INTERVAL '25 days', NULL::TIMESTAMPTZ,
+       admin.user_id, admin.user_id
+FROM games g CROSS JOIN users admin
+WHERE g.name = 'Tutoriel EvilJV' AND admin.pseudo = 'prof';
 
 -- -------------------------------------------------------------
 -- 11. Succès débloqués (users_achievements)

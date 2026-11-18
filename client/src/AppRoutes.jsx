@@ -9,6 +9,7 @@ import MiniGameTuto from "./pages/MiniGameTuto.jsx";
 import EvilSettings from "./pages/EvilSettings.jsx";
 import DivingGame from "./pages/DivingGame.jsx";
 import CasinoGame from "./pages/CasinoGame.jsx";
+import EvilAdminPanel from "./pages/EvilAdminPanel.jsx";
 import CasinoIntro from "./pages/CasinoIntro.jsx";
 import BlackjackGame from "./pages/BlackjackGame.jsx";
 import "./App.css";
@@ -31,6 +32,7 @@ function AppRoutes() {
         <Route path="blackjack" element={<BlackjackGame />} />
         <Route path="evil/jeux/casino" element={<Navigate to="/casino" replace />} />
         <Route path="evil/parametres" element={<EvilSettings />} />
+        <Route path="evil/admin" element={<EvilAdminPanel />} />
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />
