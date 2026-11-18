@@ -12,6 +12,7 @@ import CasinoGame from "./pages/CasinoGame.jsx";
 import EvilAdminPanel from "./pages/EvilAdminPanel.jsx";
 import CasinoIntro from "./pages/CasinoIntro.jsx";
 import BlackjackGame from "./pages/BlackjackGame.jsx";
+import IhmClashGame from "./pages/IhmClashGame.jsx";
 import "./App.css";
 
 function AppRoutes() {
@@ -27,6 +28,7 @@ function AppRoutes() {
         <Route path="evil/jeux" element={<EvilGames />} />
         <Route path="evil/jeux/tutoriel" element={<MiniGameTuto />} />
         <Route path="evil/jeux/plongee" element={<DivingGame />} />
+        <Route path="evil/jeux/ihm-clash" element={<IhmClashGame />} />
         <Route path="casino" element={<CasinoIntro />} />
         <Route path="machine" element={<CasinoGame />} />
         <Route path="blackjack" element={<BlackjackGame />} />

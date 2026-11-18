@@ -43,6 +43,7 @@ FROM (VALUES
     ('Projet final', 'Synthèse et mise en œuvre', 3::SMALLINT, '/assets/modules/but3.png', FALSE, NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ),
     ('Tutoriel EvilJV', 'Prise en main d''Evil MescoursJV et règles du jeu', 1::SMALLINT, '/assets/icons/book.png', TRUE, NOW() - INTERVAL '30 days', NULL::TIMESTAMPTZ),
     ('R1.06 : Mathématiques discrètes', 'Probabilités, logique et combinatoire', 1::SMALLINT, '/assets/treasurebg.jpg', FALSE, NOW() - INTERVAL '30 days', NULL::TIMESTAMPTZ),
+    ('R3.01 : Développement Web', 'Conception web, responsive design, ergonomie et accessibilité', 2::SMALLINT, '/assets/modules/but2.png', TRUE, NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ),
     ('R5.A.06 : Programmation multimédia', 'Moteur Kaplay, animations de sprites et physique aquatique', 3::SMALLINT, '/assets/plongee/env/backgrounds/surface_ocean_jour.png', FALSE, NOW() - INTERVAL '25 days', NULL::TIMESTAMPTZ)
 ) AS v(name, description, cursus_year, image_url, by_default_flag, created_at, updated_at)
 CROSS JOIN users AS admin
@@ -129,6 +130,16 @@ FROM (VALUES
         '{"oxygen_depletion_rate":2.5,"pearl_points":50,"relic_points":200,"max_possible":1000}',
         TRUE, 1::SMALLINT, 4::SMALLINT, TRUE,
         LOCALTIMESTAMP - INTERVAL '25 days', LOCALTIMESTAMP - INTERVAL '1 day'
+    ),
+    (
+        'R3.01 : Développement Web',
+        'Duel d''IHM (UX Clash)',
+        'Comparez 2 interfaces web et identifiez la plus responsive, accessible et ergonomique.',
+        '{"topics":["responsive","wcag","forms","ergonomics"],"rounds":20}',
+        'medium',
+        '{"time_limit_sec":15,"points_per_correct":100,"streak_bonus":25,"max_players":4}',
+        TRUE, 1::SMALLINT, 4::SMALLINT, TRUE,
+        LOCALTIMESTAMP - INTERVAL '10 days', NULL::TIMESTAMPTZ
     )
 ) AS v(module_name, name, description, data, difficulty, config,
        multiplayer_flag, min_players, max_players, active_flag, created_at, updated_at)

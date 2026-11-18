@@ -48,7 +48,15 @@ export const ressourcesBUT = {
   ],
   BUT2: [
     // Semestre 3
-    { id: "R3.01", nom: "Développement web", sem: 3 },
+    {
+      id: "R3.01",
+      nom: "Développement web : Duel d'IHM",
+      sem: 3,
+      path: "/evil/jeux/ihm-clash",
+      bgImage: "/assets/ui/fonds_site/alchimiste_chateau_option.jpg",
+      spriteIcon: "/assets/ui/Barre-de-Navigation/sprites/gamepad-32.png",
+      tag: "Duel d'IHM",
+    },
     { id: "R3.02", nom: "Développement efficace", sem: 3 },
     { id: "R3.03", nom: "Analyse", sem: 3 },
     { id: "R3.04", nom: "Qualité de développement", sem: 3 },
