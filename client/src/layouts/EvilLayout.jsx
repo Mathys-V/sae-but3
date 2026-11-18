@@ -39,6 +39,28 @@ function UserProfileBadge({ user, isGuest, role, avatar }) {
   );
 }
 
+function getCastleBackgroundStyle(pathname) {
+  if (pathname === "/evil") {
+    return {
+      backgroundImage: 'linear-gradient(rgba(10, 10, 16, 0.32), rgba(5, 5, 8, 0.42)), url("/assets/ui/accueil/exterieur_chateau.jpg")',
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover",
+      backgroundAttachment: "fixed",
+    };
+  }
+  if (pathname === "/evil/jeux") {
+    return {
+      backgroundImage: 'linear-gradient(rgba(10, 10, 16, 0.32), rgba(5, 5, 8, 0.42)), url("/assets/ui/accueil/interieur_chateau.jpg")',
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover",
+      backgroundAttachment: "fixed",
+    };
+  }
+  return undefined;
+}
+
 function EvilLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -52,20 +74,15 @@ function EvilLayout() {
   };
 
   const isCasino = ["/casino", "/machine", "/blackjack"].includes(location.pathname);
-  const isHome = location.pathname === "/evil";
+  const castleBgStyle = getCastleBackgroundStyle(location.pathname);
+  const hasCustomBg = isCasino || Boolean(castleBgStyle);
   const pageBackground = getPageBackground(location.pathname);
   const casinoIntroBackground = location.pathname === "/casino";
 
   return (
     <div
-      className={`min-h-screen ${isCasino || isHome ? "" : "bg-gray-950"} casino-layout text-gray-100 font-sans flex flex-col`}
-      style={isHome ? {
-        backgroundImage: 'linear-gradient(rgba(10, 10, 16, 0.72), rgba(5, 5, 8, 0.86)), url("/assets/ui/accueil/interieur_chateau.jpg")',
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        backgroundAttachment: "fixed",
-      } : undefined}
+      className={`min-h-screen ${hasCustomBg ? "" : "bg-gray-950"} casino-layout text-gray-100 font-sans flex flex-col`}
+      style={castleBgStyle}
     >
       {/* Barre de navigation Décor de Donjon Pixel Art */}
       <header className="navbar-dungeon px-4 py-3 flex items-center justify-between sticky top-0 z-50">
