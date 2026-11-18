@@ -47,6 +47,45 @@ def _resolve_player_account(db: Session, current_user: User | None) -> User:
     return guest_user
 
 
+def _create_initial_module_progress(
+    user_id: int,
+    module_id: int,
+    req: RecordGameSessionRequest,
+    duration_sec: int,
+    now: datetime,
+) -> UserModule:
+    status_str = "completed" if req.completed else "in_progress"
+    best_time = duration_sec if req.completed else None
+    date_comp = now if req.completed else None
+    return UserModule(
+        user_id=user_id,
+        module_id=module_id,
+        status=status_str,
+        attempts=1,
+        best_score=req.score,
+        best_time=best_time,
+        date_completion=date_comp,
+    )
+
+
+def _update_existing_module_progress(
+    progress: UserModule,
+    req: RecordGameSessionRequest,
+    duration_sec: int,
+    now: datetime,
+) -> None:
+    progress.attempts += 1
+    if req.score > (progress.best_score or 0):
+        progress.best_score = req.score
+    if not req.completed:
+        return
+    if progress.best_time is None or duration_sec < progress.best_time:
+        progress.best_time = duration_sec
+    progress.status = "completed"
+    if not progress.date_completion:
+        progress.date_completion = now
+
+
 def _sync_user_module_progress(
     db: Session,
     player: User,
@@ -66,27 +105,14 @@ def _sync_user_module_progress(
         .first()
     )
     if not progress:
-        progress = UserModule(
-            user_id=player.user_id,
-            module_id=game.module_id,
-            status="completed" if req.completed else "in_progress",
-            attempts=1,
-            best_score=req.score,
-            best_time=duration_sec if req.completed else None,
-            date_completion=now if req.completed else None,
+        db.add(
+            _create_initial_module_progress(
+                player.user_id, game.module_id, req, duration_sec, now
+            )
         )
-        db.add(progress)
         return
 
-    progress.attempts += 1
-    if req.score > (progress.best_score or 0):
-        progress.best_score = req.score
-    if req.completed:
-        if progress.best_time is None or duration_sec < progress.best_time:
-            progress.best_time = duration_sec
-        progress.status = "completed"
-        if not progress.date_completion:
-            progress.date_completion = now
+    _update_existing_module_progress(progress, req, duration_sec, now)
 
 
 @router.post("/record-session", response_model=RecordGameSessionResponse, status_code=status.HTTP_201_CREATED)

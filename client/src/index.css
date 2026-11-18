@@ -102,7 +102,7 @@
   border-radius: 0;
   image-rendering: pixelated;
   text-shadow: 1px 1px 0 #000000;
-  transition: background-color 0.1s ease, color 0.1s ease, transform 0.05s ease;
+  transition: background-color 0.1s ease, color 0.1s ease;
   user-select: none;
   cursor: pointer;
   outline: none;
@@ -262,7 +262,7 @@
     0 0 0 2px #000000;
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.08s ease, color 0.08s ease, transform 0.08s ease;
+  transition: background-color 0.08s ease, color 0.08s ease;
   image-rendering: pixelated;
 }
 
@@ -301,7 +301,7 @@
     0 3px 0 2px #000000;
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.08s ease, color 0.08s ease, transform 0.08s ease;
+  transition: background-color 0.08s ease, color 0.08s ease;
   image-rendering: pixelated;
 }
 
@@ -334,7 +334,7 @@
     inset -2px -2px 0 0 #272a38,
     0 0 0 2px #000000;
   image-rendering: pixelated;
-  transition: transform 0.08s ease, background-color 0.08s ease;
+  transition: background-color 0.08s ease;
 }
 
 .pixel-slot:hover {
@@ -358,5 +358,8 @@
     animation-iteration-count: 1;
     transition-duration: 0.01ms;
     scroll-behavior: auto;
+  }
+  .pixel-key-btn.listening {
+    animation: none;
   }
 }
