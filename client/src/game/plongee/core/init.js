@@ -5,15 +5,36 @@ import { setupUI } from "./ui.js";
 import { setupSolids } from "../obstacles/solids.js";
 import { populateOcean } from "../world/levelManager.js";
 import { stats } from "../entities/stats.js";
+import { setupMultiplayer } from "./multiplayer.js";
+import {
+  saveProgression,
+  loadProgression,
+  saveActiveRun,
+  loadActiveRun,
+} from "./statsStorage.js";
 
 /**
  * Initialise l'instance du moteur Kaplay, charge l'ensemble des spritesheets, sons et polices,
  * puis instancie la scène principale de plongée ("dive") avec la physique, la caméra et les écouteurs.
  *
  * @param {HTMLCanvasElement} canvasElement - Élément canvas HTML cible pour le rendu Kaplay.
+ * @param {object} [multiplayerOptions={}] - Configuration multijoueur (socket, session, joueurs, simulation).
  * @returns {() => void} Fonction de destruction et de nettoyage complet du moteur de jeu.
  */
-export function initDivingGame(canvasElement) {
+export function initDivingGame(canvasElement, multiplayerOptions = {}) {
+  // Purge préventive du cache d'atlas de police WebGL pour éviter l'affichage de rectangles noirs
+  if (
+    typeof window !== "undefined" &&
+    typeof window.__kaplayClearFontCache === "function"
+  ) {
+    try {
+      window.__kaplayClearFontCache();
+    } catch {
+      /* ignore */
+    }
+  }
+
+  let multiController = null;
   const k = kaplay({
     canvas: canvasElement,
     width: 1024,
@@ -163,17 +184,39 @@ export function initDivingGame(canvasElement) {
     });
   }
 
+  let bgmMusic = null;
+  let localPlayerRef = null;
   k.scene("dive", () => {
-    k.play("bgm-dive", { loop: true, volume: 0.5 });
+    try {
+      bgmMusic = k.play("bgm-dive", { loop: true, volume: 0.5 });
+    } catch {
+      /* ignore audio error */
+    }
+
+    loadProgression(stats);
+    const activeRun = loadActiveRun();
+    let startX = 0;
+    let startY = -58;
+    if (activeRun && activeRun.pos) {
+      startX = activeRun.pos.x;
+      startY = activeRun.pos.y;
+      if (typeof activeRun.hp === "number") stats.hp = activeRun.hp;
+      if (typeof activeRun.o2 === "number") stats.o2 = activeRun.o2;
+      if (Array.isArray(activeRun.inventory)) stats.inventory = activeRun.inventory;
+      if (typeof activeRun.gameTimer === "number") stats.gameTimer = activeRun.gameTimer;
+    }
+
     setupOceanBoundaries(k);
 
-    // Spawn parfaitement centré sur le plancher du bateau
-    const localPlayer = setupPlayer(k, 0, -58);
+    // Spawn centré sur le bateau ou restauré depuis la session active
+    const localPlayer = setupPlayer(k, startX, startY);
+    localPlayerRef = localPlayer;
 
     // Fait apparaître toute la faune de l'océan (Zones 1, 2, 3)
     populateOcean(k, localPlayer);
     setupUI(k, localPlayer);
     setupSolids(k, localPlayer); // doit être appelé AVANT la caméra et le filet
+    multiController = setupMultiplayer(k, localPlayer, multiplayerOptions);
 
     // Filet de sécurité : le joueur ne peut jamais sortir de la zone
     const PLAYABLE_WIDTH = 16000; // même valeur que terrain.js
@@ -214,7 +257,7 @@ export function initDivingGame(canvasElement) {
       const camY = k.lerp(localPlayer.pos.y, surfaceCenterY, t);
 
       if (Number.isFinite(localPlayer.pos.x) && Number.isFinite(camY)) {
-        k.camPos(localPlayer.pos.x, camY);
+        k.camPos(Math.round(localPlayer.pos.x), Math.round(camY));
       }
     });
   });
@@ -231,6 +274,7 @@ export function initDivingGame(canvasElement) {
 
   // Synchronisation visuelle du sprite du Tonneau (plein vs vide) lors des ventes ou dépôts
   const handleInventoryUpdated = () => {
+    saveProgression(stats);
     const barrels = k.get("inventory-barrel");
     if (barrels.length > 0) {
       const isFull = stats.barrelInventory && stats.barrelInventory.length > 0;
@@ -242,11 +286,47 @@ export function initDivingGame(canvasElement) {
 
   k.go("dive");
   return () => {
-    window.removeEventListener("plongee-play-sound", handleGlobalSound);
-    window.removeEventListener(
-      "plongee-inventory-updated",
-      handleInventoryUpdated,
-    );
-    k.quit();
+    try {
+      saveProgression(stats);
+      if (localPlayerRef?.pos) {
+        saveActiveRun(stats, localPlayerRef.pos);
+      }
+    } catch {
+      /* ignore */
+    }
+    try {
+      bgmMusic?.stop?.();
+    } catch {
+      /* ignore audio error */
+    }
+    try {
+      multiController?.cleanup?.();
+    } catch (err) {
+      console.warn("multiController cleanup error:", err);
+    }
+    try {
+      window.removeEventListener("plongee-play-sound", handleGlobalSound);
+      window.removeEventListener(
+        "plongee-inventory-updated",
+        handleInventoryUpdated,
+      );
+    } catch (err) {
+      console.warn("event listener removal error:", err);
+    }
+    try {
+      k.quit();
+    } catch (err) {
+      console.warn("k.quit error:", err);
+    }
+    if (
+      typeof window !== "undefined" &&
+      typeof window.__kaplayClearFontCache === "function"
+    ) {
+      try {
+        window.__kaplayClearFontCache();
+      } catch {
+        /* ignore */
+      }
+    }
   };
 }

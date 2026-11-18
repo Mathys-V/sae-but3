@@ -12,6 +12,7 @@ export const useEconomyStore = create((set) => ({
   })),
   
   addWinnings: (amount) => set((state) => ({ coins: state.coins + amount })),
+  spendCoins: (amount) => set((state) => ({ coins: Math.max(0, state.coins - amount) })),
   useFreeSpin: () => set((state) => ({ freeSpins: Math.max(0, state.freeSpins - 1) })),
   
   resetEconomy: () => set({ coins: 0, freeSpins: 10, paidSpins: 0 })

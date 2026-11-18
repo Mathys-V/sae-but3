@@ -32,8 +32,12 @@ function EvilDashboard() {
   }
 
   // 3. LE RESTE DU COMPOSANT
-  // On récupère exactement les mêmes ressources débloquées que sur la page EvilGames
-  const jeuxActifs = ressourcesBUT.BUT1.slice(0, 2);
+  // On récupère les jeux actifs jouables (Plongée, Casino) et les premières ressources
+  const jeuxActifs = [
+    ressourcesBUT.BUT3.find((c) => c.id === "R5.A.06"),
+    ressourcesBUT.BUT1.find((c) => c.id === "R1.06"),
+    ...ressourcesBUT.BUT1.slice(0, 3),
+  ].filter(Boolean);
 
 
   return (
@@ -131,12 +135,20 @@ function EvilDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {jeuxActifs.map((cours) => (
             <Link
-              to="/evil/jeux"
+              to={cours.path ? cours.path : "/evil/jeux"}
               key={cours.id}
               className="bg-gray-900 border border-gray-700 rounded overflow-hidden hover:border-red-500 transition-colors"
             >
               <div className="h-24 bg-blue-900 flex items-center justify-center text-3xl">
-                🎮
+                {cours.spriteIcon ? (
+                  <img
+                    src={cours.spriteIcon}
+                    alt={cours.nom}
+                    className="w-16 h-16 object-contain filter drop-shadow [image-rendering:pixelated]"
+                  />
+                ) : (
+                  "🎮"
+                )}
               </div>
               <div className="p-2 text-xs text-gray-400 font-bold">
                 {cours.id}
