@@ -50,12 +50,12 @@ export const ressourcesBUT = {
     // Semestre 3
     {
       id: "R3.01",
-      nom: "Développement web : Duel d'IHM",
+      nom: "L'Œil Critique (R3.01) - Développement Web",
       sem: 3,
       path: "/evil/jeux/ihm-clash",
       bgImage: "/assets/ui/fonds_site/alchimiste_chateau_option.jpg",
       spriteIcon: "/assets/ui/Barre-de-Navigation/sprites/gamepad-32.png",
-      tag: "Duel d'IHM",
+      tag: "L'Œil Critique",
     },
     { id: "R3.02", nom: "Développement efficace", sem: 3 },
     { id: "R3.03", nom: "Analyse", sem: 3 },

@@ -48,7 +48,7 @@ export default function IhmClashGame() {
 
   // Titre du document
   useEffect(() => {
-    document.title = "EvilJV | Duel d'IHM (BUT 2 S3)";
+    document.title = "EvilJV | L'Œil Critique (BUT 2 S3)";
   }, []);
 
   // Gestion du chronomètre par manche (actif uniquement quand gameState === "playing")
@@ -88,7 +88,7 @@ export default function IhmClashGame() {
       earnCoins(coinsEarned);
       const totalSeconds = Math.max(10, Math.round((Date.now() - sessionStartTimeRef.current) / 1000));
       recordGameSession(token, {
-        game: "Duel d'IHM (UX Clash)",
+        game: "L'Œil Critique",
         score,
         timeSeconds: totalSeconds,
         completed: true,
@@ -164,7 +164,7 @@ export default function IhmClashGame() {
     if (myResult) {
       earnCoins(myResult.coinsWon);
       recordGameSession(token, {
-        game: "Duel d'IHM (UX Clash)",
+        game: "L'Œil Critique",
         score: myResult.score,
         timeSeconds: Math.round(totalTimeMs / 1000),
         completed: true,
@@ -211,7 +211,7 @@ export default function IhmClashGame() {
         {/* Bannière de Titre Donjon Pixel Art */}
         <div className="pixel-banner p-4 text-center">
           <h1 className="text-xl sm:text-2xl font-vcr font-bold text-red-500 tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-            ⚔️ DUEL D'IHM : BUT 2 S3 DÉVELOPPEMENT WEB
+            👁️ L'ŒIL CRITIQUE : BUT 2 S3 DÉVELOPPEMENT WEB
           </h1>
           <p className="text-xs text-gray-300 mt-1 tracking-wide">
             Évaluez 2 interfaces réelles : identifiez la version la plus responsive, accessible et ergonomique !
@@ -226,9 +226,9 @@ export default function IhmClashGame() {
             {/* Carte de Présentation & Règles du Jeu */}
             <div className="pixel-panel p-6 space-y-5 border-2 border-amber-600/80">
               <div className="text-center space-y-1 border-b border-gray-800 pb-4">
-                <span className="text-3xl">🏛️</span>
+                <span className="text-3xl">👁️</span>
                 <h2 className="text-xl font-bold text-amber-400 uppercase tracking-wider">
-                  SALLE DE BRIEFING DE L'ARCHITECTE
+                  SALLE DE BRIEFING : L'ŒIL CRITIQUE
                 </h2>
                 <p className="text-xs text-gray-300">
                   Préparez-vous à auditer les créations web du Semestre 3 (R3.01)
@@ -307,7 +307,7 @@ export default function IhmClashGame() {
                       onClick={handleStartSolo}
                       className="pixel-btn w-full !py-3.5 !bg-red-700 hover:!bg-red-600 !text-white text-base shadow-[0_0_15px_rgba(220,38,38,0.5)]"
                     >
-                      ⚔️ COMMENCER L'AUDIT SOLO (20 MANCHES)
+                      👁️ COMMENCER L'ŒIL CRITIQUE (20 MANCHES)
                     </button>
                     <p className="text-[11px] text-gray-400">
                       Le chronomètre démarrera dès le clic. Les manches s'enchaîneront avec un retour pédagogique à chaque vote.
@@ -464,7 +464,7 @@ export default function IhmClashGame() {
             <span className="text-4xl">👑</span>
             <div>
               <h2 className="text-2xl font-bold text-amber-400 uppercase tracking-widest">
-                AUDIT IHM TERMINÉ !
+                L'ŒIL CRITIQUE TERMINÉ !
               </h2>
               <p className="text-xs text-gray-300 mt-1">
                 Félicitations, vous avez complété l'ensemble des 20 cas d'études ergonomiques de S3 !
