@@ -1,4 +1,4 @@
-# Distionnaire de données
+# Dictionnaire de données
 
 
 ## Table `users`
