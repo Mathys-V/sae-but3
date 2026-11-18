@@ -25,6 +25,7 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://evil_user:evil_password@db:5432/evil_mescours_db
+      JWT_SECRET_KEY: evil-mescours-jwt-super-secret-key-at-least-32-chars-long!
     ports:
       - "8000:8000"
     depends_on:
