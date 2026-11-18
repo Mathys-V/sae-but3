@@ -47,63 +47,156 @@
   image-rendering: crisp-edges;
 }
 
-/* Boutons et éléments d'interface Pixel Art */
+/* ============================================================
+   DÉCOR DE DONJON PIXEL ART POUR LA BARRE DE NAVIGATION
+   ============================================================ */
+.navbar-dungeon {
+  background-color: #121217;
+  background-image: 
+    linear-gradient(rgba(10, 10, 16, 0.4), rgba(4, 4, 8, 0.8)),
+    url("/assets/ui/Barre-de-Navigation/dungeon-stone.png");
+  background-repeat: repeat;
+  background-size: 64px 32px;
+  image-rendering: pixelated;
+  border-bottom: 3px solid #3b0707;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.9);
+}
+
+.navbar-dungeon::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-image: url("/assets/ui/Barre-de-Navigation/ember-trim.png");
+  background-repeat: repeat-x;
+  background-size: 32px 4px;
+  image-rendering: pixelated;
+  box-shadow: 0 0 10px #ef4444, 0 0 4px #f59e0b;
+  pointer-events: none;
+}
+
+/* ============================================================
+   VÉRITABLES BOUTONS PIXEL ART BISEAUTÉS 3D (STYLE RÉTRO ARCADE)
+   ============================================================ */
 .pixel-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
-  padding: 0.3rem 0.65rem;
-  font-family: "Redden", "Alagard", sans-serif;
-  font-size: 0.875rem;
-  letter-spacing: 0.05em;
-  text-shadow: 1px 1px 0 #000;
-  border-width: 4px;
-  border-style: solid;
-  border-image-source: url("/assets/ui/Barre-de-Navigation/sprites/btn-dark.png");
-  border-image-slice: 4 fill;
-  border-image-repeat: stretch;
+  gap: 0.5rem;
+  padding: 0.45rem 0.9rem;
+  font-family: "VCR_OSD", monospace;
+  font-size: 0.95rem; /* ~15.2px lisible */
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  color: #f3f4f6;
+  background-color: #1c1d24;
+  /* Biseau 3D pixel art strict sans aucun flou */
+  box-shadow:
+    inset 2px 2px 0 0 #4b5563,
+    inset -2px -2px 0 0 #090a0f,
+    0 0 0 2px #000000,
+    0 3px 0 2px #000000;
+  border-radius: 0;
   image-rendering: pixelated;
-  color: #e5e7eb;
-  transition: transform 0.08s ease, filter 0.08s ease;
+  text-shadow: 1px 1px 0 #000000;
+  transition: background-color 0.1s ease, color 0.1s ease, transform 0.05s ease;
   user-select: none;
   cursor: pointer;
+  outline: none;
 }
 
 .pixel-btn:hover {
-  border-image-source: url("/assets/ui/Barre-de-Navigation/sprites/btn-red.png");
-  color: #fca5a5;
-  text-shadow: 1px 1px 2px #7f1d1d;
+  background-color: #7f1d1d;
+  color: #ffffff;
+  box-shadow:
+    inset 2px 2px 0 0 #f87171,
+    inset -2px -2px 0 0 #3b0707,
+    0 0 0 2px #000000,
+    0 3px 0 2px #000000;
+  text-shadow: 0 0 6px #ef4444, 1px 1px 0 #000000;
   transform: translateY(-1px);
 }
 
+.pixel-btn:active,
 .pixel-btn.active {
-  border-image-source: url("/assets/ui/Barre-de-Navigation/sprites/btn-red.png");
-  color: #fecaca;
-  text-shadow: 0 0 4px #dc2626;
+  background-color: #991b1b;
+  color: #fef2f2;
+  box-shadow:
+    inset 2px 2px 0 0 #3b0707,
+    inset -2px -2px 0 0 #fca5a5,
+    0 0 0 2px #000000,
+    0 1px 0 2px #000000;
+  transform: translateY(2px);
+  text-shadow: 0 0 6px #dc2626, 1px 1px 0 #000000;
 }
 
+/* Bouton Pixel Rouge (Admin / Modération) */
 .pixel-btn-red {
-  border-image-source: url("/assets/ui/Barre-de-Navigation/sprites/btn-red.png");
-  color: #fecaca;
-  text-shadow: 1px 1px 2px #7f1d1d;
+  background-color: #7f1d1d;
+  color: #ffffff;
+  box-shadow:
+    inset 2px 2px 0 0 #ef4444,
+    inset -2px -2px 0 0 #3b0707,
+    0 0 0 2px #000000,
+    0 3px 0 2px #000000;
+  text-shadow: 0 0 6px #dc2626, 1px 1px 0 #000000;
 }
 
 .pixel-btn-red:hover {
-  filter: brightness(1.2);
+  background-color: #991b1b;
+  box-shadow:
+    inset 2px 2px 0 0 #f87171,
+    inset -2px -2px 0 0 #3b0707,
+    0 0 0 2px #000000,
+    0 3px 0 2px #000000;
+  filter: brightness(1.15);
   transform: translateY(-1px);
 }
 
+.pixel-btn-red:active,
+.pixel-btn-red.active {
+  background-color: #b91c1c;
+  transform: translateY(2px);
+  box-shadow:
+    inset 2px 2px 0 0 #3b0707,
+    inset -2px -2px 0 0 #fca5a5,
+    0 0 0 2px #000000,
+    0 1px 0 2px #000000;
+}
+
+/* Badge Coins Pixel Art */
 .pixel-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0.6rem;
-  border-width: 4px;
-  border-style: solid;
-  border-image-source: url("/assets/ui/Barre-de-Navigation/sprites/pill-long.png");
-  border-image-slice: 4 fill;
-  border-image-repeat: stretch;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem;
+  background-color: #1a1608;
+  font-family: "VCR_OSD", monospace;
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #fde047;
+  box-shadow:
+    inset 2px 2px 0 0 #ca8a04,
+    inset -2px -2px 0 0 #000000,
+    0 0 0 2px #000000;
+  text-shadow: 1px 1px 0 #000000;
   image-rendering: pixelated;
-  font-family: "Redden", "Alagard", sans-serif;
+  user-select: none;
+}
+
+/* Cadre Profil Joueur Pixel Art */
+.pixel-profile-frame {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.65rem;
+  background-color: #121319;
+  box-shadow:
+    inset 2px 2px 0 0 #374151,
+    inset -2px -2px 0 0 #000000,
+    0 0 0 2px #000000;
+  image-rendering: pixelated;
 }
