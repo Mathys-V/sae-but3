@@ -8,10 +8,102 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Alagard";
+  src: url("./assets/fonts/alagard.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "VCR_OSD";
+  src: url("./assets/fonts/VCR_OSD_MONO_1.001.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-redden: "Redden", sans-serif;
+  --font-alagard: "Alagard", serif;
+  --font-vcr: "VCR_OSD", monospace;
 }
 
 .font-redden {
   font-family: "Redden", sans-serif;
+}
+
+.font-alagard {
+  font-family: "Alagard", serif;
+}
+
+.font-vcr {
+  font-family: "VCR_OSD", monospace;
+}
+
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Boutons et éléments d'interface Pixel Art */
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.65rem;
+  font-family: "Redden", "Alagard", sans-serif;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  text-shadow: 1px 1px 0 #000;
+  border-width: 4px;
+  border-style: solid;
+  border-image-source: url("/assets/ui/Barre-de-Navigation/sprites/btn-dark.png");
+  border-image-slice: 4 fill;
+  border-image-repeat: stretch;
+  image-rendering: pixelated;
+  color: #e5e7eb;
+  transition: transform 0.08s ease, filter 0.08s ease;
+  user-select: none;
+  cursor: pointer;
+}
+
+.pixel-btn:hover {
+  border-image-source: url("/assets/ui/Barre-de-Navigation/sprites/btn-red.png");
+  color: #fca5a5;
+  text-shadow: 1px 1px 2px #7f1d1d;
+  transform: translateY(-1px);
+}
+
+.pixel-btn.active {
+  border-image-source: url("/assets/ui/Barre-de-Navigation/sprites/btn-red.png");
+  color: #fecaca;
+  text-shadow: 0 0 4px #dc2626;
+}
+
+.pixel-btn-red {
+  border-image-source: url("/assets/ui/Barre-de-Navigation/sprites/btn-red.png");
+  color: #fecaca;
+  text-shadow: 1px 1px 2px #7f1d1d;
+}
+
+.pixel-btn-red:hover {
+  filter: brightness(1.2);
+  transform: translateY(-1px);
+}
+
+.pixel-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border-width: 4px;
+  border-style: solid;
+  border-image-source: url("/assets/ui/Barre-de-Navigation/sprites/pill-long.png");
+  border-image-slice: 4 fill;
+  border-image-repeat: stretch;
+  image-rendering: pixelated;
+  font-family: "Redden", "Alagard", sans-serif;
 }
