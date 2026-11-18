@@ -60,16 +60,14 @@ function CourseCard({ cours }) {
       </div>
 
       {/* Bas de carte : Progression & Bouton d'accès */}
-      <div className={`flex justify-between items-center mt-3 pt-2 border-t -mx-3.5 -mb-3.5 px-3.5 pb-2.5 rounded-b-lg relative z-10 backdrop-blur-[2px] ${isCasino ? "border-red-800/60 bg-red-950/45" : "border-gray-700/60 bg-slate-950/40"}`}>
+      <div className={`flex justify-between items-center mt-3 pt-2 border-t -mx-3.5 -mb-3.5 px-3.5 pb-2.5 rounded-b-lg relative z-10 backdrop-blur-[2px] ${hasGame ? "border-red-800/60 bg-red-950/45" : "border-gray-700/60 bg-slate-950/40"}`}>
         <span className="text-xs text-gray-200 font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">0 % terminé</span>
         <Link
           to={cours.path ? cours.path : `/evil/jeux/${cours.id}`}
-          style={isCasino ? { color: "#fff" } : undefined}
+          style={hasGame ? { color: "#ffffff" } : undefined}
           className={`font-bold text-xs sm:text-sm flex items-center gap-1.5 px-3 py-1.5 rounded transition-all duration-200 ${
             hasGame
-              ? isCasino
-                ? "bg-red-700 hover:bg-red-600 text-white hover:text-white shadow-md hover:shadow-red-500/40"
-                : "bg-cyan-600 hover:bg-cyan-500 text-white shadow-md hover:shadow-cyan-500/40"
+              ? "bg-red-700 hover:bg-red-600 text-white hover:text-white shadow-md hover:shadow-red-500/40"
               : "text-blue-400 hover:text-blue-300 hover:bg-blue-950/40"
           }`}
         >
