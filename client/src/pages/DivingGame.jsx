@@ -68,6 +68,10 @@ function DivingGame({
   });
   const [victoryData, setVictoryData] = useState(null);
 
+  useEffect(() => {
+    document.title = "EvilJV | L'Odyssée (R5.A.06)";
+  }, []);
+
   /**
    * Ferme le tutoriel d'introduction, mémorise la lecture et replace le focus sur le canvas.
    */
@@ -288,6 +292,11 @@ function DivingGame({
               <span aria-hidden="true">🛒</span>
               <span>Boutique [B]</span>
             </button>
+
+            {/* Plaque nominative du mini-jeu */}
+            <div className="stone-plaque-btn !bg-slate-950 !border-amber-600/80 !text-amber-300 font-bold tracking-widest text-xs uppercase shadow select-none">
+              ⚓ L'ODYSSÉE ⚓
+            </div>
 
             <button
               onClick={() => setIsIntroOpen(true)}

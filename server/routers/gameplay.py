@@ -19,8 +19,8 @@ def _find_game(db: Session, target: str) -> Game | None:
     if game:
         return game
     lowered = target.lower()
-    if "plong" in lowered:
-        return db.query(Game).filter(Game.name.ilike("%Plongée%")).first()
+    if "plong" in lowered or "odyss" in lowered:
+        return db.query(Game).filter(Game.name.ilike("%Odyssée%")).first() or db.query(Game).filter(Game.name.ilike("%Plongée%")).first()
     if "casino" in lowered or "manchot" in lowered:
         return db.query(Game).filter(Game.name.ilike("%Casino%")).first()
     if "tuto" in lowered:

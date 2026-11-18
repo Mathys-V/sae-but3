@@ -123,7 +123,7 @@ FROM (VALUES
     ),
     (
         'R5.A.06 : Programmation multimédia',
-        'Jeu de Plongée (R5.A.06)',
+        'L''Odyssée (R5.A.06)',
         'Exploration sous-marine périlleuse : collectez des perles, gérez votre oxygène et évitez les monstres marins.',
         '{"zones":["surface","ocean_jour","abysses"],"oxygen_max":100}',
         'hard',

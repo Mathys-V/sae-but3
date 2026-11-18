@@ -56,7 +56,7 @@ function DivingIntroModal({ isOpen, onClose }) {
             id="intro-dialog-title"
             className="text-lg sm:text-xl font-bold text-cyan-300 pixel-font tracking-wider uppercase leading-tight"
           >
-            Bienvenue dans les Abysses
+            L'Odyssée : Les Abysses Océaniques
           </h2>
           <p id="intro-dialog-desc" className="text-xs sm:text-sm text-cyan-100/90 mt-1 pixel-font">
             Plonge dans les profondeurs océaniques, récolte du butin et affronte les monstres marins !
