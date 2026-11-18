@@ -48,12 +48,9 @@ function EvilSettings() {
   }, [isListening]);
 
   const handleSave = () => {
-    console.log("Nouvelle configuration sauvegardée :", {
-      keys,
-      volumeMaster,
-      volumeSFX,
-    });
     setIsModalOpen(false);
+    setFeedbackMsg("Configuration des touches enregistrée avec succès !");
+    setTimeout(() => setFeedbackMsg(""), 3000);
   };
 
   const handleSelectAvatar = (iconId) => {
@@ -64,7 +61,7 @@ function EvilSettings() {
 
   const handleBuyAvatar = (iconId) => {
     if (coins < AVATAR_COST) {
-      alert(`Vous n'avez pas assez de Coins (${coins}/${AVATAR_COST}). Jouez aux mini-jeux pour en gagner !`);
+      alert(`Fonds insuffisants : vous avez ${coins} Coins sur les ${AVATAR_COST} requis.`);
       return;
     }
     spendCoins(AVATAR_COST);
@@ -75,130 +72,136 @@ function EvilSettings() {
   };
 
   return (
-    <>
-      <main className="space-y-8 max-w-4xl mx-auto relative">
-        <div className="flex items-center justify-between">
+    <div className="pixel-page-dungeon -m-6 p-6 min-h-[calc(100vh-64px)] font-vcr">
+      <main className="max-w-4xl mx-auto space-y-6">
+        {/* Barre d'action supérieure */}
+        <div className="flex items-center justify-between gap-4">
           <button
+            type="button"
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-200 hover:text-white text-sm font-bold transition-all shadow-sm hover:shadow"
+            className="pixel-btn"
             title="Revenir à la page précédente"
           >
-            <span>←</span>
-            <span>Retour / Reprendre</span>
+            <span>← RETOUR</span>
           </button>
 
-          {/* Affichage rapide des Coins */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-900 border border-amber-800 text-amber-300 text-sm font-bold shadow">
+          {/* Solde Coins en pixel art */}
+          <div className="pixel-pill" title="Pièces démoniaques récoltées">
             <img
               src="/assets/ui/Barre-de-Navigation/sprites/coin-32.png"
               alt="Coins"
-              className="w-4 h-4 pixelated animate-pulse"
+              className="w-5 h-5 pixelated animate-pulse"
             />
-            <span>{coins} Coins</span>
+            <span>{coins} COINS</span>
           </div>
         </div>
 
-        <div className="bg-gradient-to-r from-red-950 via-gray-900 to-red-950 text-white p-6 text-center rounded border border-red-900 shadow-xl">
-          <h1 className="text-3xl sm:text-4xl font-redden tracking-wider text-red-500">
-            Paramètres & Profil Joueur
+        {/* Bannière de Titre Décor Donjon */}
+        <div className="pixel-banner p-5 text-center">
+          <h1 className="text-2xl sm:text-3xl font-vcr font-bold text-red-500 tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+            PARAMÈTRES & PROFIL JOUEUR
           </h1>
-          <p className="text-sm text-gray-400 mt-1">
-            Gérez votre identité, vos touches et les options de la plateforme EvilJV
+          <p className="text-sm text-gray-300 mt-1 tracking-wide">
+            Personnalisez votre apparence, vos touches de jeu et votre environnement audio
           </p>
         </div>
 
         {feedbackMsg && (
-          <div className="p-3 bg-emerald-950/80 border border-emerald-600 text-emerald-200 text-sm font-bold text-center rounded shadow animate-fade-in">
+          <div className="p-3 bg-emerald-950 text-emerald-200 border-2 border-emerald-600 text-sm font-bold text-center shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-fade-in">
             {feedbackMsg}
           </div>
         )}
 
-        {/* Boutons d'onglets internes */}
-        <div className="flex border-b border-gray-800 overflow-x-auto">
+        {/* Onglets Pixel Art Style Arcade / Inventaire */}
+        <div className="flex gap-2 overflow-x-auto pb-1">
           <button
+            type="button"
             onClick={() => setActiveTab("profil")}
-            className={`py-3 px-6 font-bold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "profil"
-                ? "border-red-500 text-red-400 bg-red-950/20"
-                : "border-transparent text-gray-400 hover:text-white"
-            }`}
+            className={`pixel-tab ${activeTab === "profil" ? "active" : ""}`}
           >
             <span>👤</span>
-            <span>Profil & Avatars</span>
+            <span>PROFIL & AVATARS</span>
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab("controles")}
-            className={`py-3 px-6 font-bold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "controles"
-                ? "border-red-500 text-red-400 bg-red-950/20"
-                : "border-transparent text-gray-400 hover:text-white"
-            }`}
+            className={`pixel-tab ${activeTab === "controles" ? "active" : ""}`}
           >
             <span>🎮</span>
-            <span>Touches & Contrôles</span>
+            <span>TOUCHES CLAVIER</span>
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab("sons")}
-            className={`py-3 px-6 font-bold border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "sons"
-                ? "border-red-500 text-red-400 bg-red-950/20"
-                : "border-transparent text-gray-400 hover:text-white"
-            }`}
+            className={`pixel-tab ${activeTab === "sons" ? "active" : ""}`}
           >
             <span>🔊</span>
-            <span>Sons & Audio</span>
+            <span>SONS & VOLUME</span>
           </button>
         </div>
 
-        {/* Contenu : Onglet Profil & Avatars */}
+        {/* ========================================================
+            ONGLET 1 : PROFIL & CATALOGUE D'AVATARS
+            ======================================================== */}
         {activeTab === "profil" && (
-          <div className="bg-gray-900 p-6 rounded border border-gray-800 space-y-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-gray-950 border border-red-950 rounded-lg">
+          <div className="space-y-6">
+            {/* Carte de prévisualisation du joueur */}
+            <div className="pixel-panel p-5 flex flex-col sm:flex-row items-center justify-between gap-5">
               <div className="flex items-center gap-4">
-                <img
-                  src={`/assets/ui/Barre-de-Navigation/Icones_profil/${avatar || "Icon1"}.png`}
-                  alt="Avatar actuel"
-                  className="w-16 h-16 pixelated border-2 border-red-600 rounded bg-gray-900 shadow-[0_0_12px_rgba(220,38,38,0.5)]"
-                />
+                <div className="p-1.5 bg-gray-950 border-2 border-red-600 shadow-[0_0_12px_rgba(239,68,68,0.7)] shrink-0">
+                  <img
+                    src={`/assets/ui/Barre-de-Navigation/Icones_profil/${avatar || "Icon1"}.png`}
+                    alt="Avatar actuel"
+                    className="w-16 h-16 pixelated bg-gray-900"
+                  />
+                </div>
                 <div>
-                  <h2 className="text-xl font-bold font-redden text-gray-100 flex items-center gap-2">
-                    <span>{user || "Invité"}</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xl font-bold text-gray-100 tracking-wider">
+                      {user || "Invité"}
+                    </span>
                     {role === "admin" && (
-                      <span className="text-xs bg-red-950 text-red-400 border border-red-700 px-2 py-0.5 rounded font-sans">
-                        Admin
+                      <span className="text-xs bg-red-950 text-red-400 border border-red-700 px-2 py-0.5 font-bold">
+                        ADMIN
                       </span>
                     )}
                     {isGuest && (
-                      <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded font-sans">
-                        Invité
+                      <span className="text-xs bg-gray-800 text-gray-400 border border-gray-700 px-2 py-0.5 font-bold">
+                        INVITÉ
                       </span>
                     )}
-                  </h2>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    Avatar actuellement sélectionné : <span className="text-red-400 font-bold">{avatar || "Icon1"}</span>
+                  </div>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Avatar actuellement équipé : <span className="text-red-400 font-bold">{avatar || "Icon1"}</span>
                   </p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-xs text-gray-400">Avatars débloqués</p>
-                <p className="text-lg font-bold text-gray-100 font-mono">
+
+              <div className="text-center sm:text-right shrink-0">
+                <p className="text-xs text-gray-400 uppercase tracking-wider">Collection débloquée</p>
+                <p className="text-2xl font-bold text-amber-300 mt-0.5">
                   {(unlockedAvatars || []).length} / {ALL_AVATARS.length}
                 </p>
               </div>
             </div>
 
-            <div>
-              <h3 className="text-lg font-bold text-gray-200 mb-2 flex items-center justify-between">
-                <span>Catalogue des Avatars Pixel Art</span>
-                <span className="text-xs text-amber-400 font-normal">
-                  Prix : {AVATAR_COST} Coins par avatar verrouillé
+            {/* Grille du Catalogue des 48 Avatars */}
+            <div className="pixel-panel p-5 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-800 pb-3">
+                <div>
+                  <h2 className="text-lg font-bold text-gray-100">
+                    CATALOGUE DES AVATARS PIXEL ART
+                  </h2>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    Sélectionnez votre avatar ou débloquez-en de nouveaux avec vos gains
+                  </p>
+                </div>
+                <span className="text-xs text-amber-400 font-bold bg-amber-950/60 border border-amber-800 px-2 py-1 self-start sm:self-auto">
+                  Prix : {AVATAR_COST} Coins / avatar
                 </span>
-              </h3>
-              <p className="text-xs text-gray-400 mb-4">
-                Cliquez sur un avatar possédé pour l'équiper, ou débloquez-en de nouveaux grâce à vos gains !
-              </p>
+              </div>
 
-              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 max-h-96 overflow-y-auto p-2 bg-gray-950/70 border border-gray-800 rounded">
+              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 max-h-96 overflow-y-auto p-2 bg-gray-950/90 border-2 border-black">
                 {ALL_AVATARS.map((iconId) => {
                   const isUnlocked = (unlockedAvatars || []).includes(iconId) || role === "admin";
                   const isCurrent = (avatar || "Icon1") === iconId;
@@ -206,44 +209,37 @@ function EvilSettings() {
                   return (
                     <div
                       key={iconId}
-                      className={`relative flex flex-col items-center justify-center p-2 rounded border transition-all ${
-                        isCurrent
-                          ? "border-red-500 bg-red-950/50 shadow-[0_0_8px_rgba(220,38,38,0.6)]"
-                          : isUnlocked
-                            ? "border-gray-700 bg-gray-800/80 hover:border-gray-500 hover:bg-gray-800"
-                            : "border-gray-800 bg-gray-950/60 opacity-60 hover:opacity-80"
-                      }`}
+                      className={`pixel-slot ${isCurrent ? "active" : ""}`}
                     >
                       <img
                         src={`/assets/ui/Barre-de-Navigation/Icones_profil/${iconId}.png`}
                         alt={iconId}
-                        className={`w-10 h-10 pixelated ${!isUnlocked ? "filter grayscale brightness-75" : ""}`}
+                        className={`w-10 h-10 pixelated ${!isUnlocked ? "filter grayscale brightness-50" : ""}`}
                       />
                       <span className="text-[10px] text-gray-400 mt-1 font-mono">
                         {iconId.replace("Icon", "#")}
                       </span>
 
                       {isCurrent ? (
-                        <span className="mt-1 text-[9px] bg-red-700 text-white px-1.5 py-0.5 rounded font-bold">
-                          Actif
+                        <span className="mt-1.5 text-[9px] bg-red-700 text-white px-2 py-0.5 font-bold shadow">
+                          ACTIF
                         </span>
                       ) : isUnlocked ? (
                         <button
                           type="button"
                           onClick={() => handleSelectAvatar(iconId)}
-                          className="mt-1 text-[9px] bg-gray-700 hover:bg-gray-600 text-gray-200 px-1.5 py-0.5 rounded transition"
+                          className="pixel-btn !px-1.5 !py-0.5 !text-[9px] mt-1.5 w-full"
                         >
-                          Équiper
+                          ÉQUIPER
                         </button>
                       ) : (
                         <button
                           type="button"
                           onClick={() => handleBuyAvatar(iconId)}
-                          className="mt-1 text-[9px] bg-amber-900/80 hover:bg-amber-800 text-amber-200 border border-amber-700 px-1 py-0.5 rounded transition flex items-center gap-0.5"
+                          className="pixel-btn !px-1 !py-0.5 !text-[9px] !bg-amber-950 hover:!bg-amber-900 !text-amber-200 mt-1.5 w-full"
                           title={`Acheter pour ${AVATAR_COST} Coins`}
                         >
-                          <span>🔒</span>
-                          <span>{AVATAR_COST}</span>
+                          🔒 {AVATAR_COST}
                         </button>
                       )}
                     </div>
@@ -254,110 +250,119 @@ function EvilSettings() {
           </div>
         )}
 
-        {/* Contenu : Onglet Contrôles */}
+        {/* ========================================================
+            ONGLET 2 : TOUCHES & CONTRÔLES DU CLAVIER
+            ======================================================== */}
         {activeTab === "controles" && (
-          <div className="bg-gray-800 p-6 rounded border border-gray-700 space-y-6">
-            <h2 className="text-xl font-bold mb-4">
-              Personnalisation des touches
-            </h2>
-            <p className="text-sm text-gray-400">
-              Clique sur une touche pour la modifier, puis appuie sur la
-              nouvelle touche de ton choix.
-            </p>
+          <div className="pixel-panel p-6 space-y-6">
+            <div className="border-b border-gray-800 pb-3">
+              <h2 className="text-lg font-bold text-gray-100">
+                CONFIGURATION DES TOUCHES DE JEU
+              </h2>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Cliquez sur une touche mécanique pour la réassigner à l'action souhaitée
+              </p>
+            </div>
 
             <div className="space-y-4">
-              <div className="flex justify-between items-center bg-gray-900 p-4 rounded border border-gray-700">
-                <span>Déplacement à Gauche</span>
+              <div className="flex justify-between items-center bg-gray-950 p-4 border border-gray-800">
+                <span className="text-sm font-bold text-gray-200">DÉPLACEMENT À GAUCHE</span>
                 <button
+                  type="button"
                   onClick={() => setIsListening("left")}
-                  className={`px-4 py-2 rounded font-mono font-bold transition-all ${
-                    isListening === "left"
-                      ? "bg-red-600 text-white animate-pulse"
-                      : "bg-gray-700 hover:bg-gray-600 text-gray-200"
-                  }`}
+                  className={`pixel-key-btn ${isListening === "left" ? "listening" : ""}`}
                 >
-                  {isListening === "left"
-                    ? "Appuie sur une touche..."
-                    : keys.left}
+                  {isListening === "left" ? "APPUYEZ..." : keys.left}
                 </button>
               </div>
 
-              <div className="flex justify-between items-center bg-gray-900 p-4 rounded border border-gray-700">
-                <span>Déplacement à Droite</span>
+              <div className="flex justify-between items-center bg-gray-950 p-4 border border-gray-800">
+                <span className="text-sm font-bold text-gray-200">DÉPLACEMENT À DROITE</span>
                 <button
+                  type="button"
                   onClick={() => setIsListening("right")}
-                  className={`px-4 py-2 rounded font-mono font-bold transition-all ${
-                    isListening === "right"
-                      ? "bg-red-600 text-white animate-pulse"
-                      : "bg-gray-700 hover:bg-gray-600 text-gray-200"
-                  }`}
+                  className={`pixel-key-btn ${isListening === "right" ? "listening" : ""}`}
                 >
-                  {isListening === "right"
-                    ? "Appuie sur une touche..."
-                    : keys.right}
+                  {isListening === "right" ? "APPUYEZ..." : keys.right}
                 </button>
               </div>
 
-              <div className="flex justify-between items-center bg-gray-900 p-4 rounded border border-gray-700">
-                <span>Sauter / Valider</span>
+              <div className="flex justify-between items-center bg-gray-950 p-4 border border-gray-800">
+                <span className="text-sm font-bold text-gray-200">SAUTER / VALIDER</span>
                 <button
+                  type="button"
                   onClick={() => setIsListening("jump")}
-                  className={`px-4 py-2 rounded font-mono font-bold transition-all ${
-                    isListening === "jump"
-                      ? "bg-red-600 text-white animate-pulse"
-                      : "bg-gray-700 hover:bg-gray-600 text-gray-200"
-                  }`}
+                  className={`pixel-key-btn ${isListening === "jump" ? "listening" : ""}`}
                 >
-                  {isListening === "jump"
-                    ? "Appuie sur une touche..."
-                    : keys.jump}
+                  {isListening === "jump" ? "APPUYEZ..." : keys.jump}
                 </button>
               </div>
             </div>
 
-            {/* Bouton global de sauvegarde des touches */}
-            <div className="pt-6 border-t border-gray-700 flex justify-end">
+            <div className="pt-4 border-t border-gray-800 flex justify-end">
               <button
+                type="button"
                 onClick={() => setIsModalOpen(true)}
-                className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded shadow-lg transition-all"
+                className="pixel-btn pixel-btn-red text-sm"
               >
-                Enregistrer les touches
+                💾 ENREGISTRER LES TOUCHES
               </button>
             </div>
           </div>
         )}
 
-        {/* Contenu : Onglet Sons */}
+        {/* ========================================================
+            ONGLET 3 : SONS & ENVIRONNEMENT AUDIO
+            ======================================================== */}
         {activeTab === "sons" && (
-          <div className="bg-gray-800 p-6 rounded border border-gray-700 space-y-6">
-            <h2 className="text-xl font-bold mb-4">Gestion du volume</h2>
+          <div className="pixel-panel p-6 space-y-6">
+            <div className="border-b border-gray-800 pb-3">
+              <h2 className="text-lg font-bold text-gray-100">
+                RÉGLAGES AUDIO & MUSIQUES
+              </h2>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Ajustez les volumes sonores pour les mini-jeux et l'ambiance du donjon
+              </p>
+            </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Volume Général ({volumeMaster}%)
-                </label>
+            <div className="space-y-6">
+              <div className="bg-gray-950 p-4 border border-gray-800 space-y-2">
+                <div className="flex justify-between items-center">
+                  <label htmlFor="master-volume-input" className="text-sm font-bold text-gray-200">
+                    VOLUME GÉNÉRAL
+                  </label>
+                  <span className="text-sm font-bold text-amber-400 font-mono">
+                    {volumeMaster}%
+                  </span>
+                </div>
                 <input
+                  id="master-volume-input"
                   type="range"
                   min="0"
                   max="100"
                   value={volumeMaster}
-                  onChange={(e) => setVolumeMaster(e.target.value)}
-                  className="w-full accent-red-500 cursor-pointer"
+                  onChange={(e) => setVolumeMaster(Number(e.target.value))}
+                  className="w-full accent-red-600 cursor-pointer h-3 bg-gray-800 border border-black"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Effets Sonores - SFX ({volumeSFX}%)
-                </label>
+              <div className="bg-gray-950 p-4 border border-gray-800 space-y-2">
+                <div className="flex justify-between items-center">
+                  <label htmlFor="sfx-volume-input" className="text-sm font-bold text-gray-200">
+                    EFFETS SONORES (SFX)
+                  </label>
+                  <span className="text-sm font-bold text-amber-400 font-mono">
+                    {volumeSFX}%
+                  </span>
+                </div>
                 <input
+                  id="sfx-volume-input"
                   type="range"
                   min="0"
                   max="100"
                   value={volumeSFX}
-                  onChange={(e) => setVolumeSFX(e.target.value)}
-                  className="w-full accent-red-500 cursor-pointer"
+                  onChange={(e) => setVolumeSFX(Number(e.target.value))}
+                  className="w-full accent-red-600 cursor-pointer h-3 bg-gray-800 border border-black"
                 />
               </div>
             </div>
@@ -365,35 +370,38 @@ function EvilSettings() {
         )}
       </main>
 
-      {/* Pop-up de confirmation (Modal) */}
+      {/* ========================================================
+          MODALE DE CONFIRMATION (POP-UP RPG PIXEL ART)
+          ======================================================== */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 animate-fade-in">
-          <div className="bg-gray-800 p-8 rounded-lg border border-red-700 max-w-md w-full shadow-2xl">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              Confirmer les changements
+        <div className="fixed inset-0 bg-black/85 flex items-center justify-center z-50 p-4">
+          <div className="pixel-panel p-6 max-w-md w-full space-y-4 border-2 border-red-800 shadow-[0_0_24px_rgba(220,38,38,0.7)] animate-fade-in">
+            <h3 className="text-xl font-bold text-red-500 tracking-wider">
+              CONFIRMER LES PARAMÈTRES
             </h3>
-            <p className="text-gray-400 mb-8">
-              Êtes-vous sûr de vouloir sauvegarder ces nouveaux paramètres ? Ils
-              s'appliqueront à toutes vos prochaines parties.
+            <p className="text-sm text-gray-300 leading-relaxed">
+              Voulez-vous sauvegarder cette configuration ? Elle sera appliquée immédiatement à l'ensemble de vos parties.
             </p>
-            <div className="flex justify-end gap-4">
+            <div className="flex justify-end gap-3 pt-2">
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded transition-colors"
+                className="pixel-btn text-xs"
               >
-                Annuler
+                ANNULER
               </button>
               <button
+                type="button"
                 onClick={handleSave}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded transition-colors"
+                className="pixel-btn pixel-btn-red text-xs"
               >
-                Sauvegarder
+                CONFIRMER
               </button>
             </div>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
