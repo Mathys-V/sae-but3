@@ -187,7 +187,7 @@ export default function IhmClashGame() {
 
   return (
     <div className="-m-6 p-4 sm:p-6 min-h-[calc(100vh-64px)] font-sans text-gray-100">
-      <main className="max-w-5xl mx-auto space-y-5">
+      <main className="max-w-5xl mx-auto space-y-4">
         {/* Barre supérieure : Retour & Solde de Coins */}
         <div className="flex items-center justify-between gap-4">
           <button
@@ -218,72 +218,52 @@ export default function IhmClashGame() {
           </div>
         </div>
 
-        {/* Bannière de Titre Donjon Pixel Art */}
-        <div className="pixel-banner p-4 text-center">
-          <h1 className="text-xl sm:text-2xl font-bold text-red-500 tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] font-sans">
-            👁️ L'OEIL CRITIQUE : BUT 2 S3 DÉVELOPPEMENT WEB
-          </h1>
-          <p className="text-xs text-gray-300 mt-1 tracking-wide font-sans">
-            Évaluez 2 interfaces réelles : identifiez la version la plus responsive, accessible et ergonomique !
-          </p>
-        </div>
-
         {/* ========================================================
             1. ÉCRAN INTERMÉDIAIRE : SALLE DE BRIEFING (START SCREEN)
             ======================================================== */}
         {gameState === "briefing" && (
-          <div className="space-y-6 animate-fade-in max-w-3xl mx-auto">
-            {/* Carte de Présentation & Règles du Jeu */}
-            <div className="pixel-panel p-6 space-y-5 border-2 border-amber-600/80">
+          <div className="space-y-6 animate-fade-in max-w-3xl mx-auto pt-2">
+            {/* Carte de Présentation Épurée & Directe */}
+            <div className="pixel-panel p-6 space-y-5 border-2 border-amber-600/80 shadow-lg">
               <div className="text-center space-y-1 border-b border-gray-800 pb-4">
                 <span className="text-3xl">👁️</span>
-                <h2 className="text-xl font-bold text-amber-400 uppercase tracking-wider font-sans">
-                  SALLE DE BRIEFING : L'OEIL CRITIQUE
-                </h2>
-                <p className="text-xs text-gray-300">
-                  Préparez-vous à auditer les créations web du Semestre 3 (R3.01)
+                <h1 className="text-xl sm:text-2xl font-bold text-amber-400 uppercase tracking-wider font-sans">
+                  L'OEIL CRITIQUE (BUT 2 S3)
+                </h1>
+                <p className="text-xs sm:text-sm text-gray-300">
+                  Audit d'ergonomie et de responsive design — 20 cas concrets
                 </p>
               </div>
 
-              {/* Les 4 Piliers du Gameplay */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-sans">
+              {/* Les 3 Règles Clés Épurées */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-sans">
                 <div className="p-3.5 bg-gray-950/80 border border-gray-800 rounded space-y-1">
-                  <div className="font-bold text-amber-300 flex items-center gap-1.5">
+                  <div className="font-bold text-amber-300 flex items-center gap-1.5 font-mono">
                     <span>📐</span>
-                    <span>1 FORMAT IMPOSÉ PAR MANCHE</span>
+                    <span>1 FORMAT IMPOSÉ</span>
                   </div>
-                  <p className="text-gray-300 leading-relaxed text-xs">
-                    Chaque manche impose son format (Mobile 375px, Tablette 768px ou Desktop). La différence ergonomique est à observer directement dans ce contexte !
+                  <p className="text-gray-300 text-xs leading-relaxed">
+                    Mobile (375px), Tablette ou Desktop selon la manche.
                   </p>
                 </div>
 
                 <div className="p-3.5 bg-gray-950/80 border border-gray-800 rounded space-y-1">
-                  <div className="font-bold text-emerald-400 flex items-center gap-1.5">
+                  <div className="font-bold text-emerald-400 flex items-center gap-1.5 font-mono">
                     <span>⏱️</span>
-                    <span>15 SECONDES & BONUS VITESSE</span>
+                    <span>15s PAR AUDIT</span>
                   </div>
-                  <p className="text-gray-300 leading-relaxed text-xs">
-                    Vous avez 15 secondes par manche. Plus vite vous débusquez le piège, plus vous remportez de points bonus !
+                  <p className="text-gray-300 text-xs leading-relaxed">
+                    Débusquez le piège et gagnez des bonus de vitesse.
                   </p>
                 </div>
 
                 <div className="p-3.5 bg-gray-950/80 border border-gray-800 rounded space-y-1">
-                  <div className="font-bold text-rose-400 flex items-center gap-1.5">
-                    <span>🔥</span>
-                    <span>COMBOS DE SÉRIES (STREAK)</span>
-                  </div>
-                  <p className="text-gray-300 leading-relaxed text-xs">
-                    Enchaînez les bonnes réponses consécutives pour débloquer +25 points supplémentaires par manche d'affilée.
-                  </p>
-                </div>
-
-                <div className="p-3.5 bg-gray-950/80 border border-gray-800 rounded space-y-1">
-                  <div className="font-bold text-yellow-300 flex items-center gap-1.5">
+                  <div className="font-bold text-yellow-300 flex items-center gap-1.5 font-mono">
                     <span>💰</span>
-                    <span>GAINS DE COINS RÉELS</span>
+                    <span>GAINS DE COINS</span>
                   </div>
-                  <p className="text-gray-300 leading-relaxed text-xs">
-                    Remportez des Coins Evil proportionnels à votre score pour débloquer de nouveaux avatars dans la boutique !
+                  <p className="text-gray-300 text-xs leading-relaxed">
+                    Remportez des pièces pour débloquer de nouveaux avatars.
                   </p>
                 </div>
               </div>
@@ -317,10 +297,10 @@ export default function IhmClashGame() {
                       onClick={handleStartSolo}
                       className="pixel-btn w-full !py-3.5 !bg-red-700 hover:!bg-red-600 !text-white text-base font-bold !font-sans shadow-[0_0_15px_rgba(220,38,38,0.5)]"
                     >
-                      👁️ COMMENCER L'OEIL CRITIQUE (20 MANCHES)
+                      ▶ DÉMARRER L'AUDIT (20 MANCHES)
                     </button>
                     <p className="text-xs text-gray-400 font-sans">
-                      Le chronomètre démarre dès le clic. Les 20 cas s'enchaînent avec une explication détaillée après chaque vote.
+                      Chaque manche propose 2 interfaces. Identifiez la plus ergonomique sans vous faire piéger !
                     </p>
                   </div>
                 )}
@@ -339,88 +319,105 @@ export default function IhmClashGame() {
             ======================================================== */}
         {gameState === "playing" && !isGameOver && (
           <div className="space-y-4 animate-fade-in font-sans">
-            {/* Tableau de Bord Pixel Art (HUD Arcade) */}
-            <div className="pixel-panel p-4 flex flex-wrap items-center justify-between gap-4">
-              {/* Manche en cours */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400 uppercase font-mono">MANCHE :</span>
-                <span className="text-base font-bold text-amber-300 font-mono">
-                  {currentRoundIndex + 1} / {gameMode === "multi" ? 10 : questions.length}
+            {/* HUD Arcade & Contexte d'Audit Unifié (Bandeau Unique Épuré) */}
+            <div className="pixel-panel p-3.5 space-y-2.5 border-2 border-amber-600/70 shadow-md">
+              {/* Ligne 1 : Statuts de la partie */}
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono font-bold px-2.5 py-1 rounded bg-gray-900 border border-gray-700 text-amber-300">
+                    MANCHE {currentRoundIndex + 1} / {gameMode === "multi" ? 10 : questions.length}
+                  </span>
+                  <div className="flex items-center gap-1.5 font-mono">
+                    <span className="text-xs text-gray-400 uppercase">SCORE :</span>
+                    <span className="text-sm font-bold text-emerald-400">{score} PTS</span>
+                  </div>
+                  {streak > 1 && (
+                    <span className="text-xs font-bold text-amber-300 bg-amber-950 px-2 py-0.5 rounded border border-amber-600 animate-pulse font-mono">
+                      🔥 COMBO x{streak}
+                    </span>
+                  )}
+                </div>
+
+                {/* Chronomètre et jauge animée (Urgence visuelle < 3s) */}
+                <div
+                  className={`flex items-center gap-2.5 px-2 py-0.5 rounded transition-all duration-200 ${
+                    timeRemainingMs <= 3000 && selectedOption === null
+                      ? "bg-red-950/70 border border-red-500/80 shadow-[0_0_10px_rgba(239,68,68,0.5)] animate-pulse"
+                      : ""
+                  }`}
+                >
+                  <span
+                    className={`text-xs font-mono font-bold min-w-[42px] text-right ${
+                      timeRemainingMs <= 3000 && selectedOption === null
+                        ? "text-red-400 font-black animate-pulse"
+                        : "text-amber-400"
+                    }`}
+                  >
+                    {(timeRemainingMs / 1000).toFixed(1)}s
+                  </span>
+                  <div className="w-28 sm:w-36 h-2.5 bg-gray-900 border border-gray-700 rounded overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-100 ${
+                        timerRatio > 0.5 ? "bg-emerald-500" : timerRatio > 0.25 ? "bg-amber-500" : "bg-red-600"
+                      }`}
+                      style={{ width: `${timerRatio * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Ligne 2 : Contexte d'Audit compact & Consigne */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-gray-800 text-xs">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700 uppercase">
+                    {currentQ.categoryLabel}
+                  </span>
+                  <span className={`font-mono font-bold px-2 py-0.5 rounded border ${
+                    currentQ.targetViewport === 'mobile' ? 'bg-purple-950 text-purple-300 border-purple-700' :
+                    currentQ.targetViewport === 'tablet' ? 'bg-blue-950 text-blue-300 border-blue-700' :
+                    'bg-emerald-950 text-emerald-300 border-emerald-700'
+                  }`}>
+                    {currentQ.targetViewport === 'mobile' ? '📱 Mobile 375px' : currentQ.targetViewport === 'tablet' ? '💻 Tablette 768px' : '🖥️ Desktop'}
+                  </span>
+                  <span className="text-gray-300">
+                    Composant : <strong className="text-white">{currentQ.title}</strong>
+                  </span>
+                </div>
+
+                <span className="text-gray-300 font-medium italic sm:text-right">
+                  Identifiez l'interface conforme aux standards ergonomiques
                 </span>
               </div>
+            </div>
 
-              {/* Score et Streak Combo */}
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-gray-400 uppercase font-mono">SCORE :</span>
-                  <span className="text-base font-bold text-emerald-400 font-mono">{score} PTS</span>
-                </div>
+            {/* Simulateur avec les 2 Maquettes A et B (Directement visibles sans bloc intermédiaire) */}
+            <div key={currentRoundIndex} className="animate-fade-in">
+              <IhmViewportSimulator targetViewport={currentQ.targetViewport || "mobile"}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                  <IhmCardViewer
+                    variant={currentQ.variantA}
+                    targetViewport={currentQ.targetViewport || "mobile"}
+                    optionLabel="A"
+                    onSelect={handleSelectOption}
+                    isSelected={selectedOption === "A"}
+                    showResult={selectedOption !== null}
+                    isCorrect={currentQ.correctOption === "A"}
+                  />
 
-                {streak > 1 && (
-                  <span className="text-xs font-bold text-amber-300 bg-amber-950 px-2.5 py-1 rounded border border-amber-600 animate-pulse font-mono">
-                    🔥 COMBO x{streak} (+{streak * 25} PTS)
-                  </span>
-                )}
-              </div>
-
-              {/* Jauge du Compte à Rebours (15 secondes) */}
-              <div className="w-full sm:w-48 space-y-1">
-                <div className="flex justify-between text-xs text-gray-300 font-mono">
-                  <span>CHRONO :</span>
-                  <span className="font-bold text-amber-400">{(timeRemainingMs / 1000).toFixed(1)}s</span>
-                </div>
-                <div className="w-full h-3 bg-gray-900 border border-gray-700 rounded overflow-hidden">
-                  <div
-                    className={`h-full transition-all duration-100 ${
-                      timerRatio > 0.5 ? "bg-emerald-500" : timerRatio > 0.25 ? "bg-amber-500" : "bg-red-600"
-                    }`}
-                    style={{ width: `${timerRatio * 100}%` }}
+                  <IhmCardViewer
+                    variant={currentQ.variantB}
+                    targetViewport={currentQ.targetViewport || "mobile"}
+                    optionLabel="B"
+                    onSelect={handleSelectOption}
+                    isSelected={selectedOption === "B"}
+                    showResult={selectedOption !== null}
+                    isCorrect={currentQ.correctOption === "B"}
                   />
                 </div>
-              </div>
+              </IhmViewportSimulator>
             </div>
 
-            {/* Consigne Professionnelle et Neutre du Round */}
-            <div className="pixel-panel p-4 text-center space-y-2 border-2 border-amber-600/70">
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700 uppercase tracking-wider font-mono">
-                  {currentQ.categoryLabel}
-                </span>
-                <span className="text-xs text-gray-300">
-                  Composant : <strong className="text-white">{currentQ.title}</strong>
-                </span>
-              </div>
-              <h2 className="text-base sm:text-lg font-bold text-gray-100 font-sans">
-                Identifiez l'interface présentant la meilleure conception ergonomique et responsive.
-              </h2>
-            </div>
-
-            {/* Simulateur avec Format d'Écran Imposé pour cette manche */}
-            <IhmViewportSimulator targetViewport={currentQ.targetViewport || "mobile"}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                <IhmCardViewer
-                  variant={currentQ.variantA}
-                  targetViewport={currentQ.targetViewport || "mobile"}
-                  optionLabel="A"
-                  onSelect={handleSelectOption}
-                  isSelected={selectedOption === "A"}
-                  showResult={selectedOption !== null}
-                  isCorrect={currentQ.correctOption === "A"}
-                />
-
-                <IhmCardViewer
-                  variant={currentQ.variantB}
-                  targetViewport={currentQ.targetViewport || "mobile"}
-                  optionLabel="B"
-                  onSelect={handleSelectOption}
-                  isSelected={selectedOption === "B"}
-                  showResult={selectedOption !== null}
-                  isCorrect={currentQ.correctOption === "B"}
-                />
-              </div>
-            </IhmViewportSimulator>
-
-            {/* Panneau de Révélation et Feedback Pédagogique */}
+            {/* Panneau de Révélation et Feedback Pédagogique (affiché UNIQUEMENT après vote) */}
             {roundFeedback && (
               <div
                 className={`pixel-panel p-5 space-y-3 animate-fade-in border-2 rounded ${

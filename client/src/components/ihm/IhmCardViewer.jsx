@@ -21,6 +21,20 @@ export default function IhmCardViewer({
           : "border-slate-700 hover:border-slate-500"
       }`}
     >
+      {/* Tampon d'inspection ergonomique (Impact visuel officiel après vote) */}
+      {showResult && (
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-20">
+          <div
+            className={`px-4 sm:px-6 py-2 border-4 rounded font-mono font-black text-lg sm:text-2xl tracking-widest uppercase shadow-2xl backdrop-blur-xs animate-stamp select-none ${
+              isCorrect
+                ? "border-emerald-500 text-emerald-400 bg-emerald-950/85 shadow-[0_0_25px_rgba(16,185,129,0.5)]"
+                : "border-rose-500 text-rose-400 bg-rose-950/85 shadow-[0_0_25px_rgba(244,63,94,0.5)]"
+            }`}
+          >
+            {isCorrect ? "✓ CONFORME" : "✗ REJETÉ"}
+          </div>
+        </div>
+      )}
       {/* En-tête de la maquette (Style navigateur / smartphone moderne) */}
       <div className="flex items-center justify-between px-3 py-2 bg-slate-800 border-b border-slate-700 select-none">
         <div className="flex items-center gap-2">
@@ -52,77 +66,65 @@ export default function IhmCardViewer({
         )}
       </div>
 
-      {/* Contenu Web Moderne Réaliste (Testé par le joueur) */}
+      {/* Contenu Web Réaliste (Testé et audité par le joueur - ZÉRO spoiler textuel) */}
       <div className="p-4 bg-slate-950 text-slate-100 min-h-[240px] flex flex-col justify-center overflow-hidden font-sans">
         {/* 1. GRILLE DE CARTES PRODUITS */}
         {type === "product_grid" && (
           <div className="w-full">
             {targetViewport === "mobile" ? (
               data.fluid ? (
-                /* Option A Mobile : Liste verticale fluide, lisible et ergonomique */
-                <div className="space-y-2 w-full">
-                  <div className="flex flex-col gap-2.5 w-full">
-                    {data.items.map((it, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-lg bg-slate-800/90 border border-slate-700 flex items-center justify-between gap-3 shadow-sm"
-                      >
-                        <div className="min-w-0">
-                          <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
-                            {it.tag}
-                          </span>
-                          <h4 className="text-sm font-bold text-white truncate">{it.name}</h4>
-                          <p className="text-xs text-slate-400">{it.stock}</p>
-                        </div>
-                        <div className="flex flex-col items-end gap-1.5 shrink-0">
-                          <span className="text-sm font-bold text-emerald-400">{it.price}</span>
-                          <button
-                            type="button"
-                            className="text-xs px-2.5 py-1 bg-indigo-600 text-white font-medium rounded hover:bg-indigo-500"
-                          >
-                            Acheter
-                          </button>
-                        </div>
+                /* Option A Mobile : Liste verticale fluide */
+                <div className="flex flex-col gap-2.5 w-full">
+                  {data.items.map((it, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-lg bg-slate-800/90 border border-slate-700 flex items-center justify-between gap-3 shadow-sm"
+                    >
+                      <div className="min-w-0">
+                        <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
+                          {it.tag}
+                        </span>
+                        <h4 className="text-sm font-bold text-white truncate">{it.name}</h4>
+                        <p className="text-xs text-slate-400">{it.stock}</p>
                       </div>
-                    ))}
-                  </div>
-                  <div className="text-[11px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/80 px-2.5 py-1 rounded flex items-center gap-1.5">
-                    <span>✓</span>
-                    <span>Affichage 1 colonne adapté à la largeur mobile (aucun débordement)</span>
-                  </div>
+                      <div className="flex flex-col items-end gap-1.5 shrink-0">
+                        <span className="text-sm font-bold text-emerald-400">{it.price}</span>
+                        <button
+                          type="button"
+                          className="text-xs px-2.5 py-1 bg-indigo-600 text-white font-medium rounded hover:bg-indigo-500"
+                        >
+                          Acheter
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : (
-                /* Option B Mobile : Ligne rigide non responsive qui déborde */
-                <div className="space-y-2 w-full">
-                  <div className="flex flex-row gap-3 w-full overflow-hidden">
-                    {data.items.map((it, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-lg bg-slate-800 border border-slate-700 flex flex-col justify-between w-[200px] shrink-0"
-                      >
-                        <div>
-                          <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
-                            {it.tag}
-                          </span>
-                          <h4 className="text-sm font-bold text-white mt-0.5">{it.name}</h4>
-                          <p className="text-xs text-slate-400 mt-0.5">{it.stock}</p>
-                        </div>
-                        <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-700/60">
-                          <span className="text-sm font-bold text-emerald-400">{it.price}</span>
-                          <button
-                            type="button"
-                            className="text-xs px-2 py-1 bg-indigo-600 text-white font-medium rounded"
-                          >
-                            Acheter
-                          </button>
-                        </div>
+                /* Option B Mobile : Ligne rigide avec débordement sans scroll */
+                <div className="flex flex-row gap-3 w-full overflow-hidden">
+                  {data.items.map((it, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-lg bg-slate-800 border border-slate-700 flex flex-col justify-between w-[200px] shrink-0"
+                    >
+                      <div>
+                        <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
+                          {it.tag}
+                        </span>
+                        <h4 className="text-sm font-bold text-white mt-0.5">{it.name}</h4>
+                        <p className="text-xs text-slate-400 mt-0.5">{it.stock}</p>
                       </div>
-                    ))}
-                  </div>
-                  <div className="text-[11px] text-rose-400 bg-rose-950/60 border border-rose-800/80 px-2.5 py-1 rounded flex items-center gap-1.5">
-                    <span>⚠️</span>
-                    <span>Débordement horizontal masqué (cartes 2 et 3 tronquées sans scroll)</span>
-                  </div>
+                      <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-700/60">
+                        <span className="text-sm font-bold text-emerald-400">{it.price}</span>
+                        <button
+                          type="button"
+                          className="text-xs px-2 py-1 bg-indigo-600 text-white font-medium rounded"
+                        >
+                          Acheter
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )
             ) : (
@@ -159,41 +161,29 @@ export default function IhmCardViewer({
           <div className="w-full">
             {targetViewport === "mobile" ? (
               data.hasBurger ? (
-                /* Option B Mobile : Menu burger avec tiroir tactile */
-                <div className="space-y-2 w-full">
-                  <nav className="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 flex items-center justify-between shadow-sm">
-                    <span className="font-bold text-indigo-400 text-sm">UnivWeb S3</span>
-                    <button
-                      type="button"
-                      className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-semibold flex items-center gap-1.5 shadow"
-                    >
-                      <span>☰</span>
-                      <span>Menu</span>
-                    </button>
-                  </nav>
-                  <div className="text-[11px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/80 px-2.5 py-1 rounded flex items-center gap-1.5">
-                    <span>✓</span>
-                    <span>Menu burger adapté aux écrans tactiles étroits (375 px)</span>
-                  </div>
-                </div>
+                /* Option B Mobile : Menu burger */
+                <nav className="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 flex items-center justify-between shadow-sm">
+                  <span className="font-bold text-indigo-400 text-sm">UnivWeb S3</span>
+                  <button
+                    type="button"
+                    className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-semibold flex items-center gap-1.5 shadow"
+                  >
+                    <span>☰</span>
+                    <span>Menu</span>
+                  </button>
+                </nav>
               ) : (
-                /* Option A Mobile : Liens desktop tronqués sur petit écran */
-                <div className="space-y-2 w-full">
-                  <nav className="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 flex items-center justify-between overflow-hidden shadow-sm">
-                    <span className="font-bold text-indigo-400 text-sm shrink-0 mr-2">UnivWeb S3</span>
-                    <div className="flex gap-2 text-xs text-slate-400 overflow-hidden whitespace-nowrap">
-                      {data.links.map((l, i) => (
-                        <span key={i} className="shrink-0 px-1 py-0.5 bg-slate-700/50 rounded text-slate-300">
-                          {l}
-                        </span>
-                      ))}
-                    </div>
-                  </nav>
-                  <div className="text-[11px] text-rose-400 bg-rose-950/60 border border-rose-800/80 px-2.5 py-1 rounded flex items-center gap-1.5">
-                    <span>⚠️</span>
-                    <span>Liens de navigation tronqués sans menu responsive mobile</span>
+                /* Option A Mobile : Liens desktop tronqués */
+                <nav className="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 flex items-center justify-between overflow-hidden shadow-sm">
+                  <span className="font-bold text-indigo-400 text-sm shrink-0 mr-2">UnivWeb S3</span>
+                  <div className="flex gap-2 text-xs text-slate-400 overflow-hidden whitespace-nowrap">
+                    {data.links.map((l, i) => (
+                      <span key={i} className="shrink-0 px-1 py-0.5 bg-slate-700/50 rounded text-slate-300">
+                        {l}
+                      </span>
+                    ))}
                   </div>
-                </div>
+                </nav>
               )
             ) : (
               /* Vue Desktop */
@@ -224,17 +214,12 @@ export default function IhmCardViewer({
                 </button>
               ))}
             </div>
-            {targetViewport === "mobile" && (
-              <p className={`text-[11px] ${data.wrap ? "text-emerald-400" : "text-rose-400"}`}>
-                {data.wrap ? "✓ Flex-wrap : les boutons s'empilent sans déborder" : "⚠️ Flex-nowrap : bouton tronqué hors de l'écran"}
-              </p>
-            )}
           </div>
         )}
 
         {/* 4. TABLEAU DE NOTES RESPONSIVE */}
         {type === "responsive_table" && (
-          <div className="w-full space-y-2">
+          <div className="w-full">
             <div className={`w-full border border-slate-700 rounded ${data.scrollable ? "overflow-x-auto" : "overflow-hidden"}`}>
               <table className={`w-full text-xs text-left border-collapse ${!data.scrollable ? "table-fixed" : ""}`}>
                 <thead className="bg-slate-800 text-slate-200">
@@ -255,11 +240,6 @@ export default function IhmCardViewer({
                 </tbody>
               </table>
             </div>
-            {targetViewport === "mobile" && (
-              <p className={`text-[11px] font-mono ${data.scrollable ? "text-emerald-400" : "text-rose-400"}`}>
-                {data.scrollable ? "↔ Défilement horizontal fluide préservant la lisibilité" : "⚠️ Colonnes écrasées et contenu tronqué sans défilement"}
-              </p>
-            )}
           </div>
         )}
 
@@ -274,23 +254,18 @@ export default function IhmCardViewer({
                     <p className="text-xs text-slate-300">{data.subtitle}</p>
                   </div>
                   <div className="w-full max-w-[200px] h-12 bg-indigo-800/60 rounded flex items-center justify-center text-indigo-300 font-mono text-xs border border-indigo-600">
-                    [Illustration responsive]
+                    [Illustration]
                   </div>
                 </div>
               ) : (
-                <div className="w-full space-y-2">
-                  <div className="w-full p-3 bg-gradient-to-r from-indigo-950 to-slate-900 rounded-lg border border-indigo-900/50 flex flex-row items-center gap-2">
-                    <div className="flex-1 space-y-0.5 min-w-0">
-                      <h3 className="text-xs font-bold text-white truncate">{data.title}</h3>
-                      <p className="text-[10px] text-slate-400 line-clamp-1">{data.subtitle}</p>
-                    </div>
-                    <div className="w-24 h-12 bg-indigo-800/60 rounded flex items-center justify-center text-indigo-300 font-mono text-[10px] shrink-0 border border-indigo-600">
-                      [Illustration]
-                    </div>
+                <div className="w-full p-3 bg-gradient-to-r from-indigo-950 to-slate-900 rounded-lg border border-indigo-900/50 flex flex-row items-center gap-2">
+                  <div className="flex-1 space-y-0.5 min-w-0">
+                    <h3 className="text-xs font-bold text-white truncate">{data.title}</h3>
+                    <p className="text-[10px] text-slate-400 line-clamp-1">{data.subtitle}</p>
                   </div>
-                  <p className="text-[11px] text-rose-400">
-                    ⚠️ Colonnes rigides 50/50 écrasant le texte sur mobile
-                  </p>
+                  <div className="w-24 h-12 bg-indigo-800/60 rounded flex items-center justify-center text-indigo-300 font-mono text-[10px] shrink-0 border border-indigo-600">
+                    [Illustration]
+                  </div>
                 </div>
               )
             ) : (
@@ -332,9 +307,6 @@ export default function IhmCardViewer({
             >
               {data.label}
             </button>
-            <p className={`text-[11px] font-mono ${data.hasFocusRing ? "text-emerald-400" : "text-rose-400"}`}>
-              {data.hasFocusRing ? "✓ Anneau de focus visible (accessible clavier)" : "⚠️ Outline supprimé sans indicateur visible"}
-            </p>
           </div>
         )}
 
@@ -389,14 +361,10 @@ export default function IhmCardViewer({
               value={data.value}
               className="w-full px-3 py-2 bg-slate-800 border-2 border-rose-500 rounded text-xs text-rose-200 font-mono"
             />
-            {data.hasMessage ? (
+            {data.hasMessage && (
               <p className="text-[11px] text-rose-400 font-medium flex items-center gap-1 mt-1">
                 <span>⚠️</span>
                 <span>{data.errorText}</span>
-              </p>
-            ) : (
-              <p className="text-[11px] text-rose-400 italic">
-                (Aucun message explicatif pour corriger l'erreur)
               </p>
             )}
           </div>
@@ -405,12 +373,8 @@ export default function IhmCardViewer({
         {/* 12. LABELS VS PLACEHOLDERS */}
         {type === "form_labels" && (
           <div className="w-full max-w-sm mx-auto space-y-1">
-            {data.hasLabel ? (
+            {data.hasLabel && (
               <label className="text-xs font-bold text-slate-200 block">{data.label}</label>
-            ) : (
-              <span className="text-[10px] text-rose-400 font-mono block">
-                ⚠️ Absence de balise &lt;label&gt; permanente
-              </span>
             )}
             <input
               type="text"
@@ -432,9 +396,6 @@ export default function IhmCardViewer({
               readOnly
               className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded text-xs text-slate-200 font-mono"
             />
-            <p className="text-[11px] text-amber-300 font-mono bg-slate-900 p-1.5 rounded border border-slate-800">
-              💡 {data.helper}
-            </p>
           </div>
         )}
 
@@ -471,9 +432,6 @@ export default function IhmCardViewer({
               )}
               <span>{data.text}</span>
             </button>
-            <p className="text-[11px] text-slate-400">
-              {data.loading ? "✓ Bouton désactivé (anti-double clic)" : "⚠️ Clics multiples non protégés"}
-            </p>
           </div>
         )}
 
@@ -487,9 +445,6 @@ export default function IhmCardViewer({
             >
               {data.label}
             </button>
-            <span className="text-[10px] font-mono text-slate-400">
-              {data.size === "standard" ? "Zone conforme ≥ 44x44px" : "Zone trop étroite (< 44px)"}
-            </span>
           </div>
         )}
 
@@ -505,9 +460,6 @@ export default function IhmCardViewer({
                 {data.destructiveText}
               </button>
             </div>
-            <p className="text-[11px] text-slate-400">
-              {data.spaced ? "✓ Séparation claire entre validation et suppression" : "⚠️ Risque de clic erroné par proximité"}
-            </p>
           </div>
         )}
 
@@ -560,7 +512,7 @@ export default function IhmCardViewer({
         )}
       </div>
 
-      {/* Bouton de vote biseauté Pixel Art au bas de la carte */}
+      {/* Bouton de vote au bas de la carte */}
       <div className="p-3 bg-slate-900/90 border-t border-slate-800 flex justify-center">
         <button
           type="button"
