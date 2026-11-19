@@ -73,8 +73,17 @@ export default function IhmCardViewer({
       </div>
 
       {/* Contenu Web Réaliste (Tolérant, dynamique et avec contrastes visuels frappants) */}
-      <div className="p-4 bg-slate-950 text-slate-100 min-h-[250px] flex-1 flex flex-col justify-center overflow-hidden font-sans">
-        {/* 1. GRILLE DE CARTES PRODUITS */}
+      <div className="p-3 sm:p-4 bg-slate-950 text-slate-100 min-h-[260px] flex-1 flex flex-col justify-center items-center overflow-hidden font-sans">
+        <div
+          className={`w-full ${
+            targetViewport === "mobile"
+              ? "max-w-[340px] mx-auto p-2.5 rounded-xl border border-dashed border-slate-700/80 bg-slate-900/40 shadow-inner"
+              : targetViewport === "tablet"
+              ? "max-w-[540px] mx-auto w-full"
+              : "w-full"
+          }`}
+        >
+          {/* 1. GRILLE DE CARTES PRODUITS */}
         {type === "product_grid" && (
           <div className="w-full">
             {targetViewport === "mobile" ? (
@@ -232,14 +241,22 @@ export default function IhmCardViewer({
 
         {/* 3. GROUPES DE BOUTONS D'ACTION */}
         {type === "button_group" && (
-          <div className="w-full p-4 bg-slate-800 rounded-lg border border-slate-700 space-y-3">
+          <div className="w-full p-3.5 bg-slate-800 rounded-lg border border-slate-700 space-y-2.5">
+            {data.hasSearch && (
+              <div className="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-slate-400">
+                <svg className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="text-slate-400">Rechercher une ressource...</span>
+              </div>
+            )}
             <p className="text-xs text-slate-300 font-medium">Filtres et actions rapides :</p>
             <div className={`flex gap-2 ${data.wrap !== false ? "flex-wrap" : "flex-nowrap overflow-hidden"}`}>
               {(data.buttons || []).map((btn, i) => (
                 <button
                   key={i}
                   type="button"
-                  className="px-3 py-1.5 text-xs font-medium bg-slate-700 hover:bg-slate-600 text-white rounded whitespace-nowrap shrink-0 border border-slate-600"
+                  className="px-2.5 py-1.5 text-xs font-medium bg-slate-700 hover:bg-slate-600 text-white rounded whitespace-nowrap shrink-0 border border-slate-600"
                 >
                   {btn}
                 </button>
@@ -736,6 +753,210 @@ export default function IhmCardViewer({
             </table>
           </div>
         )}
+
+        {/* 21. CENTRAGE OPTIQUE D'ICÔNE (CAN'T UNSEE STYLE) */}
+        {type === "optical_centering" && (() => {
+          const isCentered = data.opticalCompensation ?? data.opticallyCentered ?? true;
+          return (
+            <div className="w-full flex flex-col items-center justify-center p-4 bg-slate-900/90 rounded-xl border border-slate-800 space-y-3">
+              <span className="text-xs font-semibold text-slate-300">
+                {data.title || "Lecteur Multimédia (Audio / Vidéo)"}
+              </span>
+              <div className="relative flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-lg shadow-indigo-900/40 flex items-center justify-center border border-indigo-400/30">
+                  <svg
+                    className={`w-7 h-7 text-white fill-current transition-transform ${
+                      isCentered ? "translate-x-[2.5px]" : "translate-x-0"
+                    }`}
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-[11px] text-slate-400 font-mono">
+                {data.caption || "Bouton d'action : Lancer la ressource"}
+              </p>
+            </div>
+          );
+        })()}
+
+        {/* 22. HARMONIE DES RAYONS DE COURBURE IMBRIQUÉS (CAN'T UNSEE STYLE) */}
+        {type === "nested_border_radius" && (() => {
+          const isProportional = data.proportionalRadius ?? data.nestedMath ?? true;
+          return (
+            <div className="w-full flex justify-center p-2">
+              <div className="w-full max-w-[320px] p-3.5 bg-slate-800 rounded-2xl border-2 border-slate-700 shadow-md">
+                <div
+                  className={`p-3 bg-slate-900 border border-slate-700/80 transition-all ${
+                    isProportional ? "rounded-lg" : "rounded-2xl"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-md bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shrink-0">
+                      SAE
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-xs font-bold text-white truncate">Projet Web BUT 3</h4>
+                      <p className="text-[10px] text-slate-400">Rayon de courbure harmonieux</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* 23. INTERLETTRAGE OPTIQUE EN CAPITALES (CAN'T UNSEE STYLE) */}
+        {type === "optical_tracking" && (() => {
+          const hasTracking = data.hasTracking ?? data.opticalTracking ?? true;
+          return (
+            <div className="w-full p-4 bg-slate-900/90 rounded-xl border border-slate-800 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span
+                  className={`text-[10px] font-black uppercase px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 ${
+                    hasTracking ? "tracking-widest" : "tracking-tighter"
+                  }`}
+                >
+                  {data.badgeText || "MODULE PREMIUM"}
+                </span>
+                <span className="text-xs text-slate-400">Ressource R3.01</span>
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-white">Développement Web Avancé</h4>
+                <p className="text-xs text-slate-400 mt-1">
+                  Typographie en capitales avec compensation d'approche optique.
+                </p>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* 24. HAUTEUR DE LIGNE ET RYTHME VERTICAL (CAN'T UNSEE STYLE) */}
+        {type === "optical_line_height" && (() => {
+          const isRelaxed = data.isRelaxed ?? data.opticalLineHeight ?? true;
+          return (
+            <div className="w-full p-4 bg-slate-900/90 rounded-xl border border-slate-800 space-y-2 text-left">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                  {data.title || "Consigne d'évaluation SAE"}
+                </h4>
+              </div>
+              <p
+                className={`text-xs text-slate-300 font-sans ${
+                  isRelaxed ? "leading-relaxed" : "leading-none"
+                }`}
+              >
+                {data.text ||
+                  "L'ergonomie des interfaces numériques exige une lisibilité optimale. Un espacement vertical adapté entre les lignes empêche les jambages de se chevaucher lors de la lecture prolongée de documents pédagogiques."}
+              </p>
+            </div>
+          );
+        })()}
+
+        {/* 25. SEUIL DE CONTRASTE SUBTIL WCAG AA (CAN'T UNSEE STYLE) */}
+        {type === "subtle_contrast" && (() => {
+          const isCompliant = data.isCompliant ?? data.wcagPass ?? true;
+          return (
+            <div className="w-full p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2.5 text-left">
+              <div className="flex justify-between items-center">
+                <h4 className="text-xs font-bold text-white">{data.cardTitle || "Statut de soumission"}</h4>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-700">
+                  En ligne
+                </span>
+              </div>
+              <p className="text-xs text-slate-200">
+                Dernière modification enregistrée sur le serveur Git.
+              </p>
+              <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px]">
+                <span className="text-slate-400">Horodatage :</span>
+                <span className={`font-mono ${isCompliant ? "text-slate-300 font-medium" : "text-slate-600 font-normal"}`}>
+                  19/11/2026 à 14:32:00
+                </span>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* 26. LOI DE PROXIMITÉ DE GESTALT (CAN'T UNSEE STYLE) */}
+        {type === "gestalt_proximity" && (() => {
+          const isGrouped = data.isGrouped ?? data.correctProximity ?? true;
+          return (
+            <div className="w-full p-4 bg-slate-900 rounded-xl border border-slate-800 text-left">
+              <div className="text-xs text-slate-400 pb-2 border-b border-slate-800/80">
+                Section 1 : Introduction générale aux IHM
+              </div>
+              <h4
+                className={`text-xs font-bold text-amber-400 uppercase tracking-wide ${
+                  isGrouped ? "mt-5 mb-1" : "my-3.5"
+                }`}
+              >
+                Section 2 : Critères de Bastien et Scapin
+              </h4>
+              <p className="text-xs text-slate-300 leading-snug">
+                Le guidage et la charge de travail définissent la facilité d'apprentissage d'un outil web par l'étudiant.
+              </p>
+            </div>
+          );
+        })()}
+
+        {/* 27. ALIGNEMENT DE CASE À COCHER SUR TEXTE MULTILIGNE (CAN'T UNSEE STYLE) */}
+        {type === "checkbox_multiline" && (() => {
+          const isTopAligned = data.isTopAligned ?? data.topAligned ?? true;
+          return (
+            <div className="w-full p-4 bg-slate-900 rounded-xl border border-slate-800 text-left">
+              <label
+                className={`flex gap-3 cursor-pointer select-none ${
+                  isTopAligned ? "items-start" : "items-center"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  defaultChecked
+                  disabled
+                  className={`w-4 h-4 rounded border-slate-600 text-indigo-600 bg-slate-800 shrink-0 ${
+                    isTopAligned ? "mt-0.5" : "mt-0"
+                  }`}
+                />
+                <span className="text-xs text-slate-300 leading-relaxed">
+                  {data.label ||
+                    "J'atteste avoir pris connaissance du règlement des examens et m'engage à respecter les consignes de confidentialité et de propriété intellectuelle."}
+                </span>
+              </label>
+            </div>
+          );
+        })()}
+
+        {/* 28. ÉLÉVATION ET OMBRE PORTÉE RÉALISTE (CAN'T UNSEE STYLE) */}
+        {type === "elevation_shadow" && (() => {
+          const isDiffuse = data.isDiffuse ?? data.realisticShadow ?? true;
+          return (
+            <div className="w-full p-4 bg-slate-950/70 rounded-xl flex items-center justify-center">
+              <div
+                className={`w-full max-w-[280px] p-4 bg-slate-800 rounded-xl border border-slate-700 ${
+                  isDiffuse
+                    ? "shadow-2xl shadow-indigo-950/80 border-t-slate-600"
+                    : "shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                }`}
+              >
+                <div className="flex items-center gap-2 text-xs font-bold text-white mb-1.5">
+                  <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                  Fenêtre de confirmation
+                </div>
+                <p className="text-[11px] text-slate-300">
+                  Ombre portée douce et lumière zénithale vs ombre opaque découpée.
+                </p>
+                <div className="mt-3 flex justify-end gap-2">
+                  <button type="button" className="px-2.5 py-1 text-[11px] rounded bg-indigo-600 text-white font-medium">
+                    Confirmer
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+        </div>
       </div>
 
       {/* Bouton de vote au bas de la carte (Calé en bas pour alignement parfait) */}

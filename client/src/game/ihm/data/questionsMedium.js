@@ -296,20 +296,22 @@ export const QUESTIONS_MEDIUM = [
     title: "Barre de recherche et boutons de filtres",
     targetViewport: "mobile",
     viewportLabel: "📱 Mobile 375px",
-    instruction: "Comment agencer un champ de recherche et ses filtres sur un petit écran ?",
-    explanation: "Permettre aux éléments de basculer en colonne ou de s'empiler évite que le champ de recherche ne soit réduit à 40px de large.",
+    instruction: "Comment agencer un champ de recherche et ses boutons de filtres sur un petit écran ?",
+    explanation: "Permettre aux éléments de basculer en colonne et aux boutons de filtres de s'empiler évite qu'ils ne débordent de l'écran ou ne soient tronqués sur mobile.",
     correctVariant: {
       type: "button_group",
       data: {
+        hasSearch: true,
         wrap: true,
-        buttons: ["Tous les cours", "TPs notés", "SAEs", "Rattrapages"],
+        buttons: ["Tous les cours", "TPs notés", "SAEs BUT 3", "Rattrapages", "Archives"],
       },
     },
     incorrectVariant: {
       type: "button_group",
       data: {
+        hasSearch: true,
         wrap: false,
-        buttons: ["Tous les cours", "TPs notés", "SAEs", "Rattrapages"],
+        buttons: ["Tous les cours", "TPs notés", "SAEs BUT 3", "Rattrapages", "Archives"],
       },
     },
   },

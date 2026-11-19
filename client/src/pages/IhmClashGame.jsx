@@ -54,7 +54,7 @@ export default function IhmClashGame() {
 
   // Titre du document
   useEffect(() => {
-    document.title = "EvilJV | L'Oeil Critique (BUT 2 S3)";
+    document.title = "EvilJV | L'Oeil Critique - Développement Web";
   }, []);
 
   // Gestion du chronomètre par manche (actif uniquement quand gameState === "playing")
@@ -486,7 +486,7 @@ export default function IhmClashGame() {
 
                 <div className="text-xs sm:text-sm text-gray-200 leading-relaxed font-sans bg-gray-950/90 p-3.5 border border-gray-800 rounded">
                   <strong className="text-amber-400 block mb-1 font-bold">
-                    🔍 ANALYSE ERGONOMIQUE OFFICIELLE (BUT 2 S3 DÉV WEB) :
+                    💡 EXPLICATION DE LA RÉPONSE :
                   </strong>
                   {roundFeedback.explanation}
                 </div>
@@ -570,10 +570,10 @@ export default function IhmClashGame() {
                 <div>
                   <h3 className="text-lg font-bold text-amber-400 flex items-center gap-2 font-sans">
                     <span>📋</span>
-                    <span>REVUE DÉTAILLÉE DES 20 CAS D'AUDIT (BUT 2 S3)</span>
+                    <span>REVUE DÉTAILLÉE DES 20 CAS D'AUDIT</span>
                   </h3>
                   <p className="text-xs text-gray-400 mt-0.5">
-                    Analysez à tête reposée chaque cas d'étude, votre vote et l'explication ergonomique officielle.
+                    Analysez à tête reposée chaque cas d'étude, votre vote et l'explication ergonomique détaillée.
                   </p>
                 </div>
 
@@ -684,7 +684,7 @@ export default function IhmClashGame() {
                     {/* Explication pédagogique */}
                     <div className="text-xs sm:text-sm text-gray-300 leading-relaxed bg-gray-950/80 p-3 rounded border border-gray-800/80">
                       <strong className="text-amber-400 block mb-1 font-bold">
-                        💡 Règle ergonomique & cours BUT 2 S3 :
+                        💡 EXPLICATION DE LA RÉPONSE :
                       </strong>
                       {item.explanation}
                     </div>

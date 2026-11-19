@@ -236,7 +236,7 @@ export const QUESTIONS_EASY = [
       type: "link_semantics",
       data: {
         explicit: true,
-        title: "Programme officiel BUT 2 Informatique",
+        title: "Programme du département Informatique",
         linkText: "Télécharger le syllabus complet du S3 (PDF 1.4 Mo)",
       },
     },
@@ -244,7 +244,7 @@ export const QUESTIONS_EASY = [
       type: "link_semantics",
       data: {
         explicit: false,
-        title: "Programme officiel BUT 2 Informatique",
+        title: "Programme du département Informatique",
         linkText: "Cliquez ici pour tout voir",
       },
     },
