@@ -17,7 +17,7 @@ const TIMER_TOTAL_MS = 15000;
 export default function IhmClashGame() {
   const navigate = useNavigate();
   const { token } = useAuthStore();
-  const { coins, earnCoins } = useEconomyStore();
+  const { coins, addWinnings, earnCoins = addWinnings } = useEconomyStore();
 
   const {
     questions,
@@ -50,6 +50,7 @@ export default function IhmClashGame() {
   const [timeRemainingMs, setTimeRemainingMs] = useState(TIMER_TOTAL_MS);
   const timerRef = useRef(null);
   const sessionStartTimeRef = useRef(0);
+  const hasRecordedRef = useRef(false);
 
   // Titre du document
   useEffect(() => {
@@ -87,12 +88,16 @@ export default function IhmClashGame() {
     };
   }, [gameState, currentRoundIndex, selectedOption, isGameOver, inMultiBattle, gameMode, submitAnswer]);
 
-  // Enregistrement de la télémétrie en fin de partie solo
+  // Enregistrement de la télémétrie en fin de partie solo (une seule fois par session terminée)
   useEffect(() => {
-    if (isGameOver && coinsEarned > 0) {
-      earnCoins(coinsEarned);
+    if (isGameOver && coinsEarned > 0 && !hasRecordedRef.current) {
+      hasRecordedRef.current = true;
+      const awardCoins = earnCoins || addWinnings;
+      if (typeof awardCoins === "function") {
+        awardCoins(coinsEarned);
+      }
       const totalSeconds = Math.max(10, Math.round((Date.now() - sessionStartTimeRef.current) / 1000));
-      recordGameSession(token, {
+      void recordGameSession(token, {
         game: "L'Oeil Critique",
         score,
         timeSeconds: totalSeconds,
@@ -100,13 +105,14 @@ export default function IhmClashGame() {
         status: "finished",
       });
     }
-  }, [isGameOver, coinsEarned, earnCoins, score, token]);
+  }, [isGameOver, coinsEarned, earnCoins, addWinnings, score, token]);
 
   const currentQ = questions[currentRoundIndex] || questions[0];
   const timerRatio = Math.max(0, timeRemainingMs / TIMER_TOTAL_MS);
 
   // Démarrage de la partie Solo depuis l'écran de briefing
   const handleStartSolo = () => {
+    hasRecordedRef.current = false;
     startSoloGame();
     sessionStartTimeRef.current = Date.now();
     setGameState("playing");
@@ -120,6 +126,7 @@ export default function IhmClashGame() {
 
   // Démarrage de la battle multijoueur (2 à 4 joueurs max)
   const handleStartMultiBattle = (players) => {
+    hasRecordedRef.current = false;
     setMultiPlayers(players);
     setInMultiBattle(true);
     startSoloGame();
@@ -167,8 +174,11 @@ export default function IhmClashGame() {
 
     const myResult = finalRankings.find((r) => r.isMe);
     if (myResult) {
-      earnCoins(myResult.coinsWon);
-      recordGameSession(token, {
+      const awardCoins = earnCoins || addWinnings;
+      if (typeof awardCoins === "function") {
+        awardCoins(myResult.coinsWon);
+      }
+      void recordGameSession(token, {
         game: "L'Oeil Critique",
         score: myResult.score,
         timeSeconds: Math.round(totalTimeMs / 1000),
