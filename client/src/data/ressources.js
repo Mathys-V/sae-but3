@@ -50,11 +50,10 @@ export const ressourcesBUT = {
     // Semestre 3
     {
       id: "R3.01",
-      nom: "L'Oeil Critique (R3.01) - Développement Web",
+      nom: "Développement Web",
       sem: 3,
       path: "/evil/jeux/ihm-clash",
       bgImage: "/assets/ui/fonds_site/atelier_architecte_ihm.png",
-      spriteIcon: "/assets/ui/Barre-de-Navigation/sprites/gamepad-32.png",
       tag: "L'Oeil Critique",
     },
     { id: "R3.02", nom: "Développement efficace", sem: 3 },
@@ -93,11 +92,10 @@ export const ressourcesBUT = {
     { id: "R5.A.05", nom: "Programmation avancée", sem: 5 },
     {
       id: "R5.A.06",
-      nom: "L'Odyssée (R5.A.06) - Programmation multimédia",
+      nom: "Programmation multimédia",
       sem: 5,
       path: "/evil/jeux/plongee",
       bgImage: "/assets/plongee/env/backgrounds/surface_ocean_jour.png",
-      spriteIcon: "/assets/plongee/player/player-idle-boat.png",
       tag: "L'Odyssée",
     },
     { id: "R5.A.07", nom: "Automatisation (CI/CD, DevOps)", sem: 5 },

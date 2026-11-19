@@ -1,6 +1,6 @@
-// client/src/store/ihmStore.js
+// client/src/game/ihm/store/ihmStore.js
 import { create } from "zustand";
-import { IHM_QUESTIONS } from "../data/ihmQuestions";
+import { generateSessionQuestions } from "../data/questionGenerator";
 
 const ROUND_TIME_LIMIT_MS = 15000; // 15 secondes par round en solo
 const BASE_POINTS = 100;
@@ -8,7 +8,7 @@ const STREAK_BONUS = 25;
 const MAX_SPEED_BONUS = 50;
 
 export const useIhmStore = create((set, get) => ({
-  questions: IHM_QUESTIONS,
+  questions: generateSessionQuestions(),
   currentRoundIndex: 0,
   score: 0,
   streak: 0,
@@ -23,7 +23,10 @@ export const useIhmStore = create((set, get) => ({
   setViewportMode: (mode) => set({ viewportMode: mode }),
 
   startSoloGame: () => {
+    // Génération dynamique d'une session progressive (5 faciles, 10 moyennes, 5 difficiles) avec A/B aléatoire
+    const freshQuestions = generateSessionQuestions();
     set({
+      questions: freshQuestions,
       currentRoundIndex: 0,
       score: 0,
       streak: 0,
@@ -74,6 +77,7 @@ export const useIhmStore = create((set, get) => ({
       {
         round: state.currentRoundIndex + 1,
         questionId: currentQuestion.id,
+        difficulty: currentQuestion.difficulty || "medium",
         title: currentQuestion.title,
         categoryLabel: currentQuestion.categoryLabel,
         targetViewport: currentQuestion.targetViewport,

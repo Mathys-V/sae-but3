@@ -4,4 +4,7 @@ export { default as IhmViewportSimulator } from "./components/IhmViewportSimulat
 export { default as IhmMultiLobby } from "./components/IhmMultiLobby";
 export { default as IhmRankingModal } from "./components/IhmRankingModal";
 export { useIhmStore } from "./store/ihmStore";
-export { IHM_QUESTIONS } from "./data/ihmQuestions";
+export { generateSessionQuestions, ALL_QUESTIONS_POOL } from "./data/questionGenerator";
+export { QUESTIONS_EASY } from "./data/questionsEasy";
+export { QUESTIONS_MEDIUM } from "./data/questionsMedium";
+export { QUESTIONS_HARD } from "./data/questionsHard";

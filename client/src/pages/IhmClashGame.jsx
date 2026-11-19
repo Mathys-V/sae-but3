@@ -261,11 +261,11 @@ export default function IhmClashGame() {
 
                 <div className="p-3.5 bg-gray-950/80 border border-gray-800 rounded space-y-1">
                   <div className="font-bold text-emerald-400 flex items-center gap-1.5 font-mono">
-                    <span>⏱️</span>
-                    <span>15s PAR AUDIT</span>
+                    <span>⚡</span>
+                    <span>DIFFICULTÉ PROGRESSIVE</span>
                   </div>
                   <p className="text-gray-300 text-xs leading-relaxed">
-                    Débusquez le piège et gagnez des bonus de vitesse.
+                    5 faciles, 10 moyennes et 5 expertes tirées parmi 80 cas.
                   </p>
                 </div>
 
@@ -387,6 +387,15 @@ export default function IhmClashGame() {
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-mono font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700 uppercase">
                     {currentQ.categoryLabel}
+                  </span>
+                  <span className={`font-mono text-[11px] font-bold px-2 py-0.5 rounded border uppercase ${
+                    currentQ.difficulty === 'easy'
+                      ? 'bg-emerald-950 text-emerald-300 border-emerald-700'
+                      : currentQ.difficulty === 'hard'
+                      ? 'bg-rose-950 text-rose-300 border-rose-700'
+                      : 'bg-amber-950 text-amber-300 border-amber-700'
+                  }`}>
+                    {currentQ.difficulty === 'easy' ? '🟢 Facile' : currentQ.difficulty === 'hard' ? '🔴 Expert' : '🟡 Moyen'}
                   </span>
                   <span className={`font-mono font-bold px-2 py-0.5 rounded border ${
                     currentQ.targetViewport === 'mobile' ? 'bg-purple-950 text-purple-300 border-purple-700' :
@@ -541,7 +550,7 @@ export default function IhmClashGame() {
                   }}
                   className="pixel-btn w-full !bg-red-700 hover:!bg-red-600 !text-white !font-sans font-bold"
                 >
-                  RETOURNER AU BRIEFING
+                  RETOURNER AUX EXPLICATIONS
                 </button>
                 <button
                   type="button"
@@ -629,6 +638,15 @@ export default function IhmClashGame() {
                         <span className="text-xs text-gray-400 font-medium">
                           [{item.categoryLabel}]
                         </span>
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded border uppercase ${
+                          item.difficulty === 'easy'
+                            ? 'bg-emerald-950 text-emerald-300 border-emerald-700'
+                            : item.difficulty === 'hard'
+                            ? 'bg-rose-950 text-rose-300 border-rose-700'
+                            : 'bg-amber-950 text-amber-300 border-amber-700'
+                        }`}>
+                          {item.difficulty === 'easy' ? '🟢 Facile' : item.difficulty === 'hard' ? '🔴 Expert' : '🟡 Moyen'}
+                        </span>
                         <h4 className="text-sm font-bold text-white">
                           {item.title}
                         </h4>
@@ -678,6 +696,28 @@ export default function IhmClashGame() {
                     Aucun cas correspondant à ce filtre.
                   </div>
                 )}
+              </div>
+
+              {/* Boutons de navigation dupliqués en bas pour éviter de devoir remonter la page */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetGame();
+                    setGameState("briefing");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="pixel-btn w-full !bg-red-700 hover:!bg-red-600 !text-white !font-sans font-bold"
+                >
+                  RETOURNER AUX EXPLICATIONS
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/evil/jeux")}
+                  className="pixel-btn w-full !font-sans font-bold"
+                >
+                  CATALOGUE DES JEUX
+                </button>
               </div>
             </div>
           </div>

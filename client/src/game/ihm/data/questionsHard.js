@@ -1,0 +1,571 @@
+// client/src/game/ihm/data/questionsHard.js
+// 20 Cas d'Audit Ergonomique - Niveau 🔴 DIFFICILE / EXPERT (Subtilités UX, Accessibilité Avancée & Pièges Cognitifs)
+
+export const QUESTIONS_HARD = [
+  {
+    id: "H01",
+    difficulty: "hard",
+    category: "ergonomics",
+    categoryLabel: "Ergonomie Cognitive",
+    title: "Hiérarchie visuelle entre action destructrice et confirmation",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Quelle boîte de dialogue applique la bonne hiérarchie pour prévenir la suppression accidentelle ?",
+    explanation: "Dans l'option correcte, l'action destructive est clairement identifiée en rouge d'alerte avec un libellé sans ambiguïté, tandis que l'action sûre est accessible en priorité. Inverser les styles visuels piège l'utilisateur par automatisme.",
+    correctVariant: {
+      type: "action_spacing",
+      data: {
+        safeDistance: true,
+        confirmText: "Annuler et conserver",
+        destructiveText: "Supprimer définitivement la base",
+      },
+    },
+    incorrectVariant: {
+      type: "action_spacing",
+      data: {
+        safeDistance: false,
+        confirmText: "Supprimer définitivement la base",
+        destructiveText: "Annuler et conserver",
+      },
+    },
+  },
+  {
+    id: "H02",
+    difficulty: "hard",
+    category: "accessibility",
+    categoryLabel: "Accessibilité WCAG AAA",
+    title: "Ratio de contraste sur texte fin (300 weight)",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Quel texte garantit une lisibilité irréprochable même avec une fonte fine ?",
+    explanation: "La norme WCAG AAA impose un ratio de 7:1 pour le corps de texte. Sur une typographie fine (font-weight: 300), le contraste effectif perçu par l'œil baisse fortement : un contraste très élevé est indispensable.",
+    correctVariant: {
+      type: "contrast_card",
+      data: {
+        highContrast: true,
+        title: "Clause de confidentialité des données",
+        body: "Les données d'évaluation des étudiants sont chiffrées selon le standard AES-256 et ne font l'objet d'aucune exploitation commerciale.",
+      },
+    },
+    incorrectVariant: {
+      type: "contrast_card",
+      data: {
+        highContrast: false,
+        title: "Clause de confidentialité des données",
+        body: "Les données d'évaluation des étudiants sont chiffrées selon le standard AES-256 et ne font l'objet d'aucune exploitation commerciale.",
+      },
+    },
+  },
+  {
+    id: "H03",
+    difficulty: "hard",
+    category: "responsive",
+    categoryLabel: "Responsive Breakpoint Hybride",
+    title: "Grille de cartes complexes sur tablette verticale (768px)",
+    targetViewport: "tablet",
+    viewportLabel: "💻 Tablette 768px",
+    instruction: "Quelle stratégie de layout évite à la fois le vide excessif et la compression des éléments ?",
+    explanation: "L'option correcte bascule en 2 colonnes avec des cartes aux hauteurs harmonisées ('items-stretch'). Forcer 3 colonnes tronque les boutons et étouffe le texte.",
+    correctVariant: {
+      type: "product_grid",
+      data: {
+        fluid: true,
+        items: [
+          { name: "Serveur Dédié VM1", price: "45 €/m", stock: "Dispo", tag: "Production" },
+          { name: "Cluster BDD VM2", price: "80 €/m", stock: "Actif", tag: "PostgreSQL" },
+          { name: "Reverse Proxy Nginx", price: "20 €/m", stock: "En veille", tag: "Réseau" },
+        ],
+      },
+    },
+    incorrectVariant: {
+      type: "product_grid",
+      data: {
+        fluid: false,
+        items: [
+          { name: "Serveur Dédié VM1", price: "45 €/m", stock: "Dispo", tag: "Production" },
+          { name: "Cluster BDD VM2", price: "80 €/m", stock: "Actif", tag: "PostgreSQL" },
+          { name: "Reverse Proxy Nginx", price: "20 €/m", stock: "En veille", tag: "Réseau" },
+        ],
+      },
+    },
+  },
+  {
+    id: "H04",
+    difficulty: "hard",
+    category: "forms",
+    categoryLabel: "Formulaires & Erreurs Inline",
+    title: "Précision du message de validation d'un mot de passe fort",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Quel retour d'erreur guide le plus efficacement la saisie de règles multiples ?",
+    explanation: "L'option correcte détaille explicitement quel critère n'est pas rempli (ex: 'manque 1 chiffre') au lieu d'un message générique 'Mot de passe invalide'.",
+    correctVariant: {
+      type: "form_error",
+      data: {
+        accessible: true,
+        fieldName: "Mot de passe d'administration",
+        errorMsg: "Critère manquant : Le mot de passe doit comporter au moins 1 chiffre et 1 caractère spécial.",
+      },
+    },
+    incorrectVariant: {
+      type: "form_error",
+      data: {
+        accessible: false,
+        fieldName: "Mot de passe d'administration",
+        errorMsg: "",
+      },
+    },
+  },
+  {
+    id: "H05",
+    difficulty: "hard",
+    category: "ergonomics",
+    categoryLabel: "Loi de Fitts & Thumb Zone",
+    title: "Cibles tactiles et zone d'action du pouce sur grand smartphone",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Mobile 375px",
+    instruction: "Quelle interface tient compte de la zone de préhension naturelle du pouce (Thumb Zone) ?",
+    explanation: "Sur smartphone, les boutons principaux doivent offrir une cible minimale de 48px et être positionnés dans la zone facilement accessible sans contorsion de la main.",
+    correctVariant: {
+      type: "touch_target",
+      data: {
+        size: "large",
+        icon: "💾",
+        label: "Enregistrer mon livrable SAE",
+      },
+    },
+    incorrectVariant: {
+      type: "touch_target",
+      data: {
+        size: "small",
+        icon: "💾",
+        label: "Enregistrer mon livrable SAE",
+      },
+    },
+  },
+  {
+    id: "H06",
+    difficulty: "hard",
+    category: "accessibility",
+    categoryLabel: "Navigation Clavier & Focus",
+    title: "Contraste de l'indicateur de focus sur fond sombre",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Quel anneau de focus répond aux exigences WCAG 2.4.11 (contraste de composant 3:1) ?",
+    explanation: "L'indicateur de focus doit lui-même contraster nettement avec le fond environnant. Un anneau bleu ciel ou ambre éclatant avec offset permet une détection immédiate au clavier.",
+    correctVariant: {
+      type: "focus_state",
+      data: {
+        hasOutline: true,
+        label: "Identifiant de connexion IUT",
+        placeholder: "Entrez votre identifiant ENT...",
+      },
+    },
+    incorrectVariant: {
+      type: "focus_state",
+      data: {
+        hasOutline: false,
+        label: "Identifiant de connexion IUT",
+        placeholder: "Entrez votre identifiant ENT...",
+      },
+    },
+  },
+  {
+    id: "H07",
+    difficulty: "hard",
+    category: "ergonomics",
+    categoryLabel: "Comportement Tabulaire Avancé",
+    title: "Alignement mixte de données (Textes, Devises, Pourcentages)",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Quelle convention typographique internationale garantit la comparabilité des données ?",
+    explanation: "Les libellés textuels s'alignent à gauche pour le confort de lecture de gauche à droite, tandis que les données quantitatives (monnaies, pourcentages) s'alignent strictement à droite.",
+    correctVariant: {
+      type: "numeric_alignment",
+      data: {
+        alignRight: true,
+        headers: ["Module de compétence", "Taux de réussite"],
+        items: [
+          { label: "Développement d'applications", cost: "94,2 %" },
+          { label: "Administration système Linux", cost: "88,0 %" },
+          { label: "Algorithmique avancée", cost: "76,5 %" },
+        ],
+      },
+    },
+    incorrectVariant: {
+      type: "numeric_alignment",
+      data: {
+        alignRight: false,
+        headers: ["Module de compétence", "Taux de réussite"],
+        items: [
+          { label: "Développement d'applications", cost: "94,2 %" },
+          { label: "Administration système Linux", cost: "88,0 %" },
+          { label: "Algorithmique avancée", cost: "76,5 %" },
+        ],
+      },
+    },
+  },
+  {
+    id: "H08",
+    difficulty: "hard",
+    category: "forms",
+    categoryLabel: "Formulaires & Accessibilité",
+    title: "Association programmatique Label / Input",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Pourquoi un label flottant ou pur placeholder pose-t-il problème aux personnes avec troubles de l'attention ?",
+    explanation: "Un label persistant au-dessus du champ évite de surcharger la mémoire de travail de l'utilisateur, qui n'a pas à se souvenir de l'intitulé une fois la saisie commencée.",
+    correctVariant: {
+      type: "form_labels",
+      data: {
+        visibleLabels: true,
+        fields: [
+          { label: "Adresse IP du serveur distant", placeholder: "ex: 10.1.136.68" },
+          { label: "Port de communication PostgreSQL", placeholder: "ex: 5432" },
+        ],
+      },
+    },
+    incorrectVariant: {
+      type: "form_labels",
+      data: {
+        visibleLabels: false,
+        fields: [
+          { label: "Adresse IP du serveur distant", placeholder: "ex: 10.1.136.68" },
+          { label: "Port de communication PostgreSQL", placeholder: "ex: 5432" },
+        ],
+      },
+    },
+  },
+  {
+    id: "H09",
+    difficulty: "hard",
+    category: "accessibility",
+    categoryLabel: "Accessibilité & Images Décoratives vs Informatives",
+    title: "Graphique vectoriel SVG informatif",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Comment rendre un SVG porteur de données accessible aux technologies d'assistance ?",
+    explanation: "Un SVG porteur de sens doit comporter une balise title, un desc ou un aria-label complet décrivant la tendance. Les images sans description laissent les malvoyants sans accès aux données.",
+    correctVariant: {
+      type: "alt_text_demo",
+      data: {
+        hasAlt: true,
+        src: "/assets/ui/chart_svg.png",
+        alt: "Courbe d'apprentissage : Hausse régulière des scores de la manche 1 à la manche 20",
+        caption: "Progression moyenne des promotions antérieures",
+      },
+    },
+    incorrectVariant: {
+      type: "alt_text_demo",
+      data: {
+        hasAlt: false,
+        src: "/assets/ui/chart_svg.png",
+        alt: "vector-graphic.svg",
+        caption: "Progression moyenne des promotions antérieures",
+      },
+    },
+  },
+  {
+    id: "H10",
+    difficulty: "hard",
+    category: "responsive",
+    categoryLabel: "Responsive Design & Cibles",
+    title: "Tableau dense de logs serveur sur smartphone",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Mobile 375px",
+    instruction: "Comment gérer une table de télémétrie de 7 colonnes sans impacter le layout mobile ?",
+    explanation: "Le conteneur scrollable dédié ('overflow-x: auto') isole le défilement et permet d'inspecter les colonnes tout en gardant la page principale ancrée.",
+    correctVariant: {
+      type: "responsive_table",
+      data: {
+        scrollable: true,
+        headers: ["Horodatage", "IP Source", "Méthode", "URI", "Code HTTP", "Latence"],
+        rows: [
+          ["14:22:01", "10.1.136.68", "POST", "/api/games/record-session", "200 OK", "4ms"],
+          ["14:22:05", "10.1.136.68", "GET", "/api/scores", "200 OK", "2ms"],
+        ],
+      },
+    },
+    incorrectVariant: {
+      type: "responsive_table",
+      data: {
+        scrollable: false,
+        headers: ["Horodatage", "IP Source", "Méthode", "URI", "Code HTTP", "Latence"],
+        rows: [
+          ["14:22:01", "10.1.136.68", "POST", "/api/games/record-session", "200 OK", "4ms"],
+          ["14:22:05", "10.1.136.68", "GET", "/api/scores", "200 OK", "2ms"],
+        ],
+      },
+    },
+  },
+  {
+    id: "H11",
+    difficulty: "hard",
+    category: "forms",
+    categoryLabel: "Formulaires & Claviers Mobiles",
+    title: "Saisie d'un code postal ou d'une clé API chiffrée",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Mobile 375px",
+    instruction: "Quel inputmode optimise la saisie tout en interdisant les caractères alphabétiques parasites ?",
+    explanation: "L'attribut inputmode='numeric' combiné à pattern='[0-9]*' garantit l'affichage exclusif du pavé numérique sur iOS et Android.",
+    correctVariant: {
+      type: "input_types",
+      data: {
+        semanticType: true,
+        label: "Code Postal de résidence",
+        type: "tel",
+      },
+    },
+    incorrectVariant: {
+      type: "input_types",
+      data: {
+        semanticType: false,
+        label: "Code Postal de résidence",
+        type: "text",
+      },
+    },
+  },
+  {
+    id: "H12",
+    difficulty: "hard",
+    category: "accessibility",
+    categoryLabel: "Accessibilité & Contrastes",
+    title: "Bouton d'état désactivé (Disabled)",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Quelle est la meilleure approche pour un bouton inactif selon les recommandations modernes ?",
+    explanation: "Un bouton inactif au contraste trop faible est souvent perçu comme absent. Les bonnes pratiques recommandent de le garder lisible tout en indiquant textuellement pourquoi il est bloqué.",
+    correctVariant: {
+      type: "contrast_card",
+      data: {
+        highContrast: true,
+        title: "Validation de la soutenance",
+        body: "Action verrouillée : Vous devez d'abord charger votre rapport de stage avant de valider l'inscription.",
+      },
+    },
+    incorrectVariant: {
+      type: "contrast_card",
+      data: {
+        highContrast: false,
+        title: "Validation de la soutenance",
+        body: "Action verrouillée : Vous devez d'abord charger votre rapport de stage avant de valider l'inscription.",
+      },
+    },
+  },
+  {
+    id: "H13",
+    difficulty: "hard",
+    category: "ergonomics",
+    categoryLabel: "Hiérarchie & Affordance",
+    title: "Carte de rendu de note de synthèse",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Comment concevoir la carte pour que l'action principale soit comprise sans lire tout le texte ?",
+    explanation: "Une bonne affordance associe un contraste typographique fort, un badge de statut clair et un bouton d'action primaire évident.",
+    correctVariant: {
+      type: "card_hierarchy",
+      data: {
+        clearHierarchy: true,
+        category: "SYNTHÈSE TECHNIQUE R3.01",
+        title: "Rapport d'audit ergonomique du site EvilJV",
+        author: "Équipe Qualité Logicielle",
+        date: "Validé le 19 nov 2026",
+      },
+    },
+    incorrectVariant: {
+      type: "card_hierarchy",
+      data: {
+        clearHierarchy: false,
+        category: "SYNTHÈSE TECHNIQUE R3.01",
+        title: "Rapport d'audit ergonomique du site EvilJV",
+        author: "Équipe Qualité Logicielle",
+        date: "Validé le 19 nov 2026",
+      },
+    },
+  },
+  {
+    id: "H14",
+    difficulty: "hard",
+    category: "forms",
+    categoryLabel: "Formulaires & Double Validation",
+    title: "Protection contre les soumissions multiples sur requête lente",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Quel composant neutralise les requêtes concurrentes lors d'un paiement en ligne ?",
+    explanation: "L'option correcte désactive immédiatement le bouton (disabled) dès le premier clic et remplace le libellé par un retour d'état rassurant.",
+    correctVariant: {
+      type: "submit_state",
+      data: {
+        loadingFeedback: true,
+        buttonText: "Confirmer l'achat de 200 Coins",
+      },
+    },
+    incorrectVariant: {
+      type: "submit_state",
+      data: {
+        loadingFeedback: false,
+        buttonText: "Confirmer l'achat de 200 Coins",
+      },
+    },
+  },
+  {
+    id: "H15",
+    difficulty: "hard",
+    category: "responsive",
+    categoryLabel: "Responsive Design & Menus",
+    title: "Comportement du sous-menu sur écran tactile",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Mobile 375px",
+    instruction: "Pourquoi les menus déroulants basés sur le survol (:hover) échouent-ils sur mobile ?",
+    explanation: "Sur smartphone, le curseur n'existe pas. Un sous-menu doit s'ouvrir au tapotement (accordéon ou tiroir) et non s'appuyer sur l'état :hover.",
+    correctVariant: {
+      type: "navbar",
+      data: {
+        hasBurger: true,
+        links: ["Modules", "Ressources SAE", "Évaluations", "Aide ENT"],
+      },
+    },
+    incorrectVariant: {
+      type: "navbar",
+      data: {
+        hasBurger: false,
+        links: ["Modules", "Ressources SAE", "Évaluations", "Aide ENT"],
+      },
+    },
+  },
+  {
+    id: "H16",
+    difficulty: "hard",
+    category: "accessibility",
+    categoryLabel: "Accessibilité & Sémantique",
+    title: "Liens vers ressources externes et nouvelle fenêtre",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Comment annoncer proprement un lien qui s'ouvre dans un nouvel onglet (target='_blank') ?",
+    explanation: "Ouvrir un nouvel onglet sans prévenir désoriente les utilisateurs de technologies d'assistance. Une mention explicite (ex: '(nouvel onglet)') est requise par le RGAA.",
+    correctVariant: {
+      type: "link_semantics",
+      data: {
+        explicit: true,
+        title: "Dépôt officiel du projet GitLab IUT",
+        linkText: "Accéder au dépôt Git du projet SAE (ouvre un nouvel onglet)",
+      },
+    },
+    incorrectVariant: {
+      type: "link_semantics",
+      data: {
+        explicit: false,
+        title: "Dépôt officiel du projet GitLab IUT",
+        linkText: "Consulter le code source ici",
+      },
+    },
+  },
+  {
+    id: "H17",
+    difficulty: "hard",
+    category: "ergonomics",
+    categoryLabel: "Typographie & Rythme Vertical",
+    title: "Densité de l'information et espacement de paragraphes",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Quel espacement de paragraphe préserve la respiration visuelle d'un document technique ?",
+    explanation: "Des marges cohérentes entre titres et paragraphes (margin-bottom: 1rem) évitent l'effet de pavé compact décourageant pour le lecteur.",
+    correctVariant: {
+      type: "typography_readability",
+      data: {
+        comfortable: true,
+        title: "Principes de conception responsive en BUT Informatique",
+        paragraph: "L'approche mobile-first consiste à concevoir d'abord l'expérience sur petit écran, avant d'enrichir progressivement l'interface sur grands écrans via les media queries.",
+      },
+    },
+    incorrectVariant: {
+      type: "typography_readability",
+      data: {
+        comfortable: false,
+        title: "Principes de conception responsive en BUT Informatique",
+        paragraph: "L'approche mobile-first consiste à concevoir d'abord l'expérience sur petit écran, avant d'enrichir progressivement l'interface sur grands écrans via les media queries.",
+      },
+    },
+  },
+  {
+    id: "H18",
+    difficulty: "hard",
+    category: "responsive",
+    categoryLabel: "Responsive Breakpoints",
+    title: "Bannière d'accroche avec plusieurs boutons d'action sur smartphone",
+    targetViewport: "mobile",
+    viewportLabel: "📱 Mobile 375px",
+    instruction: "Comment adapter 2 boutons d'action majeurs sur une largeur de 375px ?",
+    explanation: "Passer les boutons en pleine largeur empilés verticalement ('w-full flex-col') sur mobile offre des zones de clic faciles à toucher sans débordement.",
+    correctVariant: {
+      type: "hero_banner",
+      data: {
+        responsiveText: true,
+        title: "Entrez dans l'Arène EvilJV",
+        subtitle: "Défiez vos camarades en duel d'IHM et prouvez votre maîtrise du web",
+        cta: "Lancer le défi",
+      },
+    },
+    incorrectVariant: {
+      type: "hero_banner",
+      data: {
+        responsiveText: false,
+        title: "Entrez dans l'Arène EvilJV",
+        subtitle: "Défiez vos camarades en duel d'IHM et prouvez votre maîtrise du web",
+        cta: "Lancer le défi",
+      },
+    },
+  },
+  {
+    id: "H19",
+    difficulty: "hard",
+    category: "forms",
+    categoryLabel: "Formulaires & Erreurs",
+    title: "Indication obligatoire avec contraste suffisant",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Comment marquer l'obligation sans dépendre d'une couleur difficile à distinguer ?",
+    explanation: "Associer l'astérisque à une mention textuelle explicite 'Champs obligatoires' garantit que l'obligation est comprise même avec des problèmes de daltonisme.",
+    correctVariant: {
+      type: "required_indicator",
+      data: {
+        hasAsterisk: true,
+        fields: ["Nom de famille", "Prénom", "Groupe de TD (S3)"],
+      },
+    },
+    incorrectVariant: {
+      type: "required_indicator",
+      data: {
+        hasAsterisk: false,
+        fields: ["Nom de famille", "Prénom", "Groupe de TD (S3)"],
+      },
+    },
+  },
+  {
+    id: "H20",
+    difficulty: "hard",
+    category: "accessibility",
+    categoryLabel: "Accessibilité & Retours Système",
+    title: "Notification de panne réseau critique",
+    targetViewport: "desktop",
+    viewportLabel: "🖥️ Desktop",
+    instruction: "Quel message d'alerte système respecte à la fois les contrastes et la présence d'icône explicite ?",
+    explanation: "L'option correcte conjugue un fond sombre aux contrastes élevés, une icône de mise en garde et une phrase décrivant la solution immédiate (reconnexion VPN).",
+    correctVariant: {
+      type: "status_alert",
+      data: {
+        hasIcon: true,
+        color: "rose",
+        message: "Perte de connexion au VPN IUT. Vérifiez votre client VPN pour continuer les requêtes.",
+      },
+    },
+    incorrectVariant: {
+      type: "status_alert",
+      data: {
+        hasIcon: false,
+        color: "rose",
+        message: "Perte de connexion au VPN IUT. Vérifiez votre client VPN pour continuer les requêtes.",
+      },
+    },
+  },
+];
