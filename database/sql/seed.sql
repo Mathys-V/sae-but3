@@ -9,12 +9,12 @@
 -- -------------------------------------------------------------
 -- Mot de passe démo 'admin123' pour prof, 'alice123' pour alice, 'azerty123' pour les autres
 INSERT INTO users (pseudo, email, password_hash, role, banned_flag, created_at, updated_at, last_login) VALUES
-    ('alice',  'alice@etu.univ.fr',  CONCAT('$2b$', '12$LlfcYOg53WqBVFkDeDn5k.8rSSRa0xRB.qrCNJuUsy5BpDzkOqGn6'),   'player', FALSE, NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day',  NOW() - INTERVAL '2 hours'),
-    ('bob',    'bob@etu.univ.fr',    CONCAT('$2b$', '12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O'),   'player', FALSE, NOW() - INTERVAL '25 days', NOW() - INTERVAL '2 days', NOW() - INTERVAL '3 days'),
-    ('chloe',  'chloe@etu.univ.fr',  CONCAT('$2b$', '12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O'),   'player', FALSE, NOW() - INTERVAL '10 days', NULL,                    NOW() - INTERVAL '1 hour'),
-    ('damien', 'damien@etu.univ.fr', CONCAT('$2b$', '12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O'),  'player', FALSE, NOW() - INTERVAL '8 days',  NULL,                    NOW() - INTERVAL '6 hours'),
-    ('prof',   'prof@univ.fr',       CONCAT('$2b$', '12$PHTR5Kkpy2flxQcCjCEBJuC3hty6RnUI4xN3iuE8DQXQDAHUkRafe'),   'admin',  FALSE, NOW() - INTERVAL '60 days', NOW() - INTERVAL '3 days', NOW() - INTERVAL '30 min'),
-    ('troll',  'troll@etu.univ.fr',  CONCAT('$2b$', '12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O'),   'player', TRUE,  NOW() - INTERVAL '10 days', NULL,                    NULL);
+    ('alice',  'alice@etu.univ.fr',  '$2b$12$swbvMXP6wJa1EqvCCDtCgeY7xXi9zhFjoNBad21Kp5MnN7HJfQvNe',   'player', FALSE, NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day',  NOW() - INTERVAL '2 hours'),
+    ('bob',    'bob@etu.univ.fr',    '$2b$12$6izyXBay9/GqjFhp2IQyZOmzf6WCLnRZiyIMu.H.DP9mZsXefZo5a',     'player', FALSE, NOW() - INTERVAL '25 days', NOW() - INTERVAL '2 days', NOW() - INTERVAL '3 days'),
+    ('chloe',  'chloe@etu.univ.fr',  '$2b$12$NBR/TrDhcvZHG6ulMtSvRO1jO2Qw.63qEyfmr5M6h.jTiillDl81',   'player', FALSE, NOW() - INTERVAL '10 days', NULL,                    NOW() - INTERVAL '1 hour'),
+    ('damien', 'damien@etu.univ.fr', '$2b$12$sjIi6QYKPsh7pgJFuSe/feHzZkcEi6RqTu6cKdr1Frg9dJ.q9Hll.',  'player', FALSE, NOW() - INTERVAL '8 days',  NULL,                    NOW() - INTERVAL '6 hours'),
+    ('prof',   'prof@univ.fr',       '$2b$12$LtF5Fv4mb2RqqZgvAYOWIuzpuvgfcXxoiWi/ExaeLQjMHPndNg.32',    'admin',  FALSE, NOW() - INTERVAL '60 days', NOW() - INTERVAL '3 days', NOW() - INTERVAL '30 min'),
+    ('troll',  'troll@etu.univ.fr',  '$2b$12$OeFBK0VGor.GIRJc/Kt7JeSR9KdlV65x4130mgx0tp6EnaURjR.OK',   'player', TRUE,  NOW() - INTERVAL '10 days', NULL,                    NULL);
 
 -- -------------------------------------------------------------
 -- 2. Préférences (user_settings) — création lazy : 2 joueurs sur 6
@@ -151,7 +151,7 @@ WHERE admin.pseudo = 'prof';
 -- 5. Progression (users_modules) — différents statuts représentés
 -- -------------------------------------------------------------
 INSERT INTO users_modules (user_id, module_id, status, attempts, best_score, best_time, date_completion)
-SELECT u.user_id, m.module_id, 'completed', 4, 140, 55, NOW() - INTERVAL '20 days'
+SELECT u.user_id, m.module_id, 'completed', 4, 140, 55, NOW() - INTERVAL '20 days' + INTERVAL '1 min'
 FROM users u JOIN modules m ON m.name = 'Bases de Python'
 WHERE u.pseudo = 'alice';
 
@@ -185,7 +185,7 @@ WHERE u.pseudo = 'damien';
 -- -------------------------------------------------------------
 INSERT INTO sessions (host_id, status, current_game_id, invite_code, max_players, created_at, ended_at)
 SELECT u.user_id, 'finished', g.game_id, 'SOLO01', 1,
-       NOW() - INTERVAL '20 days', NOW() - INTERVAL '20 days' + INTERVAL '5 min'
+       NOW() - INTERVAL '25 days', NOW() - INTERVAL '20 days' + INTERVAL '4 min'
 FROM users u CROSS JOIN games g
 WHERE u.pseudo = 'alice' AND g.name = 'Quiz Variables';
 
@@ -210,7 +210,7 @@ WHERE u.pseudo = 'bob' AND g.name = 'Duck Hunt';
 -- -------------------------------------------------------------
 INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at, left_at)
 SELECT s.session_id, u.user_id, 'host', TRUE, FALSE,
-       NOW() - INTERVAL '20 days', NOW() - INTERVAL '20 days' + INTERVAL '5 min'
+       NOW() - INTERVAL '25 days', NOW() - INTERVAL '20 days' + INTERVAL '4 min'
 FROM sessions s CROSS JOIN users u
 WHERE s.invite_code = 'SOLO01' AND u.pseudo = 'alice';
 
@@ -245,27 +245,32 @@ SELECT s.session_id, u.user_id, 'player', TRUE, FALSE, NOW() - INTERVAL '5 days'
 FROM sessions s CROSS JOIN users u
 WHERE s.invite_code = 'RESULTS1' AND u.pseudo = 'chloe';
 
+INSERT INTO sessions_users (session_id, user_id, role, ready_flag, connected_flag, joined_at)
+SELECT s.session_id, u.user_id, 'host', TRUE, TRUE, s.created_at
+FROM sessions s CROSS JOIN users u
+WHERE s.invite_code = 'LOBBY2' AND u.pseudo = 'chloe';
+
 -- -------------------------------------------------------------
 -- 8. Coups (moves) — historique solo et extraits du multi
 -- -------------------------------------------------------------
 INSERT INTO moves (session_id, game_id, user_id, move_data, created_at)
 SELECT s.session_id, g.game_id, u.user_id,
        '{"type":"answer","question":1,"choice":1,"correct":true,"time_ms":4200}',
-       NOW() - INTERVAL '20 days' + INTERVAL '1 min'
+       NOW() - INTERVAL '25 days' + INTERVAL '1 min'
 FROM sessions s CROSS JOIN games g CROSS JOIN users u
 WHERE s.invite_code = 'SOLO01' AND g.name = 'Quiz Variables' AND u.pseudo = 'alice';
 
 INSERT INTO moves (session_id, game_id, user_id, move_data, created_at)
 SELECT s.session_id, g.game_id, u.user_id,
        '{"type":"answer","question":2,"choice":0,"correct":false,"time_ms":19000}',
-       NOW() - INTERVAL '20 days' + INTERVAL '2 min'
+       NOW() - INTERVAL '25 days' + INTERVAL '2 min'
 FROM sessions s CROSS JOIN games g CROSS JOIN users u
 WHERE s.invite_code = 'SOLO01' AND g.name = 'Quiz Variables' AND u.pseudo = 'alice';
 
 INSERT INTO moves (session_id, game_id, user_id, move_data, created_at)
 SELECT s.session_id, g.game_id, u.user_id,
        '{"type":"answer","question":3,"choice":1,"correct":true,"time_ms":3100}',
-       NOW() - INTERVAL '20 days' + INTERVAL '3 min'
+       NOW() - INTERVAL '25 days' + INTERVAL '3 min'
 FROM sessions s CROSS JOIN games g CROSS JOIN users u
 WHERE s.invite_code = 'SOLO01' AND g.name = 'Quiz Variables' AND u.pseudo = 'alice';
 
@@ -294,7 +299,7 @@ WHERE s.invite_code = 'RESULTS1' AND g.name = 'Duck Hunt' AND u.pseudo = 'bob';
 -- 9. Scores (scores) — tentatives solo et résultats multi
 -- -------------------------------------------------------------
 INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
-SELECT u.user_id, g.game_id, s.session_id, 80, 120, TRUE, NOW() - INTERVAL '25 days'
+SELECT u.user_id, g.game_id, s.session_id, 80, 120, TRUE, NOW() - INTERVAL '25 days' + INTERVAL '2 min'
 FROM users u CROSS JOIN games g CROSS JOIN sessions s
 WHERE u.pseudo = 'alice' AND g.name = 'Quiz Variables' AND s.invite_code = 'SOLO01';
 
@@ -304,7 +309,7 @@ FROM users u CROSS JOIN games g CROSS JOIN sessions s
 WHERE u.pseudo = 'alice' AND g.name = 'Quiz Variables' AND s.invite_code = 'SOLO01';
 
 INSERT INTO scores (user_id, game_id, session_id, score, time, winner_flag, created_at)
-SELECT u.user_id, g.game_id, s.session_id, 140, 55, TRUE, NOW() - INTERVAL '20 days'
+SELECT u.user_id, g.game_id, s.session_id, 140, 55, TRUE, NOW() - INTERVAL '20 days' + INTERVAL '1 min'
 FROM users u CROSS JOIN games g CROSS JOIN sessions s
 WHERE u.pseudo = 'alice' AND g.name = 'Quiz Variables' AND s.invite_code = 'SOLO01';
 
