@@ -3,12 +3,14 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { useEconomyStore } from "../game/casino/economyStore";
-import { useIhmStore } from "../store/ihmStore";
+import {
+  useIhmStore,
+  IhmViewportSimulator,
+  IhmCardViewer,
+  IhmMultiLobby,
+  IhmRankingModal,
+} from "../game/ihm";
 import { recordGameSession } from "../services/api";
-import IhmViewportSimulator from "../components/ihm/IhmViewportSimulator";
-import IhmCardViewer from "../components/ihm/IhmCardViewer";
-import IhmMultiLobby from "../components/ihm/IhmMultiLobby";
-import IhmRankingModal from "../components/ihm/IhmRankingModal";
 
 const TIMER_TOTAL_MS = 15000;
 
@@ -228,10 +230,10 @@ export default function IhmClashGame() {
               <div className="text-center space-y-1 border-b border-gray-800 pb-4">
                 <span className="text-3xl">👁️</span>
                 <h1 className="text-xl sm:text-2xl font-bold text-amber-400 uppercase tracking-wider font-sans">
-                  L'OEIL CRITIQUE (BUT 2 S3)
+                  L'OEIL CRITIQUE
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-300">
-                  Audit d'ergonomie et de responsive design — 20 cas concrets
+                  Comparez 2 interfaces et choisissez celle qui respecte les bonnes pratiques du web.
                 </p>
               </div>
 
@@ -338,16 +340,16 @@ export default function IhmClashGame() {
                   )}
                 </div>
 
-                {/* Chronomètre et jauge animée (Urgence visuelle < 3s) */}
+                {/* Chronomètre et jauge animée (Urgence visuelle < 3s, barre élargie) */}
                 <div
-                  className={`flex items-center gap-2.5 px-2 py-0.5 rounded transition-all duration-200 ${
+                  className={`flex items-center gap-3 px-3 py-1 rounded transition-all duration-200 ${
                     timeRemainingMs <= 3000 && selectedOption === null
-                      ? "bg-red-950/70 border border-red-500/80 shadow-[0_0_10px_rgba(239,68,68,0.5)] animate-pulse"
-                      : ""
+                      ? "bg-red-950/80 border border-red-500 shadow-[0_0_12px_rgba(239,68,68,0.6)] animate-pulse"
+                      : "bg-gray-900/90 border border-gray-700/80"
                   }`}
                 >
                   <span
-                    className={`text-xs font-mono font-bold min-w-[42px] text-right ${
+                    className={`text-sm sm:text-base font-mono font-black min-w-[50px] text-right ${
                       timeRemainingMs <= 3000 && selectedOption === null
                         ? "text-red-400 font-black animate-pulse"
                         : "text-amber-400"
@@ -355,10 +357,14 @@ export default function IhmClashGame() {
                   >
                     {(timeRemainingMs / 1000).toFixed(1)}s
                   </span>
-                  <div className="w-28 sm:w-36 h-2.5 bg-gray-900 border border-gray-700 rounded overflow-hidden">
+                  <div className="w-44 sm:w-64 md:w-80 h-3.5 bg-gray-950 border border-gray-700 rounded overflow-hidden shadow-inner">
                     <div
                       className={`h-full transition-all duration-100 ${
-                        timerRatio > 0.5 ? "bg-emerald-500" : timerRatio > 0.25 ? "bg-amber-500" : "bg-red-600"
+                        timerRatio > 0.5
+                          ? "bg-gradient-to-r from-emerald-600 to-emerald-400"
+                          : timerRatio > 0.25
+                          ? "bg-gradient-to-r from-amber-600 to-amber-400"
+                          : "bg-gradient-to-r from-red-700 to-red-500"
                       }`}
                       style={{ width: `${timerRatio * 100}%` }}
                     />
@@ -393,7 +399,7 @@ export default function IhmClashGame() {
             {/* Simulateur avec les 2 Maquettes A et B (Directement visibles sans bloc intermédiaire) */}
             <div key={currentRoundIndex} className="animate-fade-in">
               <IhmViewportSimulator targetViewport={currentQ.targetViewport || "mobile"}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-stretch">
                   <IhmCardViewer
                     variant={currentQ.variantA}
                     targetViewport={currentQ.targetViewport || "mobile"}

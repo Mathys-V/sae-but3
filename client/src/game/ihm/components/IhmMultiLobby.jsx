@@ -1,6 +1,6 @@
-// client/src/components/ihm/IhmMultiLobby.jsx
+// client/src/game/ihm/components/IhmMultiLobby.jsx
 import { useState } from "react";
-import { useAuthStore } from "../../store/authStore";
+import { useAuthStore } from "../../../store/authStore";
 
 export default function IhmMultiLobby({ onStartBattle }) {
   const { user, avatar } = useAuthStore();

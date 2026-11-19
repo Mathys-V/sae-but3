@@ -53,7 +53,7 @@ export const ressourcesBUT = {
       nom: "L'Oeil Critique (R3.01) - Développement Web",
       sem: 3,
       path: "/evil/jeux/ihm-clash",
-      bgImage: "/assets/ui/fonds_site/alchimiste_chateau_option.jpg",
+      bgImage: "/assets/ui/fonds_site/atelier_architecte_ihm.png",
       spriteIcon: "/assets/ui/Barre-de-Navigation/sprites/gamepad-32.png",
       tag: "L'Oeil Critique",
     },

@@ -44,7 +44,7 @@ const BACKGROUND_BY_ROUTE = {
   "/evil/jeux": "/assets/ui/fonds_site/interieur_chateau.jpg",
   "/evil/admin": "/assets/ui/fonds_site/salle_trone_chateau_admin.jpg",
   "/evil/parametres": "/assets/ui/fonds_site/alchimiste_chateau_option.jpg",
-  "/evil/jeux/ihm-clash": "/assets/ui/fonds_site/atelier_architecte_ihm.jpg",
+  "/evil/jeux/ihm-clash": "/assets/ui/fonds_site/atelier_architecte_ihm.png",
 };
 
 function getCastleBackgroundStyle(pathname) {

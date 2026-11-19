@@ -13,7 +13,7 @@ export default function IhmCardViewer({
 
   return (
     <div
-      className={`relative flex flex-col bg-slate-900 border-2 rounded-lg transition-all shadow-lg overflow-hidden ${
+      className={`relative flex flex-col h-full bg-slate-900 border-2 rounded-lg transition-all shadow-lg overflow-hidden ${
         isSelected
           ? isCorrect
             ? "border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]"
@@ -67,7 +67,7 @@ export default function IhmCardViewer({
       </div>
 
       {/* Contenu Web Réaliste (Testé et audité par le joueur - ZÉRO spoiler textuel) */}
-      <div className="p-4 bg-slate-950 text-slate-100 min-h-[240px] flex flex-col justify-center overflow-hidden font-sans">
+      <div className="p-4 bg-slate-950 text-slate-100 min-h-[240px] flex-1 flex flex-col justify-center overflow-hidden font-sans">
         {/* 1. GRILLE DE CARTES PRODUITS */}
         {type === "product_grid" && (
           <div className="w-full">
@@ -512,8 +512,8 @@ export default function IhmCardViewer({
         )}
       </div>
 
-      {/* Bouton de vote au bas de la carte */}
-      <div className="p-3 bg-slate-900/90 border-t border-slate-800 flex justify-center">
+      {/* Bouton de vote au bas de la carte (Calé en bas pour alignement parfait) */}
+      <div className="mt-auto p-3 bg-slate-900/90 border-t border-slate-800 flex justify-center">
         <button
           type="button"
           onClick={() => onSelect(optionLabel)}
