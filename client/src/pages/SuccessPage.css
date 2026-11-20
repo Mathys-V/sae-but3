@@ -5,6 +5,19 @@
   padding: 28px 24px 40px;
   color: #f3f4f6;
   font-family: "VCR_OSD", monospace;
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  background: transparent;
+}
+
+.success-page::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(rgba(8, 7, 12, .32), rgba(8, 7, 12, .55)), url("../assets/backgrounds/successbg.jpg") center top / cover no-repeat;
+  content: "";
+  pointer-events: none;
 }
 
 .success-page * { box-sizing: border-box; }
@@ -20,9 +33,46 @@
   background-image: none;
   box-shadow: none;
 }
-.success-hero-copy { max-width: 600px; text-align: center; }
+.success-hero-copy { width: min(100%, 760px); text-align: center; }
+.success-ribbon {
+  position: relative;
+  z-index: 0;
+  width: min(100%, 680px);
+  margin: 4px auto 10px;
+  isolation: isolate;
+  filter: drop-shadow(0 8px 5px #0009);
+}
+.success-ribbon h1 {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: 112px;
+  margin: 0;
+  padding: 20px 32px;
+  place-items: center;
+  background: linear-gradient(180deg, #ff6672 0%, #e31b30 18%, #bd071d 72%, #8e0618 100%);
+  clip-path: polygon(0 14%, 13% 11%, 30% 8%, 50% 6%, 70% 8%, 87% 11%, 100% 14%, 100% 90%, 87% 87%, 70% 84%, 50% 82%, 30% 84%, 13% 87%, 0 90%);
+}
+.success-ribbon::before, .success-ribbon::after {
+  position: absolute;
+  z-index: -1;
+  top: 58px;
+  width: 90px;
+  height: 52px;
+  background: linear-gradient(180deg, #a8071b, #650511);
+  content: "";
+}
+.success-ribbon::before {
+  left: -35px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 78%, 22% 51%, 0 26%);
+}
+.success-ribbon::after {
+  right: -35px;
+  clip-path: polygon(0 0, 100% 0, 100% 26%, 78% 51%, 100% 78%, 0 100%);
+}
 .success-kicker { display: block; color: var(--success-gold); font-size: 11px; letter-spacing: .12em; }
-.success-hero h1 { margin: 12px 0; color: #fff; font-size: clamp(30px, 5vw, 48px); line-height: 1.1; }
+.success-hero .success-ribbon h1 { color: #fff7ee; font-size: clamp(25px, 4.5vw, 43px); line-height: 1.2; letter-spacing: .025em; text-shadow: 3px 3px 0 #780818, 0 0 12px #fff5; }
+.success-ribbon h1 span { transform: translateY(-5px); }
 .success-hero p, .success-duck-info p { color: #c5c9d2; font: 15px/1.6 sans-serif; }
 .success-duck-art {
   display: grid;
@@ -36,6 +86,7 @@
 }
 .success-ducks { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: center; gap: 20px; margin-top: 22px; padding: 20px; }
 .success-duck-art { width: 80px; height: 80px; }
+.success-duck-art span { font-size: 48px; line-height: 1; filter: drop-shadow(0 3px 0 #0008); }
 .success-duck-heading, .success-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 16px; }
 .success-duck-heading h2, .success-section-heading h2 { margin: 5px 0 0; font-size: 21px; }
 .success-duck-heading strong { color: var(--success-gold); font-size: 25px; white-space: nowrap; }
@@ -56,17 +107,22 @@
 .success-games-layout { display: grid; grid-template-columns: minmax(200px, .85fr) minmax(0, 1.5fr); gap: 16px; }
 .success-game-detail { display: flex; min-height: 230px; flex-direction: column; align-items: flex-start; justify-content: center; padding: 18px; border: 1px solid #343949; background: linear-gradient(145deg, #171b29, #0e1119); }
 .success-detail-sprite { display: grid; width: 64px; height: 64px; margin-bottom: 14px; place-items: center; border: 1px dashed #9b823d; background: #4e401b; color: var(--success-gold); font-size: 24px; }
+.success-detail-sprite img { width: 100%; height: 100%; object-fit: contain; image-rendering: auto; }
+.success-detail-sprite span { font: 36px/1 "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
 .success-detail-sprite.is-locked { border-color: #555b67; background: #242832; color: #717887; filter: grayscale(1); }
 .success-game-detail h3 { margin: 7px 0; color: #fff; font-size: 17px; }
 .success-game-detail p { margin: 0; color: #b7bdc9; font: 12px/1.5 sans-serif; }
 .success-game-detail small { margin-top: 12px; color: var(--success-gold); font-size: 10px; }
 .success-badge-sections { display: grid; gap: 10px; align-content: start; max-height: 430px; overflow: auto; padding-right: 3px; }
+.success-achievements-error { margin: 0; padding: 10px; border: 1px solid #8f4343; color: #ffc0c0; font: 12px/1.5 sans-serif; }
 .success-badge-year { padding: 9px; border: 1px solid #343949; background: #0b0e16; }
 .success-badge-year h3 { margin: 0 0 8px; padding: 5px 7px; background: #25347c; color: #e5eaff; font-size: 11px; }
 .success-badge-grid { display: grid; grid-template-columns: repeat(5, minmax(42px, 1fr)); gap: 7px; }
 .success-badge, .success-empty-slot { display: grid; aspect-ratio: 1; place-items: center; padding: 5px; border: 1px solid #323747; background: #171b27; image-rendering: pixelated; }
-.success-badge { cursor: pointer; }
+.success-badge.is-selectable { cursor: pointer; }
 .success-badge-sprite { display: grid; width: 100%; height: 100%; place-items: center; border: 1px dashed #626b7b; color: #838a98; font: 16px "VCR_OSD", monospace; }
+.success-badge img.success-badge-sprite { border: 0; object-fit: contain; image-rendering: auto; }
+.success-badge .success-trophy-emoji { border: 0; font: 28px/1 "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
 .success-badge.is-locked .success-badge-sprite { filter: grayscale(1); opacity: .48; }
 .success-badge.is-unlocked { border-color: #b9973f; background: linear-gradient(145deg, #4e401b, #242017); box-shadow: inset 0 0 12px #edc6582e; }
 .success-badge.is-unlocked .success-badge-sprite { border-color: #c6a64b; }
@@ -91,7 +147,11 @@
 
 @media (max-width: 700px) {
   .success-page { padding: 18px 12px 30px; }
-  .success-hero { min-height: 0; padding: 20px; }
+  .success-hero { min-height: 0; padding: 18px 12px 22px; }
+  .success-ribbon h1 { min-height: 88px; padding: 16px 20px; }
+  .success-ribbon::before, .success-ribbon::after { top: 47px; width: 62px; height: 38px; }
+  .success-ribbon::before { left: -24px; }
+  .success-ribbon::after { right: -24px; }
   .success-hero p { font-size: 13px; }
   .success-ducks { grid-template-columns: 56px minmax(0, 1fr); gap: 12px; padding: 14px; }
   .success-duck-art { width: 54px; height: 54px; }

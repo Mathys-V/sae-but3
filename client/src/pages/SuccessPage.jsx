@@ -20,16 +20,29 @@ function readFoundDucks() {
   }
 }
 
-function TrophyCard({ course, unlocked, selected, onSelect }) {
+function TrophyCard({ course, achievement, selected, onSelect }) {
+  const [iconUnavailable, setIconUnavailable] = useState(false);
+  const unlocked = Boolean(achievement?.unlocked);
+  const label = course?.tag || course?.nom || achievement?.game_name || "Succès général";
   return (
     <button
       type="button"
-      className={`success-badge ${unlocked ? "is-unlocked" : "is-locked"} ${selected ? "is-selected" : ""}`}
+      className={`success-badge ${unlocked ? "is-unlocked" : "is-locked"} ${selected ? "is-selected" : ""} ${onSelect ? "is-selectable" : ""}`}
       onClick={onSelect}
-      aria-label={`${course.tag || course.nom}, ${unlocked ? "débloqué" : "verrouillé"}`}
+      aria-label={`${achievement?.name || label}, ${unlocked ? "débloqué" : "verrouillé"}`}
+      title={achievement?.name || label}
       aria-pressed={selected}
     >
-      <span className="success-badge-sprite" aria-hidden="true" />
+      {achievement?.icon_url && !iconUnavailable ? (
+        <img
+          className="success-badge-sprite"
+          src={achievement.icon_url}
+          alt=""
+          onError={() => setIconUnavailable(true)}
+        />
+      ) : (
+        <span className="success-badge-sprite success-trophy-emoji" aria-hidden="true">🏆</span>
+      )}
     </button>
   );
 }
@@ -38,7 +51,10 @@ function SuccessPage() {
   const [foundDucks, setFoundDucks] = useState(readFoundDucks);
   const [skillsRevealed, setSkillsRevealed] = useState(false);
   const [achievements, setAchievements] = useState([]);
+  const [achievementsError, setAchievementsError] = useState("");
   const [selectedCourseId, setSelectedCourseId] = useState("R1.06");
+  const [selectedAchievementId, setSelectedAchievementId] = useState(null);
+  const [detailIconUnavailable, setDetailIconUnavailable] = useState(false);
   const token = useAuthStore((state) => state.token);
   const developedCourses = useMemo(
     () =>
@@ -64,17 +80,34 @@ function SuccessPage() {
 
   useEffect(() => {
     let active = true;
-    fetchAchievements(token).then((items) => {
-      if (active) setAchievements(items);
-    });
+    fetchAchievements(token)
+      .then((items) => {
+        if (active) {
+          setAchievements(items);
+          setAchievementsError("");
+        }
+      })
+      .catch((error) => {
+        if (active) {
+          setAchievements([]);
+          setAchievementsError(error.message || "Impossible de charger les succès.");
+        }
+      });
     return () => {
       active = false;
     };
   }, [token]);
 
+  useEffect(() => {
+    setDetailIconUnavailable(false);
+  }, [selectedAchievementId]);
+
   const selectedCourse =
     developedCourses.find((course) => course.id === selectedCourseId) ||
     developedCourses[0];
+  const selectedAchievement = achievements.find(
+    (achievement) => achievement.achievement_id === selectedAchievementId,
+  );
   const getCourseAchievements = (course) =>
     achievements.filter((achievement) =>
       course.path === "/casino"
@@ -83,11 +116,30 @@ function SuccessPage() {
           ? achievement.game_name?.toLowerCase().includes("plong")
           : false,
     );
-  const isCourseUnlocked = (course) =>
-    getCourseAchievements(course).some((achievement) => achievement.unlocked);
+  const selectedAchievementCourse = selectedAchievement
+    ? developedCourses.find((course) =>
+        getCourseAchievements(course).some(
+          (achievement) => achievement.achievement_id === selectedAchievement.achievement_id,
+        ),
+      )
+    : null;
   const selectedCourseAchievements = selectedCourse
     ? getCourseAchievements(selectedCourse)
     : [];
+  const detailDescription = selectedAchievement
+    ? selectedAchievement.description
+    : selectedCourseAchievements[0]?.description;
+  const selectedCourseUnlocked = selectedCourseAchievements.some(
+    (achievement) => achievement.unlocked,
+  );
+  const courseAchievementIds = new Set(
+    developedCourses.flatMap((course) =>
+      getCourseAchievements(course).map((achievement) => achievement.achievement_id),
+    ),
+  );
+  const otherAchievements = achievements.filter(
+    (achievement) => !courseAchievementIds.has(achievement.achievement_id),
+  );
   const achievementGroups = [1, 2, 3].map((year) => ({
     year,
     items: developedCourses.filter((course) => course.cursusYear === year),
@@ -97,7 +149,11 @@ function SuccessPage() {
     <main className="success-page pixel-page-dungeon">
       <section className="success-hero pixel-banner">
         <div className="success-hero-copy">
-          <h1>Mes succès</h1>
+          <div className="success-ribbon">
+            <h1>
+              <span>Mes succès</span>
+            </h1>
+          </div>
         </div>
       </section>
 
@@ -108,7 +164,9 @@ function SuccessPage() {
         <div
           className="success-duck-art"
           aria-label="Emplacement pour le sprite du canard"
-        />
+        >
+          <span aria-hidden="true">🦆</span>
+        </div>
         <div className="success-duck-info">
           <div className="success-duck-heading">
             <div>
@@ -152,22 +210,43 @@ function SuccessPage() {
             {selectedCourse && (
               <>
                 <div
-                  className={`success-detail-sprite ${isCourseUnlocked(selectedCourse) ? "is-unlocked" : "is-locked"}`}
-                  aria-label="Emplacement prévu pour le sprite du jeu"
-                />
+                  className={`success-detail-sprite ${selectedAchievement ? (selectedAchievement.unlocked ? "is-unlocked" : "is-locked") : (selectedCourseUnlocked ? "is-unlocked" : "is-locked")}`}
+                  aria-label={selectedAchievement?.name || "Détail du jeu"}
+                >
+                  {selectedAchievement?.icon_url && !detailIconUnavailable && (
+                    <img
+                      src={selectedAchievement.icon_url}
+                      alt=""
+                      onError={() => setDetailIconUnavailable(true)}
+                    />
+                  )}
+                  {(!selectedAchievement?.icon_url || detailIconUnavailable) && (
+                    <span aria-hidden="true">🏆</span>
+                  )}
+                </div>
                 <span className="success-kicker">
-                  {isCourseUnlocked(selectedCourse)
+                  {(selectedAchievement ? selectedAchievement.unlocked : selectedCourseUnlocked)
                     ? "SUCCÈS DÉBLOQUÉ"
                     : "SUCCÈS À DÉBLOQUER"}
                 </span>
-                <h3>{selectedCourse.tag || selectedCourse.nom}</h3>
-                <p>{selectedCourse.nom}</p>
-                {selectedCourseAchievements[0] && (
-                  <small>{selectedCourseAchievements[0].description}</small>
+                <h3>{selectedAchievement?.name || selectedCourse.tag || selectedCourse.nom}</h3>
+                <p>
+                  {selectedAchievement
+                    ? selectedAchievement.game_name || "Succès général"
+                    : selectedCourse.nom}
+                  {selectedAchievement?.game_name && selectedAchievementCourse
+                    ? ` · ${selectedAchievementCourse.tag || selectedAchievementCourse.nom}`
+                    : ""}
+                </p>
+                {detailDescription && <small>{detailDescription}</small>}
+                {(!selectedAchievement || selectedAchievementCourse) && selectedCourse && (
+                  <Link
+                    className="success-course-link"
+                    to={selectedAchievementCourse?.path || selectedCourse.path}
+                  >
+                    Jouer
+                  </Link>
                 )}
-                <Link className="success-course-link" to={selectedCourse.path}>
-                  Jouer
-                </Link>
               </>
             )}
           </aside>
@@ -175,6 +254,11 @@ function SuccessPage() {
             className="success-badge-sections"
             aria-label="Jeux développés par année de BUT"
           >
+            {achievementsError && (
+              <p className="success-achievements-error" role="alert">
+                {achievementsError}
+              </p>
+            )}
             {achievementGroups
               .filter(({ items }) => items.length > 0)
               .map(({ year, items }) => (
@@ -185,18 +269,38 @@ function SuccessPage() {
                 >
                   <h3 id={`success-games-but${year}`}>BUT {year}</h3>
                   <div className="success-badge-grid">
-                    {items.map((course) => (
-                      <TrophyCard
-                        key={course.id}
-                        course={course}
-                        unlocked={isCourseUnlocked(course)}
-                        selected={selectedCourseId === course.id}
-                        onSelect={() => setSelectedCourseId(course.id)}
-                      />
-                    ))}
+                    {items.flatMap((course) =>
+                      getCourseAchievements(course).map((achievement) => (
+                        <TrophyCard
+                          key={achievement.achievement_id}
+                          course={course}
+                          achievement={achievement}
+                          selected={selectedAchievementId === achievement.achievement_id}
+                          onSelect={() => {
+                            setSelectedAchievementId(achievement.achievement_id);
+                            setSelectedCourseId(course.id);
+                          }}
+                        />
+                      )),
+                    )}
                   </div>
                 </section>
               ))}
+            {otherAchievements.length > 0 && (
+              <section className="success-badge-year" aria-labelledby="success-other-achievements">
+                <h3 id="success-other-achievements">Autres succès</h3>
+                <div className="success-badge-grid">
+                  {otherAchievements.map((achievement) => (
+                    <TrophyCard
+                      key={achievement.achievement_id}
+                      achievement={achievement}
+                      selected={selectedAchievementId === achievement.achievement_id}
+                      onSelect={() => setSelectedAchievementId(achievement.achievement_id)}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         </div>
       </section>
