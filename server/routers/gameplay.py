@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 
 from database import get_db
 from models.stats import Game, Score, SessionGame, SessionUser, UserModule
@@ -12,6 +13,32 @@ from schemas.gameplay import RecordGameSessionRequest, RecordGameSessionResponse
 from security import get_optional_current_user
 
 router = APIRouter(prefix="/api/games", tags=["Gameplay & Sessions"])
+
+
+@router.get("/achievements")
+def get_achievements(
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User | None, Depends(get_optional_current_user)] = None,
+):
+    """Retourne le catalogue des badges et ceux débloqués par le joueur connecté."""
+    rows = db.execute(
+        text("""
+            SELECT a.achievement_id, a.name, a.description, a.icon_url,
+                   a.game_id, g.name AS game_name,
+                   m.cursus_year,
+                   COALESCE((a.unlock_condition->>'hidden')::boolean, FALSE) AS hidden,
+                   (ua.user_achievement_id IS NOT NULL) AS unlocked,
+                   ua.unlocked_at
+            FROM achievements a
+            LEFT JOIN games g ON g.game_id = a.game_id
+            LEFT JOIN modules m ON m.module_id = g.module_id
+            LEFT JOIN users_achievements ua
+              ON ua.achievement_id = a.achievement_id AND ua.user_id = :user_id
+            ORDER BY a.achievement_id
+        """),
+        {"user_id": current_user.user_id if current_user else None},
+    ).mappings().all()
+    return [dict(row) for row in rows]
 
 
 def _find_game(db: Session, target: str) -> Game | None:

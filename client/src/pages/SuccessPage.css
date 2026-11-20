@@ -1,0 +1,112 @@
+.success-page {
+  --success-gold: #f4c95d;
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: 28px 24px 40px;
+  color: #f3f4f6;
+  font-family: "VCR_OSD", monospace;
+}
+
+.success-page * { box-sizing: border-box; }
+.success-page h1, .success-page h2, .success-page h3, .success-page p { margin-top: 0; }
+.success-hero {
+  display: flex;
+  min-height: 0;
+  justify-content: center;
+  padding: 24px 20px 28px;
+  border: 0;
+  border-bottom: 2px solid #51452b;
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+}
+.success-hero-copy { max-width: 600px; text-align: center; }
+.success-kicker { display: block; color: var(--success-gold); font-size: 11px; letter-spacing: .12em; }
+.success-hero h1 { margin: 12px 0; color: #fff; font-size: clamp(30px, 5vw, 48px); line-height: 1.1; }
+.success-hero p, .success-duck-info p { color: #c5c9d2; font: 15px/1.6 sans-serif; }
+.success-duck-art {
+  display: grid;
+  place-items: center;
+  border: 2px dashed #778091;
+  background-color: #0c1019a8;
+  background-image: linear-gradient(45deg, #ffffff08 25%, transparent 25%, transparent 75%, #ffffff08 75%), linear-gradient(45deg, #ffffff08 25%, transparent 25%, transparent 75%, #ffffff08 75%);
+  background-position: 0 0, 8px 8px;
+  background-size: 16px 16px;
+  image-rendering: pixelated;
+}
+.success-ducks { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: center; gap: 20px; margin-top: 22px; padding: 20px; }
+.success-duck-art { width: 80px; height: 80px; }
+.success-duck-heading, .success-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 16px; }
+.success-duck-heading h2, .success-section-heading h2 { margin: 5px 0 0; font-size: 21px; }
+.success-duck-heading strong { color: var(--success-gold); font-size: 25px; white-space: nowrap; }
+.success-duck-heading strong span { color: #9ca3af; font-size: 15px; }
+.success-duck-info p { margin: 8px 0 12px; font-size: 13px; }
+.success-progress { height: 12px; border: 2px solid #050608; background: #080a0e; }
+.success-progress span { display: block; height: 100%; background: repeating-linear-gradient(90deg, #eabf4f 0 12px, #c8942e 12px 14px); }
+.success-duck-info small { display: block; margin-top: 7px; color: #aeb4bf; font-size: 10px; }
+.success-hidden-skills { margin-top: 16px; }
+.success-hidden-trigger { display: block; width: fit-content; margin: 0 auto; padding: 7px 10px; border: 0; background: transparent; color: #777d8a; text-align: center; font: 10px "VCR_OSD", monospace; cursor: pointer; }
+.success-hidden-trigger:hover, .success-hidden-trigger:focus-visible { color: #c7b575; text-decoration: underline; text-underline-offset: 3px; outline: none; }
+.success-hidden-content { padding: 16px 18px 18px; border-top: 1px solid #383d49; }
+.success-hidden-content h2 { margin: 0; font-size: 17px; }
+.success-hidden-copy { margin: 0 0 14px; color: #aeb4bf; font: 13px/1.5 sans-serif; }
+.success-hidden-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.success-hidden-slot { display: flex; min-height: 52px; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid #383d49; background: #11141c; color: #858b98; font-size: 12px; }
+.success-hidden-slot img { width: 22px; height: 22px; object-fit: contain; image-rendering: pixelated; }
+.success-games-layout { display: grid; grid-template-columns: minmax(200px, .85fr) minmax(0, 1.5fr); gap: 16px; }
+.success-game-detail { display: flex; min-height: 230px; flex-direction: column; align-items: flex-start; justify-content: center; padding: 18px; border: 1px solid #343949; background: linear-gradient(145deg, #171b29, #0e1119); }
+.success-detail-sprite { display: grid; width: 64px; height: 64px; margin-bottom: 14px; place-items: center; border: 1px dashed #9b823d; background: #4e401b; color: var(--success-gold); font-size: 24px; }
+.success-detail-sprite.is-locked { border-color: #555b67; background: #242832; color: #717887; filter: grayscale(1); }
+.success-game-detail h3 { margin: 7px 0; color: #fff; font-size: 17px; }
+.success-game-detail p { margin: 0; color: #b7bdc9; font: 12px/1.5 sans-serif; }
+.success-game-detail small { margin-top: 12px; color: var(--success-gold); font-size: 10px; }
+.success-badge-sections { display: grid; gap: 10px; align-content: start; max-height: 430px; overflow: auto; padding-right: 3px; }
+.success-badge-year { padding: 9px; border: 1px solid #343949; background: #0b0e16; }
+.success-badge-year h3 { margin: 0 0 8px; padding: 5px 7px; background: #25347c; color: #e5eaff; font-size: 11px; }
+.success-badge-grid { display: grid; grid-template-columns: repeat(5, minmax(42px, 1fr)); gap: 7px; }
+.success-badge, .success-empty-slot { display: grid; aspect-ratio: 1; place-items: center; padding: 5px; border: 1px solid #323747; background: #171b27; image-rendering: pixelated; }
+.success-badge { cursor: pointer; }
+.success-badge-sprite { display: grid; width: 100%; height: 100%; place-items: center; border: 1px dashed #626b7b; color: #838a98; font: 16px "VCR_OSD", monospace; }
+.success-badge.is-locked .success-badge-sprite { filter: grayscale(1); opacity: .48; }
+.success-badge.is-unlocked { border-color: #b9973f; background: linear-gradient(145deg, #4e401b, #242017); box-shadow: inset 0 0 12px #edc6582e; }
+.success-badge.is-unlocked .success-badge-sprite { border-color: #c6a64b; }
+.success-badge.is-selected { outline: 2px solid var(--success-gold); outline-offset: 1px; }
+.success-empty-slot { border-style: dashed; border-color: #262b37; background: #0a0c12; }
+.success-trophies { margin-top: 34px; scroll-margin-top: 90px; }
+.success-section-heading { margin-bottom: 15px; }
+.success-available-count { color: #aeb4bf; font-size: 11px; }
+.success-levels { display: flex; gap: 8px; margin-bottom: 16px; }
+.success-levels button { display: grid; gap: 5px; min-width: 110px; padding: 10px 14px; border: 0; background: #171923; color: #b8bdc7; box-shadow: inset 2px 2px #3a3d4a, inset -2px -2px #07080c, 0 0 0 2px #000; font: inherit; cursor: pointer; }
+.success-levels button span { color: #858b98; font: 10px sans-serif; }
+.success-levels button.active { background: #542328; color: #fff; box-shadow: inset 2px 2px #d45a4e, inset -2px -2px #260c11, 0 0 0 2px #000; }
+.success-course-list { display: grid; grid-template-columns: 1fr; gap: 7px; }
+.success-course { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 58px; padding: 10px 14px; border: 1px solid #383d49; background: #11141c; box-shadow: 2px 2px #050609; }
+.success-course-copy { min-width: 0; }
+.success-course-id { color: var(--success-gold); font-size: 10px; }
+.success-course h3 { margin: 4px 0; color: #f2f3f5; font: 13px/1.35 sans-serif; }
+.success-course-link { padding: 8px 12px; border: 1px solid #585e6b; color: #d7dbe2; font-size: 10px; text-decoration: none; white-space: nowrap; }
+.success-course-link:hover { border-color: var(--success-gold); color: var(--success-gold); }
+.success-course-lock { width: 24px; height: 24px; object-fit: contain; image-rendering: pixelated; }
+.success-back { display: inline-block; margin-top: 26px; color: #e1c779; font-size: 12px; }
+
+@media (max-width: 700px) {
+  .success-page { padding: 18px 12px 30px; }
+  .success-hero { min-height: 0; padding: 20px; }
+  .success-hero p { font-size: 13px; }
+  .success-ducks { grid-template-columns: 56px minmax(0, 1fr); gap: 12px; padding: 14px; }
+  .success-duck-art { width: 54px; height: 54px; }
+  .success-duck-heading h2, .success-section-heading h2 { font-size: 17px; }
+  .success-duck-heading strong { font-size: 20px; }
+  .success-games-layout { grid-template-columns: 1fr; }
+  .success-game-detail { min-height: 190px; }
+  .success-hidden-slots { grid-template-columns: 1fr; }
+  .success-badge-sections { max-height: none; overflow: visible; }
+  .success-badge-grid { grid-template-columns: repeat(5, minmax(38px, 1fr)); gap: 6px; padding: 9px; }
+  .success-hidden-trigger { padding: 8px; font-size: 9px; }
+  .success-course { gap: 9px; padding: 9px; }
+}
+
+@media (max-width: 420px) {
+  .success-section-heading { align-items: start; flex-direction: column; }
+  .success-course-link { padding: 6px; font-size: 9px; }
+}
