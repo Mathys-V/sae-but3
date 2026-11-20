@@ -1,5 +1,7 @@
 // client/src/game/ihm/components/IhmCardViewer.jsx
 
+import { SceneRenderer } from "./IhmScenes.jsx";
+
 export default function IhmCardViewer({
   variant,
   optionLabel,
@@ -83,6 +85,9 @@ export default function IhmCardViewer({
               : "w-full"
           }`}
         >
+          {/* 0. SCÈNES DÉDIÉES (niveaux moyen et expert) */}
+          {type === "scene" && <SceneRenderer data={data} />}
+
           {/* 1. GRILLE DE CARTES PRODUITS */}
         {type === "product_grid" && (
           <div className="w-full">
@@ -416,7 +421,9 @@ export default function IhmCardViewer({
           return (
             <div className="w-full p-4 bg-slate-800 rounded-lg border border-slate-700 space-y-3">
               <div className="h-24 bg-slate-900 rounded border border-slate-700 flex flex-col items-center justify-center p-3 text-center">
-                <span className="text-xs font-mono font-bold text-slate-300">🖼️ Schéma d'architecture technique</span>
+                <span className="text-xs font-mono font-bold text-slate-300">
+                  {data.imageLabel || "🖼️ Schéma d'architecture technique"}
+                </span>
                 <div className="mt-2">
                   <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-800 text-amber-300 border border-slate-700 font-bold">
                     alt="{altDisplay}"
@@ -688,8 +695,10 @@ export default function IhmCardViewer({
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-slate-700 text-slate-400">
-                  <th className="text-left py-1">Élément de compte</th>
-                  <th className={`py-1 ${data.alignRight ? "text-right" : "text-left"}`}>Total</th>
+                  <th className="text-left py-1">{(data.headers || [])[0] || "Élément de compte"}</th>
+                  <th className={`py-1 ${data.alignRight ? "text-right" : "text-left"}`}>
+                    {(data.headers || [])[1] || "Total"}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/50">

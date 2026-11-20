@@ -1,7 +1,7 @@
 // client/src/game/ihm/data/questionGenerator.js
-import { QUESTIONS_EASY } from "./questionsEasy";
-import { QUESTIONS_MEDIUM } from "./questionsMedium";
-import { QUESTIONS_HARD } from "./questionsHard";
+import { QUESTIONS_EASY } from "./questionsEasy.js";
+import { QUESTIONS_MEDIUM } from "./questionsMedium.js";
+import { QUESTIONS_HARD } from "./questionsHard.js";
 
 /**
  * Algorithme de tirage aléatoire sans remise (Fisher-Yates shuffle)

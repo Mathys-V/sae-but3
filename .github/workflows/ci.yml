@@ -21,11 +21,12 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Installation et Linting Front-end (React/ESLint)
+      - name: Installation, Linting et Tests Front-end (React/ESLint)
         run: |
           cd client
           npm install
           npm run lint
+          npm test
 
       # --- TESTS BACK-END ---
       - name: Configuration de Python

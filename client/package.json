@@ -9,6 +9,7 @@
     "prebuild": "node scripts/patch-kaplay.js",
     "build": "vite build",
     "lint": "eslint .",
+    "test": "node --test",
     "preview": "vite preview",
     "postinstall": "node scripts/patch-kaplay.js"
   },

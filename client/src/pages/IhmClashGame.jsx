@@ -14,6 +14,20 @@ import { recordGameSession } from "../services/api";
 
 const TIMER_TOTAL_MS = 15000;
 
+/** Boutons de fin de partie, réutilisés en haut et en bas de l'écran de résultats. */
+function EndNavButtons({ onRestart, onCatalogue, className = "pt-2" }) {
+  return (
+    <div className={`flex flex-col sm:flex-row gap-3 ${className}`}>
+      <button type="button" onClick={onRestart} className="pixel-btn w-full !bg-red-700 hover:!bg-red-600 !text-white !font-sans font-bold">
+        RETOURNER AUX EXPLICATIONS
+      </button>
+      <button type="button" onClick={onCatalogue} className="pixel-btn w-full !font-sans font-bold">
+        CATALOGUE DES JEUX
+      </button>
+    </div>
+  );
+}
+
 export default function IhmClashGame() {
   const navigate = useNavigate();
   const { token } = useAuthStore();
@@ -541,25 +555,13 @@ export default function IhmClashGame() {
                 </span>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    resetGame();
-                    setGameState("briefing");
-                  }}
-                  className="pixel-btn w-full !bg-red-700 hover:!bg-red-600 !text-white !font-sans font-bold"
-                >
-                  RETOURNER AUX EXPLICATIONS
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("/evil/jeux")}
-                  className="pixel-btn w-full !font-sans font-bold"
-                >
-                  CATALOGUE DES JEUX
-                </button>
-              </div>
+              <EndNavButtons
+                onRestart={() => {
+                  resetGame();
+                  setGameState("briefing");
+                }}
+                onCatalogue={() => navigate("/evil/jeux")}
+              />
             </div>
 
             {/* ========================================================
@@ -698,27 +700,16 @@ export default function IhmClashGame() {
                 )}
               </div>
 
-              {/* Boutons de navigation dupliqués en bas pour éviter de devoir remonter la page */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-800">
-                <button
-                  type="button"
-                  onClick={() => {
-                    resetGame();
-                    setGameState("briefing");
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                  className="pixel-btn w-full !bg-red-700 hover:!bg-red-600 !text-white !font-sans font-bold"
-                >
-                  RETOURNER AUX EXPLICATIONS
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("/evil/jeux")}
-                  className="pixel-btn w-full !font-sans font-bold"
-                >
-                  CATALOGUE DES JEUX
-                </button>
-              </div>
+              {/* Boutons de navigation répétés en bas pour éviter de remonter la page */}
+              <EndNavButtons
+                className="pt-4 border-t border-gray-800"
+                onRestart={() => {
+                  resetGame();
+                  setGameState("briefing");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                onCatalogue={() => navigate("/evil/jeux")}
+              />
             </div>
           </div>
         )}
