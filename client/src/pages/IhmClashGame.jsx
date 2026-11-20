@@ -46,6 +46,45 @@ function timerBarClass(ratio) {
   return "bg-gradient-to-r from-red-700 to-red-500";
 }
 
+function buildMultiRankings(players, score, myAvgTimeMs) {
+  const simulatedScores = players.map((p) =>
+    p.isMe
+      ? { pseudo: p.pseudo, avatar: p.avatar, score, avgTimeMs: myAvgTimeMs, isMe: true }
+      : {
+          pseudo: p.pseudo,
+          avatar: p.avatar,
+          score: Math.floor(650 + Math.random() * 450),
+          avgTimeMs: Math.floor(1800 + Math.random() * 1200),
+          isMe: false,
+        },
+  );
+
+  simulatedScores.sort((a, b) => (b.score !== a.score ? b.score - a.score : a.avgTimeMs - b.avgTimeMs));
+
+  const coinRewards = [100, 60, 40, 20];
+  return simulatedScores.map((item, idx) => ({
+    ...item,
+    rank: idx + 1,
+    coinsWon: coinRewards[idx] || 10,
+  }));
+}
+
+function awardMultiResult(myResult, totalTimeMs, earnCoins, addWinnings, token) {
+  if (!myResult) return;
+
+  const awardCoins = earnCoins || addWinnings;
+  if (typeof awardCoins === "function") {
+    awardCoins(myResult.coinsWon);
+  }
+  void recordGameSession(token, {
+    game: "L'Oeil Critique",
+    score: myResult.score,
+    timeSeconds: Math.round(totalTimeMs / 1000),
+    completed: true,
+    status: "finished",
+  });
+}
+
 export default function IhmClashGame() {
   const navigate = useNavigate();
   const { token } = useAuthStore();
@@ -172,55 +211,15 @@ export default function IhmClashGame() {
   // Fin de la battle multijoueur : calcul du classement final des 4 joueurs
   const handleFinishMultiBattle = () => {
     const totalTimeMs = Date.now() - sessionStartTimeRef.current;
-    const myAvgTime = Math.round(totalTimeMs / 10);
+    const finalRankings = buildMultiRankings(multiPlayers, score, Math.round(totalTimeMs / 10));
 
-    const simulatedScores = multiPlayers.map((p) => {
-      if (p.isMe) {
-        return {
-          pseudo: p.pseudo,
-          avatar: p.avatar,
-          score,
-          avgTimeMs: myAvgTime,
-          isMe: true,
-        };
-      }
-      const randomScore = Math.floor(650 + Math.random() * 450);
-      const randomTime = Math.floor(1800 + Math.random() * 1200);
-      return {
-        pseudo: p.pseudo,
-        avatar: p.avatar,
-        score: randomScore,
-        avgTimeMs: randomTime,
-        isMe: false,
-      };
-    });
-
-    simulatedScores.sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      return a.avgTimeMs - b.avgTimeMs;
-    });
-
-    const coinRewards = [100, 60, 40, 20];
-    const finalRankings = simulatedScores.map((item, idx) => ({
-      ...item,
-      rank: idx + 1,
-      coinsWon: coinRewards[idx] || 10,
-    }));
-
-    const myResult = finalRankings.find((r) => r.isMe);
-    if (myResult) {
-      const awardCoins = earnCoins || addWinnings;
-      if (typeof awardCoins === "function") {
-        awardCoins(myResult.coinsWon);
-      }
-      void recordGameSession(token, {
-        game: "L'Oeil Critique",
-        score: myResult.score,
-        timeSeconds: Math.round(totalTimeMs / 1000),
-        completed: true,
-        status: "finished",
-      });
-    }
+    awardMultiResult(
+      finalRankings.find((r) => r.isMe),
+      totalTimeMs,
+      earnCoins,
+      addWinnings,
+      token,
+    );
 
     setMultiRankings(finalRankings);
   };
