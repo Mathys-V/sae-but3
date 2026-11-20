@@ -9,12 +9,12 @@
 -- -------------------------------------------------------------
 -- Mot de passe démo 'admin123' pour prof, 'alice123' pour alice, 'azerty123' pour les autres
 INSERT INTO users (pseudo, email, password_hash, role, banned_flag, created_at, updated_at, last_login) VALUES
-    ('alice',  'alice@etu.univ.fr',  '$2b$12$swbvMXP6wJa1EqvCCDtCgeY7xXi9zhFjoNBad21Kp5MnN7HJfQvNe',   'player', FALSE, NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day',  NOW() - INTERVAL '2 hours'),
-    ('bob',    'bob@etu.univ.fr',    '$2b$12$6izyXBay9/GqjFhp2IQyZOmzf6WCLnRZiyIMu.H.DP9mZsXefZo5a',     'player', FALSE, NOW() - INTERVAL '25 days', NOW() - INTERVAL '2 days', NOW() - INTERVAL '3 days'),
-    ('chloe',  'chloe@etu.univ.fr',  '$2b$12$NBR/TrDhcvZHG6ulMtSvRO1jO2Qw.63qEyfmr5M6h.jTiillDl81',   'player', FALSE, NOW() - INTERVAL '10 days', NULL,                    NOW() - INTERVAL '1 hour'),
-    ('damien', 'damien@etu.univ.fr', '$2b$12$sjIi6QYKPsh7pgJFuSe/feHzZkcEi6RqTu6cKdr1Frg9dJ.q9Hll.',  'player', FALSE, NOW() - INTERVAL '8 days',  NULL,                    NOW() - INTERVAL '6 hours'),
-    ('prof',   'prof@univ.fr',       '$2b$12$LtF5Fv4mb2RqqZgvAYOWIuzpuvgfcXxoiWi/ExaeLQjMHPndNg.32',    'admin',  FALSE, NOW() - INTERVAL '60 days', NOW() - INTERVAL '3 days', NOW() - INTERVAL '30 min'),
-    ('troll',  'troll@etu.univ.fr',  '$2b$12$OeFBK0VGor.GIRJc/Kt7JeSR9KdlV65x4130mgx0tp6EnaURjR.OK',   'player', TRUE,  NOW() - INTERVAL '10 days', NULL,                    NULL);
+    ('alice',  'alice@etu.univ.fr',  '$2b$12$LlfcYOg53WqBVFkDeDn5k.8rSSRa0xRB.qrCNJuUsy5BpDzkOqGn6',   'player', FALSE, NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day',  NOW() - INTERVAL '2 hours'),
+    ('bob',    'bob@etu.univ.fr',    '$2b$12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O',     'player', FALSE, NOW() - INTERVAL '25 days', NOW() - INTERVAL '2 days', NOW() - INTERVAL '3 days'),
+    ('chloe',  'chloe@etu.univ.fr',  '$2b$12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O',   'player', FALSE, NOW() - INTERVAL '10 days', NULL,                    NOW() - INTERVAL '1 hour'),
+    ('damien', 'damien@etu.univ.fr', '$2b$12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O',  'player', FALSE, NOW() - INTERVAL '8 days',  NULL,                    NOW() - INTERVAL '6 hours'),
+    ('prof',   'prof@univ.fr',       '$2b$12$PHTR5Kkpy2flxQcCjCEBJuC3hty6RnUI4xN3iuE8DQXQDAHUkRafe',    'admin',  FALSE, NOW() - INTERVAL '60 days', NOW() - INTERVAL '3 days', NOW() - INTERVAL '30 min'),
+    ('troll',  'troll@etu.univ.fr',  '$2b$12$PLa8OIDY7nJOBIrouU19EuCLSuDXIewoLf8UPsaQ1ss.34ciHZa3O',   'player', TRUE,  NOW() - INTERVAL '10 days', NULL,                    NULL);
 
 -- -------------------------------------------------------------
 -- 2. Préférences (user_settings) — création lazy : 2 joueurs sur 6
@@ -43,6 +43,7 @@ FROM (VALUES
     ('Projet final', 'Synthèse et mise en œuvre', 3::SMALLINT, '/assets/modules/but3.png', FALSE, NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ),
     ('Tutoriel EvilJV', 'Prise en main d''Evil MescoursJV et règles du jeu', 1::SMALLINT, '/assets/icons/book.png', TRUE, NOW() - INTERVAL '30 days', NULL::TIMESTAMPTZ),
     ('R1.06 : Mathématiques discrètes', 'Probabilités, logique et combinatoire', 1::SMALLINT, '/assets/treasurebg.jpg', FALSE, NOW() - INTERVAL '30 days', NULL::TIMESTAMPTZ),
+    ('R3.01 : Développement Web', 'Conception web, responsive design, ergonomie et accessibilité', 2::SMALLINT, '/assets/modules/but2.png', TRUE, NOW() - INTERVAL '20 days', NULL::TIMESTAMPTZ),
     ('R5.A.06 : Programmation multimédia', 'Moteur Kaplay, animations de sprites et physique aquatique', 3::SMALLINT, '/assets/plongee/env/backgrounds/surface_ocean_jour.png', FALSE, NOW() - INTERVAL '25 days', NULL::TIMESTAMPTZ)
 ) AS v(name, description, cursus_year, image_url, by_default_flag, created_at, updated_at)
 CROSS JOIN users AS admin
@@ -122,13 +123,23 @@ FROM (VALUES
     ),
     (
         'R5.A.06 : Programmation multimédia',
-        'Jeu de Plongée (R5.A.06)',
+        'L''Odyssée (R5.A.06)',
         'Exploration sous-marine périlleuse : collectez des perles, gérez votre oxygène et évitez les monstres marins.',
         '{"zones":["surface","ocean_jour","abysses"],"oxygen_max":100}',
         'hard',
         '{"oxygen_depletion_rate":2.5,"pearl_points":50,"relic_points":200,"max_possible":1000}',
         TRUE, 1::SMALLINT, 4::SMALLINT, TRUE,
         LOCALTIMESTAMP - INTERVAL '25 days', LOCALTIMESTAMP - INTERVAL '1 day'
+    ),
+    (
+        'R3.01 : Développement Web',
+        'L''Oeil Critique (R3.01)',
+        'Comparez 2 interfaces web et identifiez la plus responsive, accessible et ergonomique.',
+        '{"topics":["responsive","wcag","forms","ergonomics"],"rounds":20}',
+        'medium',
+        '{"time_limit_sec":15,"points_per_correct":100,"streak_bonus":25,"max_players":4}',
+        TRUE, 1::SMALLINT, 4::SMALLINT, TRUE,
+        LOCALTIMESTAMP - INTERVAL '10 days', NULL::TIMESTAMPTZ
     )
 ) AS v(module_name, name, description, data, difficulty, config,
        multiplayer_flag, min_players, max_players, active_flag, created_at, updated_at)

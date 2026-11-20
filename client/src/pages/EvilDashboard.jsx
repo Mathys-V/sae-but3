@@ -32,11 +32,12 @@ function EvilDashboard() {
   }
 
   // 3. LE RESTE DU COMPOSANT
-  // On récupère les jeux actifs jouables (Plongée, Casino) et les premières ressources
+  // On récupère les jeux actifs jouables (Casino, L'Œil Critique, L'Odyssée) et les premières ressources
   const jeuxActifs = [
-    ressourcesBUT.BUT3.find((c) => c.id === "R5.A.06"),
     ressourcesBUT.BUT1.find((c) => c.id === "R1.06"),
-    ...ressourcesBUT.BUT1.slice(0, 3),
+    ressourcesBUT.BUT2.find((c) => c.id === "R3.01"),
+    ressourcesBUT.BUT3.find((c) => c.id === "R5.A.06"),
+    ...ressourcesBUT.BUT1.slice(0, 2),
   ].filter(Boolean);
 
 

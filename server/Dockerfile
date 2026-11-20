@@ -7,11 +7,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements-lock.txt .
+COPY requirements.txt requirements-lock.txt ./
 
 RUN pip install --no-cache-dir --only-binary :all: --require-hashes -r requirements-lock.txt
 
-COPY main.py .
+COPY database.py security.py main.py ./
+COPY models/ ./models/
 COPY routers/ ./routers/
 COPY schemas/ ./schemas/
 

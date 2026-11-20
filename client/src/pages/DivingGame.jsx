@@ -10,7 +10,6 @@ import {
   PixelStarfishTopRight,
   PixelShellBottomLeft,
   PixelCrystalBottomRight,
-  PixelAmbientSea,
   PixelTrophy,
 } from "../components/DivingPixelDecor.jsx";
 
@@ -67,6 +66,10 @@ function DivingGame({
     return !localStorage.getItem("plongee_intro_seen");
   });
   const [victoryData, setVictoryData] = useState(null);
+
+  useEffect(() => {
+    document.title = "EvilJV | L'Odyssée (R5.A.06)";
+  }, []);
 
   /**
    * Ferme le tutoriel d'introduction, mémorise la lecture et replace le focus sur le canvas.
@@ -238,18 +241,6 @@ function DivingGame({
         isFullscreen ? "h-screen fixed inset-0 z-50" : "flex-1 min-h-0"
       }`}
     >
-      {/* Faune & Algues décoratives d'ambiance en arrière-plan marin Pixel Art */}
-      {!isFullscreen && (
-        <>
-          <div className="ambient-decor ambient-left" aria-hidden="true">
-            <PixelAmbientSea />
-          </div>
-          <div className="ambient-decor ambient-right" aria-hidden="true">
-            <PixelAmbientSea flipped />
-          </div>
-        </>
-      )}
-
       {/* Bouton plein écran flottant discret si plein écran actif */}
       {isFullscreen && (
         <button
@@ -288,6 +279,11 @@ function DivingGame({
               <span aria-hidden="true">🛒</span>
               <span>Boutique [B]</span>
             </button>
+
+            {/* Plaque nominative du mini-jeu */}
+            <div className="stone-plaque-btn !bg-slate-950 !border-amber-600/80 !text-amber-300 font-bold tracking-widest text-xs uppercase shadow select-none">
+              ⚓ L'ODYSSÉE ⚓
+            </div>
 
             <button
               onClick={() => setIsIntroOpen(true)}
