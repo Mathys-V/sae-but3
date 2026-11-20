@@ -174,11 +174,11 @@ def run_tests():
 
     print("\n--- 8. TEST ENREGISTREMENT DE SESSION RÉELLE & LEADERBOARD ---")
     game_plongee = Game(
-        module_id=1,
-        name="Jeu de Plongée (R5.A.06)",
-        difficulty="hard",
-        multiplayer_flag=True,
-    )
+    module_id=1,
+    name="Jeu de Plongée (R5.A.06)",
+    data={},
+    difficulty="hard",
+    multiplayer_flag=True,)
     db.add(game_plongee)
     db.commit()
 
