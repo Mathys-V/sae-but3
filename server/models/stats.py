@@ -2,8 +2,7 @@
 
 from models.games import Game
 from models.progression import UserModule
-from models.sessions import SessionGame, SessionUser, Score
-
+from models.sessions import Score, SessionGame, SessionUser
 
 __all__ = [
     "Game",

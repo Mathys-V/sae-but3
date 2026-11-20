@@ -1,11 +1,10 @@
 from database import Base
-
-from models.progression import Module, UserModule, UserStat
-from models.games import Game
-from models.sessions import SessionGame, SessionUser, Move, Score
 from models.achievements import Achievement, UserAchievement
+from models.games import Game
 from models.notifications import Notification
-from models.user import User, UserSetting, UserProfile
+from models.progression import Module, UserModule, UserStat
+from models.sessions import Move, Score, SessionGame, SessionUser
+from models.user import User, UserProfile, UserSetting
 
 __all__ = [
     "Base",

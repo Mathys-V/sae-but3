@@ -5,8 +5,8 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
-    func,
     UniqueConstraint,
+    func,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 
