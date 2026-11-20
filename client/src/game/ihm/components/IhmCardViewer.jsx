@@ -2,6 +2,22 @@
 
 import { SceneRenderer } from "./IhmScenes.jsx";
 
+const CARD_BASE_CLASS =
+  "relative flex flex-col h-full bg-slate-900 border-2 rounded-lg transition-all shadow-lg overflow-hidden";
+
+function cardBorderClass(isSelected, isCorrect) {
+  if (!isSelected) return "border-slate-700 hover:border-slate-500";
+  return isCorrect
+    ? "border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]"
+    : "border-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]";
+}
+
+const VIEWPORT_CLASSES = {
+  mobile:
+    "max-w-[340px] mx-auto p-2.5 rounded-xl border border-dashed border-slate-700/80 bg-slate-900/40 shadow-inner",
+  tablet: "max-w-[540px] mx-auto w-full",
+};
+
 export default function IhmCardViewer({
   variant,
   optionLabel,
@@ -14,15 +30,7 @@ export default function IhmCardViewer({
   const { type, data = {} } = variant;
 
   return (
-    <div
-      className={`relative flex flex-col h-full bg-slate-900 border-2 rounded-lg transition-all shadow-lg overflow-hidden ${
-        isSelected
-          ? isCorrect
-            ? "border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]"
-            : "border-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]"
-          : "border-slate-700 hover:border-slate-500"
-      }`}
-    >
+    <div className={`${CARD_BASE_CLASS} ${cardBorderClass(isSelected, isCorrect)}`}>
       {/* Tampon d'inspection ergonomique (Impact visuel officiel après vote) */}
       {showResult && (
         <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-20">
@@ -76,15 +84,7 @@ export default function IhmCardViewer({
 
       {/* Contenu Web Réaliste (Tolérant, dynamique et avec contrastes visuels frappants) */}
       <div className="p-3 sm:p-4 bg-slate-950 text-slate-100 min-h-[260px] flex-1 flex flex-col justify-center items-center overflow-hidden font-sans">
-        <div
-          className={`w-full ${
-            targetViewport === "mobile"
-              ? "max-w-[340px] mx-auto p-2.5 rounded-xl border border-dashed border-slate-700/80 bg-slate-900/40 shadow-inner"
-              : targetViewport === "tablet"
-              ? "max-w-[540px] mx-auto w-full"
-              : "w-full"
-          }`}
-        >
+        <div className={`w-full ${VIEWPORT_CLASSES[targetViewport] ?? "w-full"}`}>
           {/* 0. SCÈNES DÉDIÉES (niveaux moyen et expert) */}
           {type === "scene" && <SceneRenderer data={data} />}
 
@@ -95,9 +95,9 @@ export default function IhmCardViewer({
               data.fluid !== false ? (
                 /* Fluide en colonne */
                 <div className="flex flex-col gap-2.5 w-full">
-                  {(data.items || []).map((it, idx) => (
+                  {(data.items || []).map((it) => (
                     <div
-                      key={idx}
+                      key={it.name}
                       className="p-3 rounded-lg bg-slate-800/90 border border-slate-700 flex items-center justify-between gap-3 shadow-sm"
                     >
                       <div className="min-w-0">
@@ -122,9 +122,9 @@ export default function IhmCardViewer({
               ) : (
                 /* Rigide avec débordement sans scroll */
                 <div className="flex flex-row gap-3 w-full overflow-hidden">
-                  {(data.items || []).map((it, idx) => (
+                  {(data.items || []).map((it) => (
                     <div
-                      key={idx}
+                      key={it.name}
                       className="p-3 rounded-lg bg-slate-800 border border-slate-700 flex flex-col justify-between w-[200px] shrink-0"
                     >
                       <div>
@@ -150,9 +150,9 @@ export default function IhmCardViewer({
             ) : targetViewport === "tablet" ? (
               /* Vue Tablette 768px */
               <div className={`grid gap-3 w-full ${data.fluid !== false ? "grid-cols-2" : "grid-cols-4"}`}>
-                {(data.items || []).map((it, idx) => (
+                {(data.items || []).map((it) => (
                   <div
-                    key={idx}
+                    key={it.name}
                     className="p-3 rounded-lg bg-slate-800 border border-slate-700 flex flex-col justify-between"
                   >
                     <div>
@@ -175,9 +175,9 @@ export default function IhmCardViewer({
             ) : (
               /* Vue Desktop */
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-                {(data.items || []).map((it, idx) => (
+                {(data.items || []).map((it) => (
                   <div
-                    key={idx}
+                    key={it.name}
                     className="p-3 rounded-lg bg-slate-800 border border-slate-700 flex flex-col justify-between"
                   >
                     <div>
@@ -222,8 +222,8 @@ export default function IhmCardViewer({
                 <nav className="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 flex items-center justify-between overflow-hidden shadow-sm">
                   <span className="font-bold text-indigo-400 text-sm shrink-0 mr-2">UnivWeb S3</span>
                   <div className="flex gap-2 text-xs text-slate-400 overflow-hidden whitespace-nowrap">
-                    {(data.links || []).map((l, i) => (
-                      <span key={i} className="shrink-0 px-1 py-0.5 bg-slate-700/50 rounded text-slate-300">
+                    {(data.links || []).map((l) => (
+                      <span key={l} className="shrink-0 px-1 py-0.5 bg-slate-700/50 rounded text-slate-300">
                         {l}
                       </span>
                     ))}
@@ -235,8 +235,8 @@ export default function IhmCardViewer({
               <nav className="w-full bg-slate-800 p-2.5 rounded-lg border border-slate-700 flex items-center justify-between">
                 <span className="font-bold text-indigo-400 text-sm shrink-0">UnivWeb S3</span>
                 <div className="flex gap-3 text-xs text-slate-300">
-                  {(data.links || []).slice(0, 5).map((l, i) => (
-                    <span key={i} className="hover:text-white cursor-pointer">{l}</span>
+                  {(data.links || []).slice(0, 5).map((l) => (
+                    <span key={l} className="hover:text-white cursor-pointer">{l}</span>
                   ))}
                 </div>
               </nav>
@@ -249,7 +249,7 @@ export default function IhmCardViewer({
           <div className="w-full p-3.5 bg-slate-800 rounded-lg border border-slate-700 space-y-2.5">
             {data.hasSearch && (
               <div className="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-slate-400">
-                <svg className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg aria-hidden="true" className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <span className="text-slate-400">Rechercher une ressource...</span>
@@ -257,9 +257,9 @@ export default function IhmCardViewer({
             )}
             <p className="text-xs text-slate-300 font-medium">Filtres et actions rapides :</p>
             <div className={`flex gap-2 ${data.wrap !== false ? "flex-wrap" : "flex-nowrap overflow-hidden"}`}>
-              {(data.buttons || []).map((btn, i) => (
+              {(data.buttons || []).map((btn) => (
                 <button
-                  key={i}
+                  key={btn}
                   type="button"
                   className="px-2.5 py-1.5 text-xs font-medium bg-slate-700 hover:bg-slate-600 text-white rounded whitespace-nowrap shrink-0 border border-slate-600"
                 >
@@ -277,16 +277,16 @@ export default function IhmCardViewer({
               <table className={`w-full text-xs text-left border-collapse ${data.scrollable === false ? "table-fixed" : ""}`}>
                 <thead className="bg-slate-800 text-slate-200">
                   <tr>
-                    {(data.headers || []).map((h, i) => (
-                      <th key={i} className="p-2 border-b border-slate-700 whitespace-nowrap">{h}</th>
+                    {(data.headers || []).map((h) => (
+                      <th key={h} className="p-2 border-b border-slate-700 whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {(data.rows || []).map((r, i) => (
-                    <tr key={i} className="bg-slate-900/80 border-b border-slate-800">
-                      {r.map((cell, cIdx) => (
-                        <td key={cIdx} className="p-2 whitespace-nowrap text-slate-300">{cell}</td>
+                  {(data.rows || []).map((r) => (
+                    <tr key={r.join("|")} className="bg-slate-900/80 border-b border-slate-800">
+                      {r.map((cell) => (
+                        <td key={cell} className="p-2 whitespace-nowrap text-slate-300">{cell}</td>
                       ))}
                     </tr>
                   ))}
@@ -491,8 +491,8 @@ export default function IhmCardViewer({
 
           return (
             <div className="w-full max-w-sm mx-auto space-y-3">
-              {fields.map((f, i) => (
-                <div key={i} className="space-y-1">
+              {fields.map((f) => (
+                <div key={f.label} className="space-y-1">
                   {hasLabel && (
                     <label className="text-xs font-bold text-slate-200 block">
                       {f.label}
@@ -549,8 +549,8 @@ export default function IhmCardViewer({
                   * Champs obligatoires
                 </span>
               )}
-              {fields.map((f, i) => (
-                <div key={i} className="space-y-1">
+              {fields.map((f) => (
+                <div key={f} className="space-y-1">
                   <label className="text-xs font-bold text-slate-200 block">
                     {f} {hasAsterisk && <span className="text-rose-400 font-bold">*</span>}
                   </label>
@@ -702,8 +702,8 @@ export default function IhmCardViewer({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/50">
-                {(data.items || []).map((it, i) => (
-                  <tr key={i} className="text-slate-200">
+                {(data.items || []).map((it) => (
+                  <tr key={it.label} className="text-slate-200">
                     <td className="py-1.5">{it.label}</td>
                     <td className={`py-1.5 font-mono ${data.alignRight ? "text-right font-bold text-emerald-400" : "text-left text-slate-300"}`}>
                       {it.cost}
@@ -726,6 +726,7 @@ export default function IhmCardViewer({
               <div className="relative flex items-center justify-center">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-lg shadow-indigo-900/40 flex items-center justify-center border border-indigo-400/30">
                   <svg
+                    aria-hidden="true"
                     className={`w-7 h-7 text-white fill-current transition-transform ${
                       isCentered ? "translate-x-[2.5px]" : "translate-x-0"
                     }`}

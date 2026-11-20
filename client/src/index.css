@@ -381,6 +381,7 @@
     transition-duration: 0.01ms;
     scroll-behavior: auto;
   }
+  .animate-stamp,
   .pixel-key-btn.listening {
     animation: none;
   }

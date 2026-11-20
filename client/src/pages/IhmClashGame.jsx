@@ -28,6 +28,24 @@ function EndNavButtons({ onRestart, onCatalogue, className = "pt-2" }) {
   );
 }
 
+const DIFFICULTY_STYLES = {
+  easy: { badge: "bg-emerald-950 text-emerald-300 border-emerald-700", label: "🟢 Facile" },
+  hard: { badge: "bg-rose-950 text-rose-300 border-rose-700", label: "🔴 Expert" },
+  medium: { badge: "bg-amber-950 text-amber-300 border-amber-700", label: "🟡 Moyen" },
+};
+
+const VIEWPORT_STYLES = {
+  mobile: { badge: "bg-purple-950 text-purple-300 border-purple-700", label: "📱 Mobile 375px" },
+  tablet: { badge: "bg-blue-950 text-blue-300 border-blue-700", label: "💻 Tablette 768px" },
+  desktop: { badge: "bg-emerald-950 text-emerald-300 border-emerald-700", label: "🖥️ Desktop" },
+};
+
+function timerBarClass(ratio) {
+  if (ratio > 0.5) return "bg-gradient-to-r from-emerald-600 to-emerald-400";
+  if (ratio > 0.25) return "bg-gradient-to-r from-amber-600 to-amber-400";
+  return "bg-gradient-to-r from-red-700 to-red-500";
+}
+
 export default function IhmClashGame() {
   const navigate = useNavigate();
   const { token } = useAuthStore();
@@ -59,6 +77,9 @@ export default function IhmClashGame() {
 
   // Filtre d'analyse pour la revue finale des 20 cas d'audit
   const [reviewFilter, setReviewFilter] = useState("all"); // "all" | "correct" | "incorrect"
+
+  const totalRounds = gameMode === "multi" ? 10 : questions.length;
+  const isLastRound = currentRoundIndex + 1 >= totalRounds;
 
   // Chronomètre de manche
   const [timeRemainingMs, setTimeRemainingMs] = useState(TIMER_TOTAL_MS);
@@ -383,13 +404,7 @@ export default function IhmClashGame() {
                   </span>
                   <div className="w-44 sm:w-64 md:w-80 h-3.5 bg-gray-950 border border-gray-700 rounded overflow-hidden shadow-inner">
                     <div
-                      className={`h-full transition-all duration-100 ${
-                        timerRatio > 0.5
-                          ? "bg-gradient-to-r from-emerald-600 to-emerald-400"
-                          : timerRatio > 0.25
-                          ? "bg-gradient-to-r from-amber-600 to-amber-400"
-                          : "bg-gradient-to-r from-red-700 to-red-500"
-                      }`}
+                      className={`h-full transition-all duration-100 ${timerBarClass(timerRatio)}`}
                       style={{ width: `${timerRatio * 100}%` }}
                     />
                   </div>
@@ -402,21 +417,11 @@ export default function IhmClashGame() {
                   <span className="font-mono font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700 uppercase">
                     {currentQ.categoryLabel}
                   </span>
-                  <span className={`font-mono text-[11px] font-bold px-2 py-0.5 rounded border uppercase ${
-                    currentQ.difficulty === 'easy'
-                      ? 'bg-emerald-950 text-emerald-300 border-emerald-700'
-                      : currentQ.difficulty === 'hard'
-                      ? 'bg-rose-950 text-rose-300 border-rose-700'
-                      : 'bg-amber-950 text-amber-300 border-amber-700'
-                  }`}>
-                    {currentQ.difficulty === 'easy' ? '🟢 Facile' : currentQ.difficulty === 'hard' ? '🔴 Expert' : '🟡 Moyen'}
+                  <span className={`font-mono text-[11px] font-bold px-2 py-0.5 rounded border uppercase ${(DIFFICULTY_STYLES[currentQ.difficulty] || DIFFICULTY_STYLES.medium).badge}`}>
+                    {(DIFFICULTY_STYLES[currentQ.difficulty] || DIFFICULTY_STYLES.medium).label}
                   </span>
-                  <span className={`font-mono font-bold px-2 py-0.5 rounded border ${
-                    currentQ.targetViewport === 'mobile' ? 'bg-purple-950 text-purple-300 border-purple-700' :
-                    currentQ.targetViewport === 'tablet' ? 'bg-blue-950 text-blue-300 border-blue-700' :
-                    'bg-emerald-950 text-emerald-300 border-emerald-700'
-                  }`}>
-                    {currentQ.targetViewport === 'mobile' ? '📱 Mobile 375px' : currentQ.targetViewport === 'tablet' ? '💻 Tablette 768px' : '🖥️ Desktop'}
+                  <span className={`font-mono font-bold px-2 py-0.5 rounded border ${(VIEWPORT_STYLES[currentQ.targetViewport] || VIEWPORT_STYLES.desktop).badge}`}>
+                    {(VIEWPORT_STYLES[currentQ.targetViewport] || VIEWPORT_STYLES.desktop).label}
                   </span>
                   <span className="text-gray-300">
                     Composant : <strong className="text-white">{currentQ.title}</strong>
@@ -492,9 +497,7 @@ export default function IhmClashGame() {
                     }}
                     className="pixel-btn !bg-red-700 hover:!bg-red-600 !text-white text-sm font-bold !font-sans whitespace-nowrap"
                   >
-                    {currentRoundIndex + 1 >= (gameMode === "multi" ? 10 : questions.length)
-                      ? "VOIR LES RÉSULTATS →"
-                      : "MANCHE SUIVANTE →"}
+                    {isLastRound ? "VOIR LES RÉSULTATS →" : "MANCHE SUIVANTE →"}
                   </button>
                 </div>
 
@@ -640,14 +643,8 @@ export default function IhmClashGame() {
                         <span className="text-xs text-gray-400 font-medium">
                           [{item.categoryLabel}]
                         </span>
-                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded border uppercase ${
-                          item.difficulty === 'easy'
-                            ? 'bg-emerald-950 text-emerald-300 border-emerald-700'
-                            : item.difficulty === 'hard'
-                            ? 'bg-rose-950 text-rose-300 border-rose-700'
-                            : 'bg-amber-950 text-amber-300 border-amber-700'
-                        }`}>
-                          {item.difficulty === 'easy' ? '🟢 Facile' : item.difficulty === 'hard' ? '🔴 Expert' : '🟡 Moyen'}
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded border uppercase ${(DIFFICULTY_STYLES[item.difficulty] || DIFFICULTY_STYLES.medium).badge}`}>
+                          {(DIFFICULTY_STYLES[item.difficulty] || DIFFICULTY_STYLES.medium).label}
                         </span>
                         <h4 className="text-sm font-bold text-white">
                           {item.title}

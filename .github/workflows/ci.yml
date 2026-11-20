@@ -37,5 +37,5 @@ jobs:
       - name: Installation et Linting Back-end (FastAPI/Ruff)
         run: |
           cd server
-          pip install ruff
+          pip install -r requirements.txt
           ruff check .

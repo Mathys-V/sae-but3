@@ -137,9 +137,9 @@ export default function IhmMultiLobby({ onStartBattle }) {
 
           {/* Liste des joueurs dans le salon */}
           <div className="space-y-2.5">
-            {players.map((p, idx) => (
+            {players.map((p) => (
               <div
-                key={idx}
+                key={p.pseudo}
                 className="p-3 bg-gray-950/80 border border-gray-800 rounded flex items-center justify-between"
               >
                 <div className="flex items-center gap-3">

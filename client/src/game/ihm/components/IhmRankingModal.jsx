@@ -1,5 +1,11 @@
 // client/src/components/ihm/IhmRankingModal.jsx
 
+function rankingRowClass(isWinner, isMe) {
+  if (isWinner) return "bg-amber-950/80 border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.5)]";
+  if (isMe) return "bg-red-950/70 border-red-500";
+  return "bg-gray-950/70 border-gray-800";
+}
+
 export default function IhmRankingModal({ rankings, onPlayAgain, onBackToGames }) {
   // rankings: [{ rank, pseudo, avatar, score, avgTimeMs, coinsWon, isMe }]
   return (
@@ -25,13 +31,7 @@ export default function IhmRankingModal({ rankings, onPlayAgain, onBackToGames }
             return (
               <div
                 key={player.pseudo || idx}
-                className={`p-3 border-2 flex items-center justify-between gap-3 transition-all rounded ${
-                  isWinner
-                    ? "bg-amber-950/80 border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.5)]"
-                    : player.isMe
-                      ? "bg-red-950/70 border-red-500"
-                      : "bg-gray-950/70 border-gray-800"
-                }`}
+                className={`p-3 border-2 flex items-center justify-between gap-3 transition-all rounded ${rankingRowClass(isWinner, player.isMe)}`}
               >
                 {/* Rang et Avatar */}
                 <div className="flex items-center gap-3">

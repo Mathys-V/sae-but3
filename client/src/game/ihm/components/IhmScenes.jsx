@@ -34,8 +34,8 @@ const SCENE_RENDERERS = {
     <div className={panel}>
       <span className="text-[11px] text-slate-400 uppercase tracking-wider">Paramètres du module</span>
       <div className={`flex gap-1.5 ${d.value ? "overflow-x-auto pb-1" : "overflow-hidden"}`}>
-        {(d.labels || ["Général", "Étudiants", "Notes", "Planning", "Soutenances"]).map((l, i) => (
-          <span key={i} className="shrink-0 px-2 py-1 text-[10px] rounded bg-slate-900 text-slate-200">
+        {(d.labels || ["Général", "Étudiants", "Notes", "Planning", "Soutenances"]).map((l) => (
+          <span key={l} className="shrink-0 px-2 py-1 text-[10px] rounded bg-slate-900 text-slate-200">
             {l}
           </span>
         ))}
@@ -45,9 +45,9 @@ const SCENE_RENDERERS = {
   tabsWrap: (d) => (
     <div className={panel}>
       <div className="flex gap-1.5">
-        {(d.labels || ["Cours", "TP", "Projets", "Examens", "Ressources"]).map((l, i) => (
+        {(d.labels || ["Cours", "TP", "Projets", "Examens", "Ressources"]).map((l) => (
           <span
-            key={i}
+            key={l}
             className={`px-2 py-1 text-[10px] rounded bg-slate-900 text-slate-200 ${
               d.value ? "whitespace-nowrap" : "truncate max-w-[45px]"
             }`}
@@ -64,7 +64,7 @@ const SCENE_RENDERERS = {
     <div className={panel}>
       <div className="text-[11px] text-slate-300 flex flex-wrap items-center gap-1">
         {(d.steps || ["Accueil", "R3.01", "SAE", "Rendu final"]).map((s, i) => (
-          <span key={i} className={d.value ? "" : "truncate max-w-[55px] inline-block"}>
+          <span key={s} className={d.value ? "" : "truncate max-w-[55px] inline-block"}>
             {i > 0 && <span className="text-slate-600 mr-1">›</span>}
             {s}
           </span>
@@ -76,7 +76,7 @@ const SCENE_RENDERERS = {
     <div className={panel}>
       <div className="text-[11px] text-slate-300 flex items-center gap-1">
         {(d.steps || ["Accueil", "Ressources", "R3.01"]).map((s, i) => (
-          <span key={i}>
+          <span key={s}>
             {i > 0 && <span className={d.value ? "text-slate-500 mx-1" : "text-slate-900 mx-0"}>›</span>}
             {s}
           </span>
@@ -230,9 +230,10 @@ const SCENE_RENDERERS = {
     <div className={panel}>
       <div className="h-1.5 w-full rounded bg-slate-700" />
       <div className="flex justify-between text-[10px] text-slate-400">
-        {(d.ticks || ["0", "25", "50", "75", "100"]).map((t, i) => (
-          <span key={i}>{d.value ? t : i % 2 === 0 ? t : ""}</span>
-        ))}
+        {(d.ticks || ["0", "25", "50", "75", "100"]).map((t, i) => {
+          const label = d.value || i % 2 === 0 ? t : "";
+          return <span key={t}>{label}</span>;
+        })}
       </div>
     </div>
   ),
@@ -257,8 +258,8 @@ const SCENE_RENDERERS = {
   autocompleteHighlight: (d) => (
     <div className={panel}>
       <div className="p-2 rounded bg-slate-900 text-[11px] text-slate-200">Rechercher un étudiant…</div>
-      {(d.suggestions || ["Jean Dupont", "Jean Martin", "Jeanne Durand"]).map((s, i) => (
-        <div key={i} className="text-[11px] text-slate-300">
+      {(d.suggestions || ["Jean Dupont", "Jean Martin", "Jeanne Durand"]).map((s) => (
+        <div key={s} className="text-[11px] text-slate-300">
           {d.value ? s.replace("Jean", "[Jean]") : s}
         </div>
       ))}
@@ -335,8 +336,8 @@ const SCENE_RENDERERS = {
   avatarOverflow: (d) => (
     <div className={panel}>
       <div className="flex -space-x-2">
-        {(d.people || ["AD", "JM", "CD", "ML"]).map((p, i) => (
-          <span key={i} className="w-7 h-7 rounded-full bg-indigo-700 text-white text-[10px] flex items-center justify-center border-2 border-slate-800">
+        {(d.people || ["AD", "JM", "CD", "ML"]).map((p) => (
+          <span key={p} className="w-7 h-7 rounded-full bg-indigo-700 text-white text-[10px] flex items-center justify-center border-2 border-slate-800">
             {p}
           </span>
         ))}
@@ -363,8 +364,8 @@ const SCENE_RENDERERS = {
   tagRemove: (d) => (
     <div className={panel}>
       <div className="flex flex-wrap gap-1.5">
-        {(d.tags || ["R3.01", "Web", "SAE"]).map((t, i) => (
-          <span key={i} className="px-2 py-1 text-[10px] rounded bg-slate-900 text-slate-200">
+        {(d.tags || ["R3.01", "Web", "SAE"]).map((t) => (
+          <span key={t} className="px-2 py-1 text-[10px] rounded bg-slate-900 text-slate-200">
             {t} {d.value && <span className="text-rose-400">✕</span>}
           </span>
         ))}
@@ -379,17 +380,25 @@ const SCENE_RENDERERS = {
   ),
 
   /* 18. Indicateur d'étapes */
-  stepperCurrent: (d) => (
-    <div className={panel}>
-      <div className="flex items-center gap-1.5">
-        {(d.steps || ["Panier", "Livraison", "Paiement"]).map((s, i) => (
-          <span key={i} className={`px-2 py-1 text-[10px] rounded ${i === 1 ? (d.value ? "bg-indigo-600 text-white font-bold" : "bg-slate-700 text-slate-400") : "bg-slate-900 text-slate-500"}`}>
-            {s}
-          </span>
-        ))}
+  stepperCurrent: (d) => {
+    const activeClass = d.value
+      ? "bg-indigo-600 text-white font-bold"
+      : "bg-slate-700 text-slate-400";
+    return (
+      <div className={panel}>
+        <div className="flex items-center gap-1.5">
+          {(d.steps || ["Panier", "Livraison", "Paiement"]).map((s, i) => (
+            <span
+              key={s}
+              className={`px-2 py-1 text-[10px] rounded ${i === 1 ? activeClass : "bg-slate-900 text-slate-500"}`}
+            >
+              {s}
+            </span>
+          ))}
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
   stepperSteps: (d) => (
     <div className={panel}>
       <Line text="Progression" value={d.value} good="Étape 2 sur 3" bad="étape 2 seulement" />
@@ -427,8 +436,8 @@ const SCENE_RENDERERS = {
   searchHighlight: (d) => (
     <div className={panel}>
       <div className="p-2 rounded bg-slate-900 text-[11px] text-slate-200">Requête : « ergonomie »</div>
-      {(d.results || ["Guide d'ergonomie", "Ergonomie cognitive", "Tests utilisateurs"]).map((r, i) => (
-        <div key={i} className="text-[11px] text-slate-300">
+      {(d.results || ["Guide d'ergonomie", "Ergonomie cognitive", "Tests utilisateurs"]).map((r) => (
+        <div key={r} className="text-[11px] text-slate-300">
           {d.value ? r.replace(/ergonomie/gi, "[ergonomie]") : r}
         </div>
       ))}
@@ -505,8 +514,8 @@ const SCENE_RENDERERS = {
   /* 25. Densité de liste */
   listDensity: (d) => (
     <div className={panel}>
-      {(d.rows || ["R3.01 Développement Web", "R3.02 Base de données", "R3.04 Qualité"]).map((r, i) => (
-        <div key={i} className={`text-[11px] text-slate-300 bg-slate-900 rounded px-2 ${d.value ? "py-2 mb-1.5" : "py-0.5 mb-0.5"}`}>
+      {(d.rows || ["R3.01 Développement Web", "R3.02 Base de données", "R3.04 Qualité"]).map((r) => (
+        <div key={r} className={`text-[11px] text-slate-300 bg-slate-900 rounded px-2 ${d.value ? "py-2 mb-1.5" : "py-0.5 mb-0.5"}`}>
           {r}
         </div>
       ))}
@@ -515,7 +524,7 @@ const SCENE_RENDERERS = {
   listZebra: (d) => (
     <div className={panel}>
       {(d.rows || ["Groupe A", "Groupe B", "Groupe C"]).map((r, i) => (
-        <div key={i} className={`text-[11px] text-slate-300 px-2 py-1 ${d.value && i % 2 === 1 ? "bg-slate-900/70" : ""}`}>
+        <div key={r} className={`text-[11px] text-slate-300 px-2 py-1 ${d.value && i % 2 === 1 ? "bg-slate-900/70" : ""}`}>
           {r}
         </div>
       ))}
@@ -589,8 +598,8 @@ const SCENE_RENDERERS = {
         <span>Montant</span>
         <span className={d.value ? "text-right" : "text-left"}>Total</span>
       </div>
-      {(d.items || [{ label: "R3.01", cost: "12,50 €" }, { label: "R3.02", cost: "4,00 €" }]).map((it, i) => (
-        <div key={i} className={`grid grid-cols-2 text-[11px] text-slate-200 pt-1 ${d.value ? "font-mono tabular-nums" : ""}`}>
+      {(d.items || [{ label: "R3.01", cost: "12,50 €" }, { label: "R3.02", cost: "4,00 €" }]).map((it) => (
+        <div key={it.label} className={`grid grid-cols-2 text-[11px] text-slate-200 pt-1 ${d.value ? "font-mono tabular-nums" : ""}`}>
           <span>{it.label}</span>
           <span className={d.value ? "text-right" : "text-left"}>{it.cost}</span>
         </div>

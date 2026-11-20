@@ -2,51 +2,59 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ressourcesBUT } from "../data/ressources.js";
 
+const THEME_CLASSES = {
+  casino: {
+    border: "border-red-500/70 bg-red-950/90 hover:border-red-400 hover:shadow-red-900/40 hover:shadow-lg",
+    badgeId: "bg-red-950/80 text-red-200 border-red-700/60",
+    badgeTag: "bg-red-950/80 text-red-200 border border-red-700/60",
+    titleHover: "group-hover:text-red-200",
+    bottomBar: "border-red-800/60 bg-red-950/60",
+    btn: "bg-red-700 hover:bg-red-600 text-white shadow-md hover:shadow-red-500/40",
+  },
+  ihm: {
+    border: "border-emerald-500/70 bg-emerald-950/90 hover:border-emerald-400 hover:shadow-emerald-900/40 hover:shadow-lg",
+    badgeId: "bg-emerald-950/80 text-emerald-200 border-emerald-700/60",
+    badgeTag: "bg-emerald-950/80 text-emerald-200 border border-emerald-700/60",
+    titleHover: "group-hover:text-emerald-200",
+    bottomBar: "border-emerald-800/60 bg-emerald-950/60",
+    btn: "bg-emerald-700 hover:bg-emerald-600 text-white shadow-md hover:shadow-emerald-500/40",
+  },
+  plongee: {
+    border: "border-sky-500/70 bg-sky-950/90 hover:border-sky-400 hover:shadow-sky-900/40 hover:shadow-lg",
+    badgeId: "bg-sky-950/80 text-sky-200 border-sky-700/60",
+    badgeTag: "bg-sky-950/80 text-sky-200 border border-sky-700/60",
+    titleHover: "group-hover:text-sky-200",
+    bottomBar: "border-sky-800/60 bg-sky-950/60",
+    btn: "bg-sky-700 hover:bg-sky-600 text-white shadow-md hover:shadow-sky-500/40",
+  },
+  default: {
+    border: "border-cyan-500/60 bg-slate-900/90 hover:border-cyan-400 hover:shadow-cyan-900/30 hover:shadow-lg",
+    badgeId: "bg-gray-700/80 text-cyan-300 border-gray-600/50",
+    badgeTag: "bg-cyan-950/80 text-cyan-300 border border-cyan-700/50",
+    titleHover: "group-hover:text-cyan-200",
+    bottomBar: "border-gray-700/60 bg-slate-950/40",
+    btn: "bg-cyan-700 hover:bg-cyan-600 text-white shadow-md hover:shadow-cyan-500/40",
+  },
+};
+
+function themeKeyFor(cours) {
+  if (cours.id === "R1.06") return "casino";
+  if (cours.id === "R3.01") return "ihm";
+  if (cours.id === "R5.A.06") return "plongee";
+  return "default";
+}
+
 /**
  * Composant de carte de ressource / mini-jeu (le profil du bloc de jeu).
  * Met en valeur les jeux dotés d'assets dédiés (fond d'ambiance, sprite pixel art, tag).
  */
 function CourseCard({ cours }) {
   const hasGame = Boolean(cours.path);
-  const isCasino = cours.id === "R1.06";
-  const isIhm = cours.id === "R3.01";
-  const isPlongee = cours.id === "R5.A.06";
-
-  const themeClasses = isCasino
-    ? {
-        border: "border-red-500/70 bg-red-950/90 hover:border-red-400 hover:shadow-red-900/40 hover:shadow-lg",
-        badgeId: "bg-red-950/80 text-red-200 border-red-700/60",
-        badgeTag: "bg-red-950/80 text-red-200 border border-red-700/60",
-        titleHover: "group-hover:text-red-200",
-        bottomBar: "border-red-800/60 bg-red-950/60",
-        btn: "bg-red-700 hover:bg-red-600 text-white shadow-md hover:shadow-red-500/40",
-      }
-    : isIhm
-    ? {
-        border: "border-emerald-500/70 bg-emerald-950/90 hover:border-emerald-400 hover:shadow-emerald-900/40 hover:shadow-lg",
-        badgeId: "bg-emerald-950/80 text-emerald-200 border-emerald-700/60",
-        badgeTag: "bg-emerald-950/80 text-emerald-200 border border-emerald-700/60",
-        titleHover: "group-hover:text-emerald-200",
-        bottomBar: "border-emerald-800/60 bg-emerald-950/60",
-        btn: "bg-emerald-700 hover:bg-emerald-600 text-white shadow-md hover:shadow-emerald-500/40",
-      }
-    : isPlongee
-    ? {
-        border: "border-sky-500/70 bg-sky-950/90 hover:border-sky-400 hover:shadow-sky-900/40 hover:shadow-lg",
-        badgeId: "bg-sky-950/80 text-sky-200 border-sky-700/60",
-        badgeTag: "bg-sky-950/80 text-sky-200 border border-sky-700/60",
-        titleHover: "group-hover:text-sky-200",
-        bottomBar: "border-sky-800/60 bg-sky-950/60",
-        btn: "bg-sky-700 hover:bg-sky-600 text-white shadow-md hover:shadow-sky-500/40",
-      }
-    : {
-        border: "border-cyan-500/60 bg-slate-900/90 hover:border-cyan-400 hover:shadow-cyan-900/30 hover:shadow-lg",
-        badgeId: "bg-gray-700/80 text-cyan-300 border-gray-600/50",
-        badgeTag: "bg-cyan-950/80 text-cyan-300 border border-cyan-700/50",
-        titleHover: "group-hover:text-cyan-200",
-        bottomBar: "border-gray-700/60 bg-slate-950/40",
-        btn: "bg-cyan-700 hover:bg-cyan-600 text-white shadow-md hover:shadow-cyan-500/40",
-      };
+  const theme = themeKeyFor(cours);
+  const isCasino = theme === "casino";
+  const isIhm = theme === "ihm";
+  const isPlongee = theme === "plongee";
+  const themeClasses = THEME_CLASSES[theme];
 
   const getBackgroundGradient = () => {
     if (!cours.bgImage) return undefined;
