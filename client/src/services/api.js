@@ -3,15 +3,12 @@
 const API_URL = import.meta.env.VITE_API_URL || "/api";
 
 export const fetchAchievements = async (token) => {
-  try {
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    const response = await fetch(`${API_URL}/games/achievements`, { headers });
-    if (!response.ok) return [];
-    return await response.json();
-  } catch (error) {
-    console.error("Erreur fetchAchievements :", error);
-    return [];
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const response = await fetch(`${API_URL}/games/achievements`, { headers });
+  if (!response.ok) {
+    throw new Error(`Impossible de charger les succès (HTTP ${response.status}).`);
   }
+  return response.json();
 };
 
 // Récupération des scores d'un mini-jeu
