@@ -46,6 +46,10 @@ function timerBarClass(ratio) {
   return "bg-gradient-to-r from-red-700 to-red-500";
 }
 
+function modeTabClass(isActive) {
+  return `pixel-tab !font-sans font-bold ${isActive ? "active" : ""}`;
+}
+
 function buildMultiRankings(players, score, myAvgTimeMs) {
   const simulatedScores = players.map((p) =>
     p.isMe
@@ -125,6 +129,7 @@ export default function IhmClashGame() {
   const timerRef = useRef(null);
   const sessionStartTimeRef = useRef(0);
   const hasRecordedRef = useRef(false);
+  const isUrgent = timeRemainingMs <= 3000 && selectedOption === null;
 
   // Titre du document
   useEffect(() => {
@@ -320,7 +325,7 @@ export default function IhmClashGame() {
                   <button
                     type="button"
                     onClick={() => setGameMode("solo")}
-                    className={`pixel-tab !font-sans font-bold ${gameMode === "solo" ? "active" : ""}`}
+                    className={modeTabClass(gameMode === "solo")}
                   >
                     <span>👤</span>
                     <span>MODE SOLO (20 MANCHES)</span>
@@ -328,7 +333,7 @@ export default function IhmClashGame() {
                   <button
                     type="button"
                     onClick={() => setGameMode("multi")}
-                    className={`pixel-tab !font-sans font-bold ${gameMode === "multi" ? "active" : ""}`}
+                    className={modeTabClass(gameMode === "multi")}
                   >
                     <span>👥</span>
                     <span>MULTIJOUEUR (2 À 4 JOUEURS)</span>
@@ -387,14 +392,14 @@ export default function IhmClashGame() {
                 {/* Chronomètre et jauge animée (Urgence visuelle < 3s, barre élargie) */}
                 <div
                   className={`flex items-center gap-3 px-3 py-1 rounded transition-all duration-200 ${
-                    timeRemainingMs <= 3000 && selectedOption === null
+                    isUrgent
                       ? "bg-red-950/80 border border-red-500 shadow-[0_0_12px_rgba(239,68,68,0.6)] animate-pulse"
                       : "bg-gray-900/90 border border-gray-700/80"
                   }`}
                 >
                   <span
                     className={`text-sm sm:text-base font-mono font-black min-w-[50px] text-right ${
-                      timeRemainingMs <= 3000 && selectedOption === null
+                      isUrgent
                         ? "text-red-400 font-black animate-pulse"
                         : "text-amber-400"
                     }`}
