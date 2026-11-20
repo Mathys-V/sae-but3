@@ -10,7 +10,6 @@ import {
   PixelStarfishTopRight,
   PixelShellBottomLeft,
   PixelCrystalBottomRight,
-  PixelAmbientSea,
   PixelTrophy,
 } from "../components/DivingPixelDecor.jsx";
 
@@ -242,18 +241,6 @@ function DivingGame({
         isFullscreen ? "h-screen fixed inset-0 z-50" : "flex-1 min-h-0"
       }`}
     >
-      {/* Faune & Algues décoratives d'ambiance en arrière-plan marin Pixel Art */}
-      {!isFullscreen && (
-        <>
-          <div className="ambient-decor ambient-left" aria-hidden="true">
-            <PixelAmbientSea />
-          </div>
-          <div className="ambient-decor ambient-right" aria-hidden="true">
-            <PixelAmbientSea flipped />
-          </div>
-        </>
-      )}
-
       {/* Bouton plein écran flottant discret si plein écran actif */}
       {isFullscreen && (
         <button
