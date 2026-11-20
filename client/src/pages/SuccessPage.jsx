@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { LayoutGroup, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ressourcesBUT } from "../data/ressources.js";
 import cadenas from "../assets/icons/cadenas.png";
@@ -20,29 +21,49 @@ function readFoundDucks() {
   }
 }
 
-function TrophyCard({ course, achievement, selected, onSelect }) {
+function TrophyCard({
+  course,
+  achievement,
+  selected,
+  onSelect,
+  variant = "medal",
+}) {
   const [iconUnavailable, setIconUnavailable] = useState(false);
   const unlocked = Boolean(achievement?.unlocked);
-  const label = course?.tag || course?.nom || achievement?.game_name || "Succès général";
+  const label =
+    course?.tag || course?.nom || achievement?.game_name || "Succès général";
   return (
     <button
       type="button"
-      className={`success-badge ${unlocked ? "is-unlocked" : "is-locked"} ${selected ? "is-selected" : ""} ${onSelect ? "is-selectable" : ""}`}
+      className={`success-exhibit success-exhibit-${variant} ${unlocked ? "is-unlocked" : "is-locked"} ${selected ? "is-selected" : ""}`}
       onClick={onSelect}
       aria-label={`${achievement?.name || label}, ${unlocked ? "débloqué" : "verrouillé"}`}
       title={achievement?.name || label}
       aria-pressed={selected}
     >
-      {achievement?.icon_url && !iconUnavailable ? (
-        <img
-          className="success-badge-sprite"
-          src={achievement.icon_url}
-          alt=""
-          onError={() => setIconUnavailable(true)}
-        />
-      ) : (
-        <span className="success-badge-sprite success-trophy-emoji" aria-hidden="true">🏆</span>
+      {variant === "medal" && (
+        <span className="success-medal-ribbons" aria-hidden="true" />
       )}
+      <motion.span
+        className="success-exhibit-icon"
+        layoutId={`achievement-icon-${achievement?.achievement_id}`}
+        transition={{ type: "spring", stiffness: 280, damping: 28 }}
+      >
+        {variant === "secret" ? (
+          <span aria-hidden="true">🏆</span>
+        ) : achievement?.icon_url && !iconUnavailable ? (
+          <img
+            src={achievement.icon_url}
+            alt=""
+            onError={() => setIconUnavailable(true)}
+          />
+        ) : (
+          <span aria-hidden="true">🏅</span>
+        )}
+      </motion.span>
+      <span className="success-exhibit-label">
+        {achievement?.name || label}
+      </span>
     </button>
   );
 }
@@ -52,7 +73,6 @@ function SuccessPage() {
   const [skillsRevealed, setSkillsRevealed] = useState(false);
   const [achievements, setAchievements] = useState([]);
   const [achievementsError, setAchievementsError] = useState("");
-  const [selectedCourseId, setSelectedCourseId] = useState("R1.06");
   const [selectedAchievementId, setSelectedAchievementId] = useState(null);
   const [detailIconUnavailable, setDetailIconUnavailable] = useState(false);
   const token = useAuthStore((state) => state.token);
@@ -65,8 +85,6 @@ function SuccessPage() {
       ),
     [],
   );
-  const duckPercent = Math.min(100, (foundDucks / DUCKS_TOTAL) * 100);
-
   useEffect(() => {
     document.title = "Succès - Evil MesCoursJV";
     const refresh = () => setFoundDucks(readFoundDucks());
@@ -90,7 +108,9 @@ function SuccessPage() {
       .catch((error) => {
         if (active) {
           setAchievements([]);
-          setAchievementsError(error.message || "Impossible de charger les succès.");
+          setAchievementsError(
+            error.message || "Impossible de charger les succès.",
+          );
         }
       });
     return () => {
@@ -102,9 +122,6 @@ function SuccessPage() {
     setDetailIconUnavailable(false);
   }, [selectedAchievementId]);
 
-  const selectedCourse =
-    developedCourses.find((course) => course.id === selectedCourseId) ||
-    developedCourses[0];
   const selectedAchievement = achievements.find(
     (achievement) => achievement.achievement_id === selectedAchievementId,
   );
@@ -119,229 +136,182 @@ function SuccessPage() {
   const selectedAchievementCourse = selectedAchievement
     ? developedCourses.find((course) =>
         getCourseAchievements(course).some(
-          (achievement) => achievement.achievement_id === selectedAchievement.achievement_id,
+          (achievement) =>
+            achievement.achievement_id === selectedAchievement.achievement_id,
         ),
       )
     : null;
-  const selectedCourseAchievements = selectedCourse
-    ? getCourseAchievements(selectedCourse)
-    : [];
   const detailDescription = selectedAchievement
     ? selectedAchievement.description
-    : selectedCourseAchievements[0]?.description;
-  const selectedCourseUnlocked = selectedCourseAchievements.some(
-    (achievement) => achievement.unlocked,
+    : null;
+  const wallAchievements = achievements.filter(
+    (achievement) => !achievement.hidden,
   );
-  const courseAchievementIds = new Set(
-    developedCourses.flatMap((course) =>
-      getCourseAchievements(course).map((achievement) => achievement.achievement_id),
-    ),
+  const secretAchievements = achievements.filter(
+    (achievement) => achievement.hidden,
   );
-  const otherAchievements = achievements.filter(
-    (achievement) => !courseAchievementIds.has(achievement.achievement_id),
+  const leftWallAchievements = wallAchievements.slice(
+    0,
+    Math.ceil(wallAchievements.length / 2),
   );
-  const achievementGroups = [1, 2, 3].map((year) => ({
-    year,
-    items: developedCourses.filter((course) => course.cursusYear === year),
-  }));
+  const rightWallAchievements = wallAchievements.slice(
+    Math.ceil(wallAchievements.length / 2),
+  );
+  const selectAchievement = (achievement) => {
+    setSelectedAchievementId(achievement.achievement_id);
+  };
+  const renderAchievement = (achievement, variant) =>
+    selectedAchievementId === achievement.achievement_id ? (
+      <div
+        key={achievement.achievement_id}
+        className={`success-exhibit-placeholder success-exhibit-placeholder-${variant}`}
+        aria-hidden="true"
+      />
+    ) : (
+      <TrophyCard
+        key={achievement.achievement_id}
+        course={developedCourses.find((course) =>
+          getCourseAchievements(course).some(
+            (item) => item.achievement_id === achievement.achievement_id,
+          ),
+        )}
+        achievement={achievement}
+        variant={variant}
+        selected={false}
+        onSelect={() => selectAchievement(achievement)}
+      />
+    );
 
   return (
     <main className="success-page pixel-page-dungeon">
-      <section className="success-hero pixel-banner">
-        <div className="success-hero-copy">
-          <div className="success-ribbon">
-            <h1>
-              <span>Mes succès</span>
-            </h1>
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="success-ducks pixel-panel"
-        aria-labelledby="duck-heading"
-      >
-        <div
-          className="success-duck-art"
-          aria-label="Emplacement pour le sprite du canard"
-        >
-          <span aria-hidden="true">🦆</span>
-        </div>
-        <div className="success-duck-info">
-          <div className="success-duck-heading">
-            <div>
-              <span className="success-kicker">COLLECTION SECRÈTE</span>
-              <h2 id="duck-heading">Canards cachés</h2>
+      <LayoutGroup id="success-room-achievements">
+        <section className="success-room" aria-label="Salle des succès">
+          <header className="success-hero pixel-banner">
+            <div className="success-hero-copy">
+              <div className="success-ribbon">
+                <h1>
+                  <span>Mes succès</span>
+                </h1>
+              </div>
             </div>
+          </header>
+
+          <section
+            className="success-wall-zone success-wall-zone-left"
+            aria-label="Médailles obtenues ou à débloquer"
+          >
+            {leftWallAchievements.map((achievement) =>
+              renderAchievement(achievement, "medal"),
+            )}
+          </section>
+          <section
+            className="success-wall-zone success-wall-zone-right"
+            aria-label="Autres médailles"
+          >
+            {rightWallAchievements.map((achievement) =>
+              renderAchievement(achievement, "medal"),
+            )}
+          </section>
+
+          <section
+            className="success-diploma"
+            aria-label="Espace réservé au diplôme de BUT"
+          ></section>
+
+          {achievementsError && (
+            <p className="success-achievements-error" role="alert">
+              {achievementsError}
+            </p>
+          )}
+
+          {selectedAchievement && (
+            <aside
+              className="success-room-detail is-focused"
+              aria-live="polite"
+            >
+              <button
+                className="success-detail-close"
+                type="button"
+                aria-label="Fermer le résumé du succès"
+                onClick={() => setSelectedAchievementId(null)}
+              >
+                ×
+              </button>
+              <motion.div
+                layoutId={`achievement-icon-${selectedAchievement.achievement_id}`}
+                transition={{ type: "spring", stiffness: 280, damping: 28 }}
+                className={`success-detail-sprite ${selectedAchievement.unlocked ? "is-unlocked" : "is-locked"}`}
+                aria-label={selectedAchievement.name}
+              >
+                {selectedAchievement.icon_url && !detailIconUnavailable && (
+                  <img
+                    src={selectedAchievement.icon_url}
+                    alt=""
+                    onError={() => setDetailIconUnavailable(true)}
+                  />
+                )}
+                {(!selectedAchievement.icon_url || detailIconUnavailable) && (
+                  <span aria-hidden="true">🏆</span>
+                )}
+              </motion.div>
+              <span className="success-kicker">
+                {selectedAchievement.unlocked
+                  ? "SUCCÈS DÉBLOQUÉ"
+                  : "SUCCÈS À DÉBLOQUER"}
+              </span>
+              <h3>{selectedAchievement.name}</h3>
+              <p>
+                {selectedAchievement.game_name || "Succès général"}
+                {selectedAchievement.game_name && selectedAchievementCourse
+                  ? ` · ${selectedAchievementCourse.tag || selectedAchievementCourse.nom}`
+                  : ""}
+              </p>
+              {detailDescription && <small>{detailDescription}</small>}
+              {selectedAchievementCourse && (
+                <Link
+                  className="success-course-link"
+                  to={selectedAchievementCourse.path}
+                >
+                  Jouer
+                </Link>
+              )}
+            </aside>
+          )}
+
+          <div
+            className="success-room-duck"
+            aria-label={`Canards cachés : ${foundDucks} sur ${DUCKS_TOTAL}`}
+          >
+            <span aria-hidden="true">🦆</span>
             <strong>
               {foundDucks}
-              <span> / {DUCKS_TOTAL}</span>
+              <small> / {DUCKS_TOTAL}</small>
             </strong>
           </div>
-          <p>Explore les jeux pour tous les retrouver.</p>
-          <div
-            className="success-progress"
-            role="progressbar"
-            aria-label="Canards trouvés"
-            aria-valuemin="0"
-            aria-valuemax={DUCKS_TOTAL}
-            aria-valuenow={foundDucks}
-          >
-            <span style={{ width: `${duckPercent}%` }} />
-          </div>
-          <small>{DUCKS_TOTAL - foundDucks} canards encore cachés</small>
-        </div>
-      </section>
 
-      <section
-        className="success-trophies"
-        id="trophees"
-        aria-labelledby="trophies-heading"
-      >
-        <div className="success-section-heading">
-          <div>
-            <span className="success-kicker">PARCOURS ACADÉMIQUE</span>
-            <h2 id="trophies-heading">Jeux par matière</h2>
-          </div>
-          <span className="success-available-count">2 jeux développés</span>
-        </div>
-        <div className="success-games-layout">
-          <aside className="success-game-detail" aria-live="polite">
-            {selectedCourse && (
-              <>
-                <div
-                  className={`success-detail-sprite ${selectedAchievement ? (selectedAchievement.unlocked ? "is-unlocked" : "is-locked") : (selectedCourseUnlocked ? "is-unlocked" : "is-locked")}`}
-                  aria-label={selectedAchievement?.name || "Détail du jeu"}
-                >
-                  {selectedAchievement?.icon_url && !detailIconUnavailable && (
-                    <img
-                      src={selectedAchievement.icon_url}
-                      alt=""
-                      onError={() => setDetailIconUnavailable(true)}
-                    />
-                  )}
-                  {(!selectedAchievement?.icon_url || detailIconUnavailable) && (
-                    <span aria-hidden="true">🏆</span>
-                  )}
-                </div>
-                <span className="success-kicker">
-                  {(selectedAchievement ? selectedAchievement.unlocked : selectedCourseUnlocked)
-                    ? "SUCCÈS DÉBLOQUÉ"
-                    : "SUCCÈS À DÉBLOQUER"}
-                </span>
-                <h3>{selectedAchievement?.name || selectedCourse.tag || selectedCourse.nom}</h3>
-                <p>
-                  {selectedAchievement
-                    ? selectedAchievement.game_name || "Succès général"
-                    : selectedCourse.nom}
-                  {selectedAchievement?.game_name && selectedAchievementCourse
-                    ? ` · ${selectedAchievementCourse.tag || selectedAchievementCourse.nom}`
-                    : ""}
-                </p>
-                {detailDescription && <small>{detailDescription}</small>}
-                {(!selectedAchievement || selectedAchievementCourse) && selectedCourse && (
-                  <Link
-                    className="success-course-link"
-                    to={selectedAchievementCourse?.path || selectedCourse.path}
-                  >
-                    Jouer
-                  </Link>
-                )}
-              </>
-            )}
-          </aside>
-          <div
-            className="success-badge-sections"
-            aria-label="Jeux développés par année de BUT"
+          <section
+            className="success-secret-table"
+            aria-label="Succès secrets exposés sur la table"
           >
-            {achievementsError && (
-              <p className="success-achievements-error" role="alert">
-                {achievementsError}
-              </p>
-            )}
-            {achievementGroups
-              .filter(({ items }) => items.length > 0)
-              .map(({ year, items }) => (
-                <section
-                  className="success-badge-year"
-                  key={year}
-                  aria-labelledby={`success-games-but${year}`}
-                >
-                  <h3 id={`success-games-but${year}`}>BUT {year}</h3>
-                  <div className="success-badge-grid">
-                    {items.flatMap((course) =>
-                      getCourseAchievements(course).map((achievement) => (
-                        <TrophyCard
-                          key={achievement.achievement_id}
-                          course={course}
-                          achievement={achievement}
-                          selected={selectedAchievementId === achievement.achievement_id}
-                          onSelect={() => {
-                            setSelectedAchievementId(achievement.achievement_id);
-                            setSelectedCourseId(course.id);
-                          }}
-                        />
-                      )),
-                    )}
-                  </div>
-                </section>
-              ))}
-            {otherAchievements.length > 0 && (
-              <section className="success-badge-year" aria-labelledby="success-other-achievements">
-                <h3 id="success-other-achievements">Autres succès</h3>
-                <div className="success-badge-grid">
-                  {otherAchievements.map((achievement) => (
-                    <TrophyCard
-                      key={achievement.achievement_id}
-                      achievement={achievement}
-                      selected={selectedAchievementId === achievement.achievement_id}
-                      onSelect={() => setSelectedAchievementId(achievement.achievement_id)}
-                    />
+            <div className="success-secret-trophies">
+              {secretAchievements.length
+                ? secretAchievements.map((achievement) =>
+                    renderAchievement(achievement, "secret"),
+                  )
+                : [1, 2, 3].map((slot) => (
+                    <div
+                      className="success-secret-placeholder"
+                      key={slot}
+                      role="img"
+                      aria-label="Emplacement de succès secret"
+                    >
+                      ?
+                    </div>
                   ))}
-                </div>
-              </section>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="success-hidden-skills"
-        aria-label="Compétences cachées"
-      >
-        <button
-          className="success-hidden-trigger"
-          type="button"
-          aria-expanded={skillsRevealed}
-          aria-controls="hidden-skills-content"
-          onClick={() => setSkillsRevealed((revealed) => !revealed)}
-        >
-          {skillsRevealed ? "Refermer" : "Psst... il y a quelque chose ici..."}
-        </button>
-        {skillsRevealed && (
-          <div className="success-hidden-content" id="hidden-skills-content">
-            <h2>Compétences cachées</h2>
-            <p className="success-hidden-copy">
-              Elles se révèleront au fil de tes aventures.
-            </p>
-            <div
-              className="success-hidden-slots"
-              aria-label="Compétences à découvrir"
-            >
-              {[1, 2, 3].map((slot) => (
-                <div className="success-hidden-slot" key={slot}>
-                  <img src={cadenas} alt="" />
-                  <span>Inconnue</span>
-                </div>
-              ))}
             </div>
-          </div>
-        )}
-      </section>
-
-      <Link className="success-back" to="/evil">
-        ← Retour à l’accueil
-      </Link>
+          </section>
+        </section>
+      </LayoutGroup>
     </main>
   );
 }
