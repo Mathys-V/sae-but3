@@ -178,6 +178,12 @@ function secureRandom() {
   return value[0] / 0x100000000;
 }
 
+function generateButtonId() {
+  const values = new Uint32Array(4);
+  crypto.getRandomValues(values);
+  return Array.from(values).join("-");
+}
+
 function validateRegisterInputs(pseudo, email, password, confirmPassword) {
   if (!pseudo.trim() || !email.trim() || !password) {
     return "Tous les champs sont requis pour l'inscription.";
@@ -486,7 +492,7 @@ function ConnexionMCJV() {
       setPopUpButtons((buttons) => [
         ...buttons,
         {
-          id: crypto.randomUUID(),
+          id: generateButtonId(),
           x:
             margin +
             secureRandom() *
